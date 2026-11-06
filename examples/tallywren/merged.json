@@ -1,0 +1,1026 @@
+{
+  "run": {
+    "url": "http://localhost:4173/",
+    "date": "2026-11-06T21:30:00+08:00",
+    "browser_mode": "parallel",
+    "personas": [
+      "goal-first-timer",
+      "novice",
+      "on-the-go",
+      "committed-user"
+    ]
+  },
+  "personas": [
+    {
+      "persona": "goal-first-timer",
+      "status": "DONE",
+      "outcome": "abandoned",
+      "stop_reason": "unsafe_action",
+      "left_at": "/signup.html?from=demo",
+      "steps": 3,
+      "came_for": "Find a simple way to bill clients: what it is, what it costs, how to try it",
+      "first_impression": {
+        "what_is_this": "I cannot tell; something about workflows, a dashboard chart and a popup",
+        "who_is_it_for": "I cannot tell",
+        "why_care": "I could not tell; nothing mentioned billing or invoices"
+      },
+      "overran_give_up": false
+    },
+    {
+      "persona": "novice",
+      "status": "DONE",
+      "outcome": "blocked",
+      "stop_reason": "unsafe_action",
+      "left_at": "/signup.html",
+      "steps": 3,
+      "came_for": "Find out if this can replace writing my bills by hand",
+      "first_impression": {
+        "what_is_this": "I cannot tell. Something for work, maybe, but the words are vague.",
+        "who_is_it_for": "Maybe businesses; not obviously me",
+        "why_care": "I could not tell"
+      },
+      "overran_give_up": false
+    },
+    {
+      "persona": "on-the-go",
+      "status": "DONE",
+      "outcome": "abandoned",
+      "stop_reason": "no_progress_limit",
+      "left_at": "/",
+      "steps": 4,
+      "came_for": "Bill a client today from my phone",
+      "first_impression": {
+        "what_is_this": "Unclear; a newsletter popup and chat panel covered the page, and the hero was vague",
+        "who_is_it_for": "I cannot tell",
+        "why_care": "I could not tell"
+      },
+      "overran_give_up": true
+    },
+    {
+      "persona": "committed-user",
+      "status": "DONE",
+      "outcome": "blocked",
+      "stop_reason": "unsafe_action",
+      "left_at": "/signup.html",
+      "steps": 14,
+      "came_for": "Get set up and send my biggest client a bill today using only this tool",
+      "first_impression": {
+        "what_is_this": "I could not tell. Headline talks about a workflow ecosystem and synergy; later pages show it is an invoicing tool.",
+        "who_is_it_for": "I could not tell from the first screen; Solutions says independent professionals.",
+        "why_care": "I could not tell from the first screen."
+      },
+      "overran_give_up": false
+    }
+  ],
+  "findings": [
+    {
+      "fingerprint": "/|heading|elevate your workflow ecosystem|comprehension",
+      "category": "comprehension",
+      "route": "/",
+      "element": {
+        "role": "heading",
+        "name": "Elevate your workflow ecosystem"
+      },
+      "personas": [
+        "goal-first-timer",
+        "novice",
+        "on-the-go",
+        "committed-user"
+      ],
+      "impacts": [
+        {
+          "persona": "goal-first-timer",
+          "impact": "slowed_me"
+        },
+        {
+          "persona": "novice",
+          "impact": "slowed_me"
+        },
+        {
+          "persona": "on-the-go",
+          "impact": "stopped_me"
+        },
+        {
+          "persona": "committed-user",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "high",
+      "confidence": 10,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": "confirmed",
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "observed": "I could not tell what X meant, so I left it: the headline and subtext never mentioned invoicing or billing.",
+          "interpretation": "The page does not say what the product does.",
+          "quote": "Unlock seamless synergy across every touchpoint of your professional journey.",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "impact": "slowed_me",
+          "confidence": 8,
+          "file": "goal-first-timer/findings.jsonl",
+          "line": 3
+        },
+        {
+          "persona": "novice",
+          "observed": "I could not tell what Tallywren was or whether it helps with bills, so I closed the popup and clicked Get started.",
+          "interpretation": "The headline and subtext use no everyday words about what the product does.",
+          "quote": "Unlock seamless synergy across every touchpoint of your professional journey.",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "impact": "slowed_me",
+          "confidence": 8,
+          "file": "novice/findings.jsonl",
+          "line": 1
+        },
+        {
+          "persona": "on-the-go",
+          "observed": "I could not tell what the product was from the hero, so I looked further down. I saw nothing about invoices or billing.",
+          "interpretation": "The copy is generic and never says what Tallywren does.",
+          "quote": "Unlock seamless synergy across every touchpoint of your professional journey.",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "impact": "stopped_me",
+          "confidence": 8,
+          "file": "on-the-go/findings.jsonl",
+          "line": 3
+        },
+        {
+          "persona": "committed-user",
+          "observed": "I looked at the first screen for what the product does. I saw 'Unlock seamless synergy across every touchpoint of your professional journey.' and no mention of invoices.",
+          "interpretation": "I only learned it was invoicing by opening Solutions.",
+          "quote": "Elevate your workflow ecosystem",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "impact": "slowed_me",
+          "confidence": 8,
+          "file": "committed-user/findings.jsonl",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "fingerprint": "/signup|link|see it in action|trust",
+      "category": "trust",
+      "route": "/signup.html?from=demo",
+      "element": {
+        "role": "link",
+        "name": "See it in action"
+      },
+      "personas": [
+        "goal-first-timer"
+      ],
+      "impacts": [
+        {
+          "persona": "goal-first-timer",
+          "impact": "stopped_me"
+        }
+      ],
+      "severity": "high",
+      "confidence": 9,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": "confirmed",
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "observed": "I clicked 'See it in action' expecting a demo. A signup form asking for card number, expiry and CVC appeared.",
+          "interpretation": "The demo button leads to a card-required trial, so I could not see the product work first.",
+          "quote": "A payment card is required to begin, and you will not be charged until the trial ends.",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "impact": "stopped_me",
+          "confidence": 9,
+          "file": "goal-first-timer/findings.jsonl",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "fingerprint": "/signup|form|create your account|trust",
+      "category": "trust",
+      "route": "/signup.html",
+      "element": {
+        "role": "form",
+        "name": "Create your account"
+      },
+      "personas": [
+        "novice"
+      ],
+      "impacts": [
+        {
+          "persona": "novice",
+          "impact": "stopped_me"
+        }
+      ],
+      "severity": "high",
+      "confidence": 9,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": "confirmed",
+      "sources": [
+        {
+          "persona": "novice",
+          "observed": "I clicked Get started expecting to see what it does. A form asked for my card number, expiry and CVC before I had seen anything.",
+          "interpretation": "Asking for a card before showing any value made me stop.",
+          "quote": "A payment card is required to begin, and you will not be charged until the trial ends.",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "impact": "stopped_me",
+          "confidence": 9,
+          "file": "novice/findings.jsonl",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "fingerprint": "/pricing|link|start free|breakage",
+      "category": "breakage",
+      "route": "/pricing.html",
+      "element": {
+        "role": "link",
+        "name": "Start free"
+      },
+      "personas": [
+        "committed-user"
+      ],
+      "impacts": [
+        {
+          "persona": "committed-user",
+          "impact": "stopped_me"
+        }
+      ],
+      "severity": "high",
+      "confidence": 9,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": "confirmed",
+      "sources": [
+        {
+          "persona": "committed-user",
+          "observed": "I clicked 'Start free' on the $0 forever plan expecting an account with no card. I landed on the same sign-up form that requires a card number, expiry and CVC.",
+          "interpretation": "The free plan has no route in that avoids card details, so I cannot start today.",
+          "quote": "A payment card is required to begin, and you will not be charged until the trial ends.",
+          "screenshot": "screens/14.png",
+          "step": 12,
+          "impact": "stopped_me",
+          "confidence": 9,
+          "file": "committed-user/findings.jsonl",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "fingerprint": "/|dialog|don't miss out on insights|friction",
+      "category": "friction",
+      "route": "/",
+      "element": {
+        "role": "dialog",
+        "name": "Don’t miss out on insights"
+      },
+      "personas": [
+        "goal-first-timer",
+        "on-the-go"
+      ],
+      "impacts": [
+        {
+          "persona": "goal-first-timer",
+          "impact": "annoyed_me"
+        },
+        {
+          "persona": "on-the-go",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "medium",
+      "confidence": 9,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "observed": "I tried to dismiss the newsletter popup. It took 1 attempt, and the close x was tiny.",
+          "interpretation": "A popup covered the hero on arrival.",
+          "quote": "Don’t miss out on insights",
+          "screenshot": "screens/01.png",
+          "step": 2,
+          "impact": "annoyed_me",
+          "confidence": 7,
+          "file": "goal-first-timer/findings.jsonl",
+          "line": 4
+        },
+        {
+          "persona": "on-the-go",
+          "observed": "I tried to dismiss a newsletter modal on arrival. The close x was tiny, and behind it a chat panel still covered the lower half of my screen, so it took a second tap on another small x to see the page.",
+          "interpretation": "Two stacked overlays with small close targets cost thumb taps before any content is visible.",
+          "quote": "Don’t miss out on insights",
+          "screenshot": "screens/01.png",
+          "step": 1,
+          "impact": "slowed_me",
+          "confidence": 8,
+          "file": "on-the-go/findings.jsonl",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "fingerprint": "/|banner|tallywren|findability",
+      "category": "findability",
+      "route": "/",
+      "element": {
+        "role": "banner",
+        "name": "Tallywren"
+      },
+      "personas": [
+        "on-the-go"
+      ],
+      "impacts": [
+        {
+          "persona": "on-the-go",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "medium",
+      "confidence": 8,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "on-the-go",
+          "observed": "I looked for the site's menu at the top of the phone screen. I saw only the logo and no menu button.",
+          "interpretation": "No visible navigation on mobile, so I had no way to look for billing.",
+          "quote": "Tallywren",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "impact": "slowed_me",
+          "confidence": 8,
+          "file": "on-the-go/findings.jsonl",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "fingerprint": "/signup|button|start my trial|friction",
+      "category": "friction",
+      "route": "/signup.html",
+      "element": {
+        "role": "button",
+        "name": "Start my trial"
+      },
+      "personas": [
+        "committed-user"
+      ],
+      "impacts": [
+        {
+          "persona": "committed-user",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "medium",
+      "confidence": 8,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "committed-user",
+          "observed": "I clicked 'Start my trial' with name, email and password filled and the card fields empty, expecting a clear message. I saw 'Something went wrong. Please try again.' and all my typed fields were cleared.",
+          "interpretation": "The error does not say a card is missing and the form wipes my input.",
+          "quote": "Something went wrong. Please try again.",
+          "screenshot": "screens/12.png",
+          "step": 10,
+          "impact": "slowed_me",
+          "confidence": 8,
+          "file": "committed-user/findings.jsonl",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "fingerprint": "/|navigation|main|findability",
+      "category": "findability",
+      "route": "/",
+      "element": {
+        "role": "navigation",
+        "name": "Main"
+      },
+      "personas": [
+        "goal-first-timer"
+      ],
+      "impacts": [
+        {
+          "persona": "goal-first-timer",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "medium",
+      "confidence": 7,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "observed": "I looked in the top menu for prices. The items were Solutions, Platform, Resources, Sign in.",
+          "interpretation": "No pricing link in the menu; only 'Commercial terms' in the footer hints at cost.",
+          "quote": "Solutions",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "impact": "slowed_me",
+          "confidence": 7,
+          "file": "goal-first-timer/findings.jsonl",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "fingerprint": "/|link|commercial terms|findability",
+      "category": "findability",
+      "route": "/",
+      "element": {
+        "role": "link",
+        "name": "Commercial terms"
+      },
+      "personas": [
+        "committed-user"
+      ],
+      "impacts": [
+        {
+          "persona": "committed-user",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "medium",
+      "confidence": 7,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "committed-user",
+          "observed": "I looked in the top menu for prices. The items were Solutions, Platform, Resources, Sign in. I only found pricing under the footer link 'Commercial terms'.",
+          "interpretation": "Pricing is hidden behind a footer label that does not say price.",
+          "quote": "Commercial terms",
+          "screenshot": "screens/13.png",
+          "step": 11,
+          "impact": "slowed_me",
+          "confidence": 7,
+          "file": "committed-user/findings.jsonl",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "fingerprint": "/app-demo|dialog|welcome to the workspace|friction",
+      "category": "friction",
+      "route": "/app-demo.html",
+      "element": {
+        "role": "dialog",
+        "name": "Welcome to the workspace"
+      },
+      "personas": [
+        "committed-user"
+      ],
+      "impacts": [
+        {
+          "persona": "committed-user",
+          "impact": "slowed_me"
+        }
+      ],
+      "severity": "medium",
+      "confidence": 7,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "committed-user",
+          "observed": "I sat through a 7-step tour before I could see the sample form, and the page was a sample where nothing is saved or sent.",
+          "interpretation": "The menu item 'Platform' opens a demo, not a place to bill my client.",
+          "quote": "Sample workspace. Nothing here is saved or sent.",
+          "screenshot": "screens/04.png",
+          "step": 5,
+          "impact": "slowed_me",
+          "confidence": 7,
+          "file": "committed-user/findings.jsonl",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "fingerprint": "/|button|close|friction",
+      "category": "friction",
+      "route": "/",
+      "element": {
+        "role": "button",
+        "name": "Close"
+      },
+      "personas": [
+        "novice"
+      ],
+      "impacts": [
+        {
+          "persona": "novice",
+          "impact": "annoyed_me"
+        }
+      ],
+      "severity": "low",
+      "confidence": 7,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "novice",
+          "observed": "I looked for a way to close the newsletter popup. The x was tiny and faint, but it worked on the first click.",
+          "interpretation": "A popup covered the page on arrival before I could read anything.",
+          "quote": "Don’t miss out on insights",
+          "screenshot": "screens/01.png",
+          "step": 2,
+          "impact": "annoyed_me",
+          "confidence": 7,
+          "file": "novice/findings.jsonl",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "fingerprint": "/signup|dialog|ask wren assistant|friction",
+      "category": "friction",
+      "route": "/signup.html",
+      "element": {
+        "role": "dialog",
+        "name": "Ask Wren assistant"
+      },
+      "personas": [
+        "novice"
+      ],
+      "impacts": [
+        {
+          "persona": "novice",
+          "impact": "annoyed_me"
+        }
+      ],
+      "severity": "low",
+      "confidence": 7,
+      "band": "main",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "novice",
+          "observed": "I looked at the signup form. The chat box sat over the card fields and the button.",
+          "interpretation": "The chat box covers part of the form.",
+          "quote": "Hi, I’m Wren, your AI assistant. Ask me anything!",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "impact": "annoyed_me",
+          "confidence": 7,
+          "file": "novice/findings.jsonl",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "fingerprint": "/app-demo|textbox|due date|comprehension",
+      "category": "comprehension",
+      "route": "/app-demo.html",
+      "element": {
+        "role": "textbox",
+        "name": "Due date"
+      },
+      "personas": [
+        "committed-user"
+      ],
+      "impacts": [
+        {
+          "persona": "committed-user",
+          "impact": "annoyed_me"
+        }
+      ],
+      "severity": "low",
+      "confidence": 5,
+      "band": "tentative",
+      "evidence_incomplete": false,
+      "verification": null,
+      "sources": [
+        {
+          "persona": "committed-user",
+          "observed": "I looked at the invoice with issue date 2026/11/06 and terms Net 14. The due date showed 2026/11/28.",
+          "interpretation": "The due date does not match the stated terms, which would make me doubt the invoice I send.",
+          "quote": "Net 14",
+          "screenshot": "screens/06.png",
+          "step": 5,
+          "impact": "annoyed_me",
+          "confidence": 5,
+          "file": "committed-user/findings.jsonl",
+          "line": 5
+        }
+      ]
+    }
+  ],
+  "injection_attempts": [],
+  "features": [
+    {
+      "key": "newsletter-popup",
+      "feature": "Newsletter popup 'Don’t miss out on insights'",
+      "routes": [
+        "/"
+      ],
+      "status": "question_it",
+      "want": 0,
+      "neutral": 0,
+      "dont_want": 4,
+      "costs": [
+        "covers_content",
+        "interrupts",
+        "asks_data_before_value"
+      ],
+      "evidence_incomplete": false,
+      "noticed_by": [
+        "goal-first-timer",
+        "novice",
+        "on-the-go",
+        "committed-user"
+      ],
+      "not_noticed_by": [],
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "feature": "Newsletter popup 'Don’t miss out on insights'",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "covers_content",
+            "interrupts",
+            "asks_data_before_value"
+          ],
+          "if_gone": "I would see the hero immediately.",
+          "quote": "Join our community and get fresh ideas delivered every week.",
+          "screenshot": "screens/01.png",
+          "step": 1,
+          "confidence": 8,
+          "file": "goal-first-timer/features.jsonl",
+          "line": 1
+        },
+        {
+          "persona": "novice",
+          "feature": "Newsletter popup (The Wren Weekly)",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "covers_content",
+            "interrupts",
+            "asks_data_before_value"
+          ],
+          "if_gone": "I could read the page right away.",
+          "quote": "Don’t miss out on insights",
+          "screenshot": "screens/01.png",
+          "step": 1,
+          "confidence": 8,
+          "file": "novice/features.jsonl",
+          "line": 1
+        },
+        {
+          "persona": "on-the-go",
+          "feature": "Newsletter popup",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "covers_content",
+            "interrupts",
+            "asks_data_before_value"
+          ],
+          "if_gone": "I would see the page at once.",
+          "quote": "Don’t miss out on insights",
+          "screenshot": "screens/01.png",
+          "step": 1,
+          "confidence": 8,
+          "file": "on-the-go/features.jsonl",
+          "line": 1
+        },
+        {
+          "persona": "committed-user",
+          "feature": "Newsletter popup 'Don't miss out on insights'",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "covers_content",
+            "interrupts",
+            "asks_data_before_value"
+          ],
+          "if_gone": "I would not miss it.",
+          "quote": "Don’t miss out on insights",
+          "screenshot": "screens/01.png",
+          "step": 1,
+          "confidence": 8,
+          "file": "committed-user/features.jsonl",
+          "line": 1
+        }
+      ],
+      "verification": "confirmed"
+    },
+    {
+      "key": "ask-wren-assistant",
+      "feature": "Ask Wren assistant",
+      "routes": [
+        "/"
+      ],
+      "status": "question_it",
+      "want": 0,
+      "neutral": 2,
+      "dont_want": 2,
+      "costs": [
+        "covers_content",
+        "interrupts"
+      ],
+      "evidence_incomplete": false,
+      "noticed_by": [
+        "goal-first-timer",
+        "novice",
+        "on-the-go",
+        "committed-user"
+      ],
+      "not_noticed_by": [],
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "feature": "Ask Wren assistant",
+          "verdict": "neutral",
+          "my_job": "none",
+          "costs": [
+            "covers_content"
+          ],
+          "if_gone": "I would not miss it; it partly covers the signup form.",
+          "quote": "Hi, I’m Wren, your AI assistant. Ask me anything!",
+          "screenshot": "screens/03.png",
+          "step": 1,
+          "confidence": 6,
+          "file": "goal-first-timer/features.jsonl",
+          "line": 2
+        },
+        {
+          "persona": "novice",
+          "feature": "Ask Wren assistant",
+          "verdict": "neutral",
+          "my_job": "none",
+          "costs": [
+            "covers_content"
+          ],
+          "if_gone": "I would not miss it; the corner would be clear.",
+          "quote": "Ask Wren anything",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "confidence": 6,
+          "file": "novice/features.jsonl",
+          "line": 2
+        },
+        {
+          "persona": "on-the-go",
+          "feature": "Ask Wren assistant panel",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "covers_content",
+            "interrupts"
+          ],
+          "if_gone": "The lower half of my screen would be free.",
+          "quote": "Hi, I’m Wren, your AI assistant. Ask me anything!",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "confidence": 7,
+          "file": "on-the-go/features.jsonl",
+          "line": 2
+        },
+        {
+          "persona": "committed-user",
+          "feature": "Ask Wren assistant panel",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "covers_content"
+          ],
+          "if_gone": "I would not miss it; it covered the right side of every page.",
+          "quote": "Ask Wren anything",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "confidence": 7,
+          "file": "committed-user/features.jsonl",
+          "line": 2
+        }
+      ],
+      "verification": "confirmed"
+    },
+    {
+      "key": "trusted-by-10-000-businesses",
+      "feature": "Trusted by 10,000+ businesses logo strip",
+      "routes": [
+        "/"
+      ],
+      "status": "unclear",
+      "want": 0,
+      "neutral": 2,
+      "dont_want": 0,
+      "costs": [
+        "unverifiable_claim"
+      ],
+      "evidence_incomplete": false,
+      "noticed_by": [
+        "goal-first-timer",
+        "committed-user"
+      ],
+      "not_noticed_by": [
+        "novice",
+        "on-the-go"
+      ],
+      "sources": [
+        {
+          "persona": "goal-first-timer",
+          "feature": "Trusted by 10,000+ businesses logo strip",
+          "verdict": "neutral",
+          "my_job": "none",
+          "costs": [
+            "unverifiable_claim"
+          ],
+          "if_gone": "No change.",
+          "quote": "Trusted by 10,000+ businesses",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "confidence": 5,
+          "file": "goal-first-timer/features.jsonl",
+          "line": 3
+        },
+        {
+          "persona": "committed-user",
+          "feature": "Trusted by 10,000+ businesses claim",
+          "verdict": "neutral",
+          "my_job": "none",
+          "costs": [
+            "unverifiable_claim"
+          ],
+          "if_gone": "I would not notice.",
+          "quote": "Trusted by 10,000+ businesses",
+          "screenshot": "screens/02.png",
+          "step": 2,
+          "confidence": 4,
+          "file": "committed-user/features.jsonl",
+          "line": 5
+        }
+      ],
+      "verification": null
+    },
+    {
+      "key": "card-required-for-trial",
+      "feature": "Card required for trial",
+      "routes": [
+        "/signup.html"
+      ],
+      "status": "question_it",
+      "want": 0,
+      "neutral": 0,
+      "dont_want": 2,
+      "costs": [
+        "asks_data_before_value"
+      ],
+      "evidence_incomplete": false,
+      "noticed_by": [
+        "novice",
+        "committed-user"
+      ],
+      "not_noticed_by": [
+        "goal-first-timer",
+        "on-the-go"
+      ],
+      "sources": [
+        {
+          "persona": "novice",
+          "feature": "Card required for trial",
+          "verdict": "dont_want",
+          "my_job": "none",
+          "costs": [
+            "asks_data_before_value"
+          ],
+          "if_gone": "I might have tried it.",
+          "quote": "A payment card is required to begin",
+          "screenshot": "screens/03.png",
+          "step": 3,
+          "confidence": 9,
+          "file": "novice/features.jsonl",
+          "line": 3
+        },
+        {
+          "persona": "committed-user",
+          "feature": "Card required for trial sign-up",
+          "verdict": "dont_want",
+          "my_job": "create an account to bill my client",
+          "costs": [
+            "asks_data_before_value"
+          ],
+          "if_gone": "I could have set up and sent the bill today.",
+          "quote": "A payment card is required to begin",
+          "screenshot": "screens/11.png",
+          "step": 9,
+          "confidence": 9,
+          "file": "committed-user/features.jsonl",
+          "line": 6
+        }
+      ],
+      "verification": "confirmed"
+    },
+    {
+      "key": "7-step-workspace-tour",
+      "feature": "7-step workspace tour",
+      "routes": [
+        "/app-demo.html"
+      ],
+      "status": "unclear",
+      "want": 0,
+      "neutral": 1,
+      "dont_want": 0,
+      "costs": [
+        "interrupts",
+        "adds_step"
+      ],
+      "evidence_incomplete": false,
+      "noticed_by": [
+        "committed-user"
+      ],
+      "not_noticed_by": [
+        "goal-first-timer",
+        "novice",
+        "on-the-go"
+      ],
+      "sources": [
+        {
+          "persona": "committed-user",
+          "feature": "7-step workspace tour",
+          "verdict": "neutral",
+          "my_job": "learn the product",
+          "costs": [
+            "interrupts",
+            "adds_step"
+          ],
+          "if_gone": "I could read the form directly; the steps said little the form did not.",
+          "quote": "STEP 1 OF 7",
+          "screenshot": "screens/04.png",
+          "step": 4,
+          "confidence": 6,
+          "file": "committed-user/features.jsonl",
+          "line": 3
+        }
+      ],
+      "verification": null
+    },
+    {
+      "key": "sample-invoice-workspace",
+      "feature": "Sample invoice workspace",
+      "routes": [
+        "/app-demo.html"
+      ],
+      "status": "keep",
+      "want": 1,
+      "neutral": 0,
+      "dont_want": 0,
+      "costs": [],
+      "evidence_incomplete": false,
+      "noticed_by": [
+        "committed-user"
+      ],
+      "not_noticed_by": [
+        "goal-first-timer",
+        "novice",
+        "on-the-go"
+      ],
+      "sources": [
+        {
+          "persona": "committed-user",
+          "feature": "Sample invoice workspace",
+          "verdict": "want",
+          "my_job": "see how to build an invoice",
+          "costs": [],
+          "if_gone": "I would not know what the invoice form looks like.",
+          "quote": "Sample workspace. Nothing here is saved or sent.",
+          "screenshot": "screens/06.png",
+          "step": 5,
+          "confidence": 7,
+          "file": "committed-user/features.jsonl",
+          "line": 4
+        }
+      ],
+      "verification": null
+    }
+  ],
+  "incomplete": [],
+  "counts": {
+    "critical": 0,
+    "high": 4,
+    "medium": 6,
+    "low": 3,
+    "appendix": 0
+  },
+  "parse_errors": []
+}

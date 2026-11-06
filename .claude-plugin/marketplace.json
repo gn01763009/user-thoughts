@@ -1,0 +1,18 @@
+{
+  "name": "user-thoughts",
+  "owner": {
+    "name": "gn01763009"
+  },
+  "plugins": [
+    {
+      "name": "user-thoughts",
+      "source": "./",
+      "description": "Send simulated users through a live website, black-box, and find where they give up and which features to question.",
+      "version": "0.1.0",
+      "license": "MIT"
+    }
+  ],
+  "metadata": {
+    "description": "Simulated users walk through a live website, black-box, and report where they give up and which features to question."
+  }
+}

@@ -1,0 +1,207 @@
+[
+ {
+  "id": "U1",
+  "type": "usability",
+  "title": "The hero never says what the product is",
+  "route": "/",
+  "all_of": [
+   [
+    "hero|headline|homepage|home page|landing|tagline|首頁|主視覺|標題|主標"
+   ],
+   [
+    "never (says?|states?|explains?|tells?|mentions?)|(does not|doesn'?t|did not|didn'?t|not) (say|state|explain|tell|mention|clear)|unclear what|not clear what|(can'?t|cannot|couldn'?t|could not|unable to) (tell|work out|figure out|understand) what|what (the|this) (product|tool|service|app|site|company|business) (is|does)|what it (is|does)|vague|不知道|沒說|沒有說明|沒有提到|看不出|不清楚|說不出|不明確"
+   ]
+  ]
+ },
+ {
+  "id": "U2",
+  "type": "usability",
+  "title": "Pricing missing from the main menu; only a footer link called Commercial terms",
+  "route": "/",
+  "all_of": [
+   [
+    "pric(e|es|ing)|定價|價格|方案|費用|commercial terms"
+   ],
+   [
+    "main (menu|nav)|top (menu|nav)|navigation|nav ?bar|menu|footer|commercial terms|選單|導覽|頁尾|主選單"
+   ],
+   [
+    "missing|not (in|on|listed|visible|found|there|shown|part)|absent|only|buried|hidden|no (link|pricing)|(can'?t|cannot|couldn'?t|could not) find|commercial terms|找不到|沒有|缺|隱藏|只有"
+   ]
+  ]
+ },
+ {
+  "id": "U3",
+  "type": "usability",
+  "title": "Invoices are called Receivables orchestration",
+  "route": "/solutions.html",
+  "all_of": [
+   [
+    "receivables?|orchestration|應收|協調"
+   ],
+   [
+    "jargon|invoice|buzz|unclear|confus|plain|term|what (it|that|this) (is|means)|corporate|術語|行話|發票|請款單|帳單|看不懂|不清楚|聽不懂|費解"
+   ]
+  ]
+ },
+ {
+  "id": "U4",
+  "type": "usability",
+  "title": "Signup failure shows a generic error, names no field and clears the form; hidden password symbol rule",
+  "route": "/signup.html",
+  "all_of": [
+   [
+    "sign.?up|registration|register|create (an )?account|form|password|註冊|表單|密碼"
+   ],
+   [
+    "something went wrong|generic (error|message)|no field|which field|(did not|didn'?t|does not|doesn'?t|not) (say|name|tell|explain|identify|indicate)|cleared|wiped|reset|erased|emptied|lost (my|what|everything)|symbol|special character|hidden (rule|requirement)|出錯|錯誤訊息|清空|清除|沒有指出|沒說|哪個欄位|符號|特殊字元"
+   ]
+  ]
+ },
+ {
+  "id": "U5",
+  "type": "usability",
+  "title": "See it in action leads to a signup needing a credit card; no product shown first",
+  "route": "/",
+  "all_of": [
+   [
+    "see it in action|demo|product tour|preview|live demo|try it|示範|試用|展示|實際操作"
+   ],
+   [
+    "sign.?up|credit card|\\bcard\\b|payment|register|account|註冊|信用卡|付款"
+   ],
+   [
+    "before (seeing|showing|i could|showing me)|no (preview|demo|screenshot)|nothing (shows|showed|shown)|without|requires?|needs?|asks? for|forced|leads? to|goes to|takes? (me )?to|導向|才能|需要|要求|先"
+   ]
+  ]
+ },
+ {
+  "id": "U6",
+  "type": "usability",
+  "title": "At 480px or less the menu disappears with no replacement",
+  "route": "all",
+  "all_of": [
+   [
+    "mobile|narrow|480|small screen|phone|responsive|viewport|手機|窄|小螢幕|行動"
+   ],
+   [
+    "menu|\\bnav\\b|navigation|hamburger|選單|導覽|漢堡"
+   ],
+   [
+    "disappear|vanish|gone|missing|hidden|no (replacement|hamburger|way|toggle|alternative|menu|visible menu)|not (available|shown|visible|there)|cannot|can'?t|消失|不見|隱藏|沒有|沒有選單"
+   ]
+  ]
+ },
+ {
+  "id": "V1",
+  "type": "value",
+  "title": "Ask Wren assistant opens itself on every page, covers content, canned replies",
+  "route": "all",
+  "all_of": [
+   [
+    "assistant|chat ?(bot|widget|bubble|window|panel)|ask wren|\\bwren\\b|AI helper|助理|聊天|客服"
+   ],
+   [
+    "open(s|ed)? (up )?(itself|by itself|on its own|automatically|on every|without)|auto.?open|pops? ?up|covers?|blocks?|obscur|canned|scripted|generic (reply|answer|response)|same (answer|reply|response|line)|自動|彈出|遮|罐頭|制式|固定回覆"
+   ]
+  ]
+ },
+ {
+  "id": "V2",
+  "type": "value",
+  "title": "Newsletter modal on load with a tiny faint close control",
+  "route": "/",
+  "all_of": [
+   [
+    "newsletter|subscribe|subscription|email (list|capture|sign.?up)|modal|訂閱|電子報"
+   ],
+   [
+    "close|dismiss|×|\\bx\\b|tiny|faint|small|hard to (find|see|spot)|low contrast|on load|immediately|right away|as soon as|關閉|太小|看不到|很淡|一進來|載入"
+   ]
+  ]
+ },
+ {
+  "id": "V3",
+  "type": "value",
+  "title": "AI Insights block with Synergy score and Momentum index that lead to no action",
+  "route": "/",
+  "all_of": [
+   [
+    "AI insights?|synergy score|momentum index|洞察|協同"
+   ],
+   [
+    "synergy score|momentum index|\\b92\\b|\\+ ?14|meaningless|no action|nothing to (do|act)|actionable|vanity|unexplained|(does not|doesn'?t|not) (say|explain|mean|tell)|what (it|this|they) (means?|are)|no meaning|jargon|無意義|沒有行動|看不懂|不知道|沒有說明|無法行動"
+   ]
+  ]
+ },
+ {
+  "id": "V4",
+  "type": "value",
+  "title": "Seven-step tour on the demo that cannot be skipped",
+  "route": "/app-demo.html",
+  "all_of": [
+   [
+    "tour|walkthrough|onboarding|tutorial|guided|導覽|教學|引導"
+   ],
+   [
+    "skip|dismiss|close|exit|cannot|can'?t|forced|seven|\\b7\\b|trapped|stuck|blocks?|跳過|無法|強制|七|不能"
+   ]
+  ]
+ },
+ {
+  "id": "V5",
+  "type": "value",
+  "title": "Unverifiable praise: Trusted by 10,000+ businesses, Sarah J., CEO",
+  "route": "/",
+  "all_of": [
+   [
+    "10,?000|trusted by|sarah|testimonials?|social proof|praise|customer (quote|logo)|endorse|見證|評價|推薦|客戶評"
+   ],
+   [
+    "unverif|verif|(can'?t|cannot|couldn'?t|could not) (check|verify|confirm)|no (last name|full name|company|photo|link|source|detail)|generic|vague|anonymous|credib|trust|believ|fabricat|surname|無法驗證|查證|可信|誠信|沒有(姓|公司)|空泛|真實"
+   ]
+  ]
+ },
+ {
+  "id": "D1",
+  "type": "decoy",
+  "title": "Enterprise tier says Contact sales (normal)",
+  "route": "/pricing.html",
+  "all_of": [
+   [
+    "enterprise|企業"
+   ],
+   [
+    "contact sales|contact us|talk to sales|no (price|pricing)|price on request|hidden price|聯絡銷售|聯絡我們|聯繫|洽詢|沒有價格"
+   ]
+  ]
+ },
+ {
+  "id": "D2",
+  "type": "decoy",
+  "title": "Account deletion needs DELETE typed (protective friction)",
+  "route": "/account.html",
+  "all_of": [
+   [
+    "delet(e|ing|ion)\\s+(of\\s+)?(my\\s+|the\\s+|your\\s+)?account|account\\s+delet|delete account|刪除.{0,3}(帳|帳號|帳戶)"
+   ],
+   [
+    "typ(e|ing|ed)|confirm|friction|extra step|輸入|確認"
+   ]
+  ]
+ },
+ {
+  "id": "D3",
+  "type": "decoy",
+  "title": "Invoice form is long because invoices need tax ID, due date, currency",
+  "route": "/app-demo.html",
+  "all_of": [
+   [
+    "invoice (form|creation|editor|screen)|demo form|new invoice|app.?demo|發票表單|開立"
+   ],
+   [
+    "\\blong\\b|lengthy|many fields|too many|tax id|due date|currency|冗長|太長|很多欄位|稅號|幣別|欄位太多"
+   ]
+  ]
+ }
+]

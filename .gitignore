@@ -1,0 +1,16 @@
+# Local research material, not part of the published project
+research_notes/
+reports/
+
+# Run output
+.user-thoughts/
+evals/results/
+
+# Tooling
+node_modules/
+.DS_Store
+.claude/
+
+# Local eval output
+evals/cases/results/
+evals/cases/run*.json

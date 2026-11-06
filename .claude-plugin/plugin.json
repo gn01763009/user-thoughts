@@ -1,0 +1,22 @@
+{
+  "name": "user-thoughts",
+  "version": "0.1.0",
+  "description": "Send simulated users through a live website, black-box, and find where they give up and which features to question.",
+  "author": {
+    "name": "gn01763009"
+  },
+  "homepage": "https://github.com/gn01763009/user-thoughts",
+  "repository": "https://github.com/gn01763009/user-thoughts",
+  "license": "MIT",
+  "keywords": [
+    "ux",
+    "usability",
+    "persona",
+    "synthetic-users",
+    "black-box-testing",
+    "browser"
+  ],
+  "experimental": {
+    "evals": "evals/cases"
+  }
+}

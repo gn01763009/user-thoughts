@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your account | Tallywren</title>
+<meta name="description" content="Manage your profile, plan and account.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0d6b61"/><path d="M7 21c0-5.2 4.2-9.4 9.4-9.4 1.8 0 3 .8 4.1 1.9l4.2-3.1-1.1 5.4c0 6.1-5 10.2-11.1 10.2-3.4 0-5.5-2-5.5-5z" fill="#fff"/><circle cx="19.2" cy="14.6" r="1.2" fill="#0d6b61"/></svg><span>Tallywren</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <form class="header-search" role="search" id="header-search"><input type="search" name="q" placeholder="Search help topics" aria-label="Search help topics" autocomplete="off"></form>
+      <ul><li><a href="solutions.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="help.html">Help</a></li><li><a href="help.html">Resources</a></li><li><a href="help.html">Support</a></li><li><a href="signin.html">Sign in</a></li></ul>
+      <div class="nav-actions"><a class="btn btn-primary btn-sm" href="signup.html">Start free</a></div>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<div class="container page-head"><span class="eyebrow">Account</span><h1>Your account</h1><p class="lede" id="account-lede">Signed in as alex@rivera-design.example (sample account).</p><p><button class="btn btn-ghost btn-sm" id="sign-out" type="button" hidden>Sign out</button></p></div>
+<section style="padding-top:24px"><div class="container"><div class="settings-grid">
+  <div class="form-card"><h3>Profile</h3>
+    <div class="field"><label for="p-name">Name</label><input id="p-name" value="Alex Rivera"></div>
+    <div class="field"><label for="p-biz">Business name</label><input id="p-biz" value="Rivera Design"></div>
+    <div class="field"><label for="p-email">Email</label><input id="p-email" type="email" value="alex@rivera-design.example"></div>
+    <button class="btn btn-primary" type="button">Save changes</button></div>
+  <div>
+    <div class="form-card" style="margin-bottom:24px"><h3>Plan</h3>
+      <div class="plan-line"><span><strong>Pro</strong> &middot; $12 per month</span><span class="pill">Active</span></div>
+      <div class="plan-line"><span>Next payment</span><span>1 December 2026</span></div>
+      <div style="margin-top:18px"><a class="btn btn-ghost btn-sm" href="pricing.html">Compare plans</a></div></div>
+    <div class="form-card" style="margin-bottom:24px"><h3>Preferences</h3>
+      <div class="toggle-line"><span><label for="smart-suggestions">Smart suggestions (beta)</label><small class="field-hint">Show tips while you build an invoice.</small></span>
+        <input class="switch" id="smart-suggestions" type="checkbox" role="switch"></div>
+      <p class="field-hint" id="pref-status" role="status" hidden>Preference saved.</p></div>
+    <div class="danger-zone"><h3>Delete account</h3>
+      <p style="color:var(--ink-soft)">This permanently removes your clients, invoices and settings. It cannot be undone. Type <strong>DELETE</strong> to confirm.</p>
+      <div class="field"><label for="confirm-delete">Confirmation</label><input id="confirm-delete" autocomplete="off" placeholder="DELETE"></div>
+      <button class="btn btn-danger" id="delete-account" type="button" disabled>Delete my account</button>
+      <p id="delete-message" role="status" style="margin-top:12px;color:#8f1d17" hidden></p></div>
+  </div>
+</div></div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0d6b61"/><path d="M7 21c0-5.2 4.2-9.4 9.4-9.4 1.8 0 3 .8 4.1 1.9l4.2-3.1-1.1 5.4c0 6.1-5 10.2-11.1 10.2-3.4 0-5.5-2-5.5-5z" fill="#fff"/><circle cx="19.2" cy="14.6" r="1.2" fill="#0d6b61"/></svg><span>Tallywren</span></a>
+        <p style="margin-top:14px;max-width:26em;color:#8fa39d">Invoicing software for freelancers and solo consultants.</p></div>
+      <div><h4>Product</h4><ul><li><a href="solutions.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="app-demo.html">Live demo</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help center</a></li><li><a href="account.html">Your account</a></li><li><a href="help.html#contact">Contact</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="help.html#privacy">Privacy</a></li><li><a href="help.html#terms">Terms</a></li></ul></div>
+    </div>
+    <div class="footer-base">&copy; 2026 Tallywren Labs, Inc. All rights reserved.</div>
+  </div>
+</footer>
+<script src="js/nav.js" defer></script>
+<script src="js/assistant.js" defer></script>
+<script src="js/session.js" defer></script>
+<script src="js/account.js" defer></script>
+</body>
+</html>

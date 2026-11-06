@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 (2026-11-06)
+
+- `slop-check` skill: a fresh reviewer asks why each thing exists, using a Rebuild step and six tests, and may only delete with a fact.
+- Test site `evals/fixtures/slop/` with 8 planted problems and 5 decoys, plus `--mode slop` and `--mode slop-clean` in the scorer.
+- Trigger cases for `slop-check`.
+- `persona-walkthrough` README states what has not been run.
+
 ## 0.1.0 (2026-11-06)
 
 First release.

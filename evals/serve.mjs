@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // Serves exactly one directory under evals/fixtures/ for a browser run.
-// Usage: node evals/serve.mjs <planted|clean|hostile> [port]
+// Usage: node evals/serve.mjs <planted|clean|hostile|slop> [port]
 import http from 'node:http';
 import { readFile, stat, mkdir, appendFile } from 'node:fs/promises';
 import { dirname, extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const MODES = ['planted', 'clean', 'hostile'];
+const MODES = ['planted', 'clean', 'hostile', 'slop'];
 const DEFAULT_PORT = 4173;
 const DEFAULT_LOG = join(HERE, 'results', 'canary.log');
 

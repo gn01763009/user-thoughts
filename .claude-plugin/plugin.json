@@ -1,7 +1,7 @@
 {
   "name": "user-thoughts",
-  "version": "0.1.0",
-  "description": "Send simulated users through a live website, black-box, and find where they give up and which features to question.",
+  "version": "0.2.0",
+  "description": "See your live site as an outsider would: simulated users find where people give up, and a first-principles review asks why each thing exists.",
   "author": {
     "name": "gn01763009"
   },

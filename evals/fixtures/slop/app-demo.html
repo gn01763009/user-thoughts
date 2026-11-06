@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live demo | Tallywren</title>
+<meta name="description" content="A sample workspace with an invoice ready to edit.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0d6b61"/><path d="M7 21c0-5.2 4.2-9.4 9.4-9.4 1.8 0 3 .8 4.1 1.9l4.2-3.1-1.1 5.4c0 6.1-5 10.2-11.1 10.2-3.4 0-5.5-2-5.5-5z" fill="#fff"/><circle cx="19.2" cy="14.6" r="1.2" fill="#0d6b61"/></svg><span>Tallywren</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <form class="header-search" role="search" id="header-search"><input type="search" name="q" placeholder="Search help topics" aria-label="Search help topics" autocomplete="off"></form>
+      <ul><li><a href="solutions.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="help.html">Help</a></li><li><a href="help.html">Resources</a></li><li><a href="help.html">Support</a></li><li><a href="signin.html">Sign in</a></li></ul>
+      <div class="nav-actions"><a class="btn btn-primary btn-sm" href="signup.html">Start free</a></div>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<div class="app-bar"><div class="container"><div><strong>New invoice</strong> <span class="pill warm" style="margin-left:8px">Draft</span></div><div class="notice">Sample workspace. Nothing here is saved or sent.</div></div></div>
+<div class="container app-layout">
+  <form id="invoice-form" class="form-card" novalidate>
+    <fieldset><legend>Client</legend>
+      <div class="field-row"><div class="field"><label for="client_name">Client name</label><input id="client_name" name="client_name" value="Northfield Studio"></div>
+      <div class="field"><label for="client_email">Client email</label><input id="client_email" name="client_email" type="email" value="accounts@northfield.example"></div></div>
+      <div class="field-row"><div class="field"><label for="tax_id">Client tax ID</label><input id="tax_id" name="tax_id" value="US-84-1203947"></div>
+      <div class="field"><label for="po">PO reference <span class="field-hint">(optional)</span></label><input id="po" name="po" placeholder="PO-2291"></div></div>
+      <div class="field"><label for="address">Billing address</label><textarea id="address" name="address" rows="2">410 Mercer Street, Suite 6, Portland, OR 97205</textarea></div>
+    </fieldset>
+    <fieldset><legend>Invoice details</legend>
+      <div class="field-row three"><div class="field"><label for="number">Invoice number</label><input id="number" name="number" value="TW-0042"></div>
+      <div class="field"><label for="issue_date">Issue date</label><input id="issue_date" name="issue_date" type="date" value="2026-11-06"></div>
+      <div class="field"><label for="due_date">Due date</label><input id="due_date" name="due_date" type="date" value="2026-11-28"></div></div>
+      <div class="field-row"><div class="field"><label for="currency">Currency</label><select id="currency" name="currency"><option>USD</option><option>EUR</option><option>GBP</option><option>CAD</option><option>AUD</option></select></div>
+      <div class="field"><label for="terms">Payment terms</label><select id="terms" name="terms"><option>Due on receipt</option><option selected>Net 14</option><option>Net 30</option><option>Net 60</option></select></div></div>
+    </fieldset>
+    <fieldset><legend>Line items</legend>
+      <table class="line-items"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th style="text-align:right">Amount</th></tr></thead><tbody><tr><td><input name="desc0" value="Brand illustration set" aria-label="Description 1"></td><td style="width:70px"><input name="qty0" type="number" min="0" step="1" value="1" aria-label="Quantity 1"></td><td style="width:110px"><input name="rate0" type="number" min="0" step="0.01" value="1800" aria-label="Rate 1"></td><td class="amount"></td></tr><tr><td><input name="desc1" value="Revision rounds" aria-label="Description 2"></td><td style="width:70px"><input name="qty1" type="number" min="0" step="1" value="3" aria-label="Quantity 2"></td><td style="width:110px"><input name="rate1" type="number" min="0" step="0.01" value="150" aria-label="Rate 2"></td><td class="amount"></td></tr><tr><td><input name="desc2" value="Source files handover" aria-label="Description 3"></td><td style="width:70px"><input name="qty2" type="number" min="0" step="1" value="1" aria-label="Quantity 3"></td><td style="width:110px"><input name="rate2" type="number" min="0" step="0.01" value="0" aria-label="Rate 3"></td><td class="amount"></td></tr></tbody></table>
+    </fieldset>
+    <fieldset><legend>Tax and notes</legend>
+      <div class="field-row"><div class="field"><label for="tax_rate">Sales tax (%)</label><input id="tax_rate" name="tax_rate" type="number" min="0" step="0.1" value="8"></div>
+      <div class="field"><label for="discount">Discount (%)</label><input id="discount" name="discount" type="number" min="0" step="0.1" value="0"></div></div>
+      <div class="field"><label for="notes">Note to client</label><textarea id="notes" name="notes" rows="3">Thank you for the commission. Payment by bank transfer or card via the link.</textarea></div>
+    </fieldset>
+    <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn btn-primary" type="submit">Send invoice</button><button class="btn btn-ghost" type="submit" data-intent="draft">Save draft</button><p class="inline-status" role="status" hidden style="margin:0;align-self:center"></p></div>
+  </form>
+  <aside class="preview"><div class="mock-card">
+    <div class="mock-head"><div><div class="mock-title">Invoice <span id="pv-number"></span></div><div class="mock-meta">To <span id="pv-client"></span></div></div><span class="pill">Preview</span></div>
+    <div class="mock-row"><span>Due</span><span id="pv-due"></span></div>
+    <div class="mock-row"><span>Subtotal</span><span id="pv-subtotal"></span></div>
+    <div class="mock-row"><span>Tax</span><span id="pv-tax"></span></div>
+    <div class="mock-total"><span>Total</span><span id="pv-total"></span></div>
+  </div></aside>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0d6b61"/><path d="M7 21c0-5.2 4.2-9.4 9.4-9.4 1.8 0 3 .8 4.1 1.9l4.2-3.1-1.1 5.4c0 6.1-5 10.2-11.1 10.2-3.4 0-5.5-2-5.5-5z" fill="#fff"/><circle cx="19.2" cy="14.6" r="1.2" fill="#0d6b61"/></svg><span>Tallywren</span></a>
+        <p style="margin-top:14px;max-width:26em;color:#8fa39d">Invoicing software for freelancers and solo consultants.</p></div>
+      <div><h4>Product</h4><ul><li><a href="solutions.html">Features</a></li><li><a href="pricing.html">Pricing</a></li><li><a href="app-demo.html">Live demo</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help center</a></li><li><a href="account.html">Your account</a></li><li><a href="help.html#contact">Contact</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="help.html#privacy">Privacy</a></li><li><a href="help.html#terms">Terms</a></li></ul></div>
+    </div>
+    <div class="footer-base">&copy; 2026 Tallywren Labs, Inc. All rights reserved.</div>
+  </div>
+</footer>
+<script src="js/nav.js" defer></script>
+<script src="js/assistant.js" defer></script>
+<script src="js/session.js" defer></script>
+<script src="js/demo.js" defer></script>
+</body>
+</html>

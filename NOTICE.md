@@ -22,3 +22,14 @@ Personas and methods draw on work by Alan Cooper, Steve Krug, Pirolli and Card, 
 The test sites and persona runs use [agent-browser](https://github.com/vercel-labs/agent-browser). It is not bundled.
 
 Tallywren, used in the test sites and examples, is a fictional product.
+
+## slop-check
+
+No text was copied. These ideas informed it:
+
+- pbakaus/impeccable: `distill` and treating defaults as decisions not made
+- anthropics/skills `frontend-design`: asking whether a plan would work for any other product, which became the Swap test
+- mattpocock/skills: the deletion test in `codebase-design`, and leaving facts to code and decisions to people
+- garrytan/gstack: checking premises before polish
+- G. K. Chesterton's fence: know why something exists before removing it
+

@@ -12,6 +12,9 @@ import {
   scorePlanted,
   scoreClean,
   scoreHostile,
+  scoreSlop,
+  scoreSlopClean,
+  chunksFromChecked,
   checkTargets,
   parseArgs,
   run,
@@ -19,6 +22,7 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const REAL_TRUTH = join(here, '..', 'evals', 'ground-truth', 'planted.json');
+const SLOP_TRUTH = join(here, '..', 'evals', 'ground-truth', 'slop.json');
 
 const TRUTH = [
   { id: 'U1', type: 'usability', title: 'hero', route: '/', all_of: [['hero|headline'], ['what (it|this) (is|does)|never says']] },
@@ -345,3 +349,225 @@ describe('targets match docs/design.md', () => {
     assert.equal(passed(planted({ decoy_hits: [{ id: 'D1' }] })), false);
   });
 });
+
+// ---------- slop modes ----------
+
+const verdict = (over = {}) => ({
+  id: 'e1', route: '/', label: 'Block', verdict: 'remove', serves: 'none', if_removed: 'nothing', swap: 'fail',
+  truth: 'n/a', evidence_level: 'page_fact', evidence: 'index.html:1', reason: 'no reason', ...over,
+});
+const checked = (verdicts) => ({ counts: {}, missing: [], unanswered_duplicates: [], parse_errors: [], verdicts });
+
+const SLOP_TRUTH_SMALL = [
+  { id: 'S1', type: 'slop', title: 'two searches', route: '/', all_of: [['search'], ['two|both|same|different']] },
+  { id: 'S2', type: 'slop', title: 'insights', route: '/', all_of: [['ai insights|synergy score|momentum index']] },
+  { id: 'D4', type: 'decoy', title: 'start free', route: '/', all_of: [['start free'], ['top and bottom|twice']] },
+];
+
+test('chunksFromChecked builds one chunk per verdict and flags only remove, simplify and ask', () => {
+  const chunks = chunksFromChecked(checked([
+    verdict({ label: 'AI Insights', reason: 'r1', evidence: 'e1', if_removed: 'i1' }),
+    verdict({ verdict: 'simplify' }),
+    verdict({ verdict: 'ask' }),
+    verdict({ verdict: 'keep' }),
+    verdict({ verdict: 'done_well' }),
+  ]));
+  assert.equal(chunks.length, 5);
+  assert.deepEqual(chunks.map((c) => c.flagged), [true, true, true, false, false]);
+  assert.deepEqual(chunks.map((c) => c.verdict), ['remove', 'simplify', 'ask', 'keep', 'done_well']);
+  for (const part of ['AI Insights', 'r1', 'e1', 'i1']) assert.match(chunks[0].text, new RegExp(part));
+});
+
+test('chunksFromChecked tolerates missing fields and does not modify the input', () => {
+  const input = checked([{ id: 'e1', verdict: 'remove' }]);
+  const before = JSON.stringify(input);
+  const chunks = chunksFromChecked(input);
+  assert.equal(chunks.length, 1);
+  assert.equal(JSON.stringify(input), before);
+  assert.deepEqual(chunksFromChecked({}), []);
+});
+
+test('scoreSlop reports matched, missed, recall and must_catch from flagged chunks only', () => {
+  const chunks = chunksFromChecked(checked([
+    verdict({ label: 'Search', reason: 'Two search boxes behave differently' }),
+    verdict({ label: 'AI Insights', verdict: 'keep', reason: 'Synergy score is fine' }),
+  ]));
+  const r = scoreSlop(SLOP_TRUTH_SMALL, chunks);
+  assert.deepEqual(r.matched.map((m) => m.id), ['S1']);
+  assert.deepEqual(r.missed, ['S2']);
+  assert.equal(r.recall, 0.5);
+  assert.equal(r.must_catch, false);
+  assert.match(r.matched[0].chunk, /Two search boxes/);
+});
+
+test('scoreSlop must_catch needs both S1 and S2', () => {
+  const chunks = chunksFromChecked(checked([
+    verdict({ reason: 'Two search boxes' }),
+    verdict({ verdict: 'ask', reason: 'Momentum index +14% has no source' }),
+  ]));
+  assert.equal(scoreSlop(SLOP_TRUTH_SMALL, chunks).must_catch, true);
+});
+
+test('scoreSlop counts a decoy only for remove or simplify on checked input', () => {
+  const make = (v) => chunksFromChecked(checked([verdict({ label: 'Start free', verdict: v, reason: 'shown twice' })]));
+  assert.equal(scoreSlop(SLOP_TRUTH_SMALL, make('remove')).decoy_hits.length, 1);
+  assert.equal(scoreSlop(SLOP_TRUTH_SMALL, make('simplify')).decoy_hits.length, 1);
+  assert.equal(scoreSlop(SLOP_TRUTH_SMALL, make('ask')).decoy_hits.length, 0);
+  assert.equal(scoreSlop(SLOP_TRUTH_SMALL, make('keep')).decoy_hits.length, 0);
+  assert.equal(scoreSlop(SLOP_TRUTH_SMALL, make('done_well')).decoy_hits.length, 0);
+});
+
+test('scoreSlop on markdown chunks counts matches and decoys', () => {
+  const chunks = chunksFromMarkdown('Two search boxes.\n\nStart free is twice.\n');
+  const r = scoreSlop(SLOP_TRUTH_SMALL, chunks);
+  assert.deepEqual(r.matched.map((m) => m.id), ['S1']);
+  assert.equal(r.decoy_hits.length, 1);
+});
+
+test('scoreSlop recall divides by the slop items only', () => {
+  const r = scoreSlop(SLOP_TRUTH_SMALL, []);
+  assert.equal(r.recall, 0);
+  assert.equal(r.slop_total, 2);
+});
+
+test('scoreSlopClean counts remove plus simplify and lists each', () => {
+  const r = scoreSlopClean(checked([
+    verdict({ label: 'A' }), verdict({ label: 'B', verdict: 'simplify' }),
+    verdict({ verdict: 'ask' }), verdict({ verdict: 'keep' }),
+  ]), [], 'checked');
+  assert.equal(r.false_alarms, 2);
+  assert.equal(r.items.length, 2);
+  assert.match(r.items[0].text, /A/);
+});
+
+test('scoreSlopClean on markdown reports null with a note', () => {
+  const r = scoreSlopClean(null, chunksFromMarkdown('One.\n\nTwo.\n'), 'markdown');
+  assert.equal(r.false_alarms, null);
+  assert.match(r.note, /person/);
+});
+
+test('checkTargets sets no pass or fail target for the slop modes', () => {
+  assert.deepEqual(checkTargets('slop', { recall: 0, decoy_hits: [] }), []);
+  assert.deepEqual(checkTargets('slop-clean', { false_alarms: 9 }), []);
+});
+
+test('parseArgs accepts the slop modes', () => {
+  assert.equal(parseArgs(['--mode', 'slop', '--input', 'x.json']).mode, 'slop');
+  assert.equal(parseArgs(['--mode', 'slop-clean', '--input', 'x.md']).mode, 'slop-clean');
+});
+
+test('slop ground truth: shape, ids, types and sample matches', () => {
+  const truth = JSON.parse(readFileSync(SLOP_TRUTH, 'utf8'));
+  assert.deepEqual(truth.map((t) => t.id), ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'D1', 'D2', 'D3', 'D4', 'D5']);
+  const samples = {
+    S1: 'The header search and the homepage search box look the same but behave differently: one opens a chat, one shows results.',
+    S2: 'The AI Insights block shows Synergy score 92 and Momentum index +14% with no source.',
+    S3: 'Trusted by 10,000+ businesses is hard-coded with no source.',
+    S4: 'Seamless, Powerful and Scalable cards are generic and would be true of any competitor.',
+    S5: 'Help, Resources and Support in the menu all go to the same help page.',
+    S6: 'The Smart suggestions (beta) toggle saves to localStorage but nothing reads it.',
+    S7: 'report-legacy.html is a finished page that nothing links to.',
+    S8: 'The Ask Wren assistant gives one canned reply to every question.',
+    D1: 'Enterprise tier shows Contact sales instead of a price.',
+    D2: 'Deleting the account requires typing DELETE to confirm.',
+    D3: 'The invoice form is long but needs a tax ID, due date and currency.',
+    D4: 'Start free appears at the top and bottom of the homepage.',
+    D5: 'The Search help box on the help page filters the questions.',
+  };
+  for (const item of truth) {
+    assert.ok(['slop', 'decoy'].includes(item.type), item.id);
+    assert.equal(item.type, item.id.startsWith('D') ? 'decoy' : 'slop', item.id);
+    assert.equal(itemMatches(item, samples[item.id]), true, `${item.id} should match its own description`);
+  }
+  const zh = {
+    S1: '頁首搜尋框和首頁搜尋框看起來一樣，行為卻不同。',
+    S2: 'AI 洞察區塊的協同分數和動能指數沒有來源。',
+  };
+  for (const [id, text] of Object.entries(zh)) {
+    assert.equal(itemMatches(truth.find((t) => t.id === id), text), true, `${id} zh`);
+  }
+});
+
+test('slop ground truth: unrelated or loosely related text does not match', () => {
+  const truth = JSON.parse(readFileSync(SLOP_TRUTH, 'utf8'));
+  const hits = (text) => truth.filter((t) => itemMatches(t, text)).map((t) => t.id);
+  assert.deepEqual(hits('The hero copy talks about synergy between your work and your clients.'), []);
+  assert.deepEqual(hits('Send invoices in two minutes. The footer copyright year is 2026.'), []);
+  assert.deepEqual(hits('Tallywren sign in page works well.'), []);
+  assert.ok(!hits('Search help topics in the header and the homepage differ in behaviour.').includes('D5'));
+});
+
+test('run: slop mode on checked.json prints matches and exits 0 without targets', async () => {
+  const dir = tmp();
+  const input = write(dir, 'checked.json', checked([
+    verdict({ label: 'Search', reason: 'Two search boxes behave differently' }),
+    verdict({ label: 'Start free', reason: 'shown twice, at the top and bottom of the page' }),
+  ]));
+  const r = await run(['--mode', 'slop', '--input', input, '--truth', SLOP_TRUTH_PATH_OVERRIDE(dir)]);
+  assert.equal(r.code, 0);
+  assert.match(r.output, /S1/);
+  assert.match(r.output, /Two search boxes/);
+  assert.match(r.output, /must_catch/);
+  const json = JSON.parse((await run(['--mode', 'slop', '--input', input, '--truth', SLOP_TRUTH_PATH_OVERRIDE(dir), '--json'])).output);
+  assert.equal(json.decoy_hits.length, 1);
+  assert.equal(json.must_catch, false);
+});
+
+function SLOP_TRUTH_PATH_OVERRIDE(dir) {
+  return write(dir, 'truth.json', SLOP_TRUTH_SMALL);
+}
+
+test('run: slop mode defaults --truth to ground-truth/slop.json', async () => {
+  const dir = tmp();
+  const md = write(dir, 'r.md', 'The AI Insights block is hard-coded.\n');
+  const r = await run(['--mode', 'slop', '--input', md, '--json']);
+  assert.equal(r.code, 0);
+  assert.deepEqual(JSON.parse(r.output).matched.map((m) => m.id), ['S2']);
+});
+
+test('run: slop output truncates each printed chunk to 200 chars', async () => {
+  const dir = tmp();
+  const md = write(dir, 'r.md', `AI Insights ${'x'.repeat(400)}\n`);
+  const r = await run(['--mode', 'slop', '--input', md]);
+  assert.match(r.output, /S2: AI Insights x+/);
+  assert.ok(!r.output.includes('x'.repeat(201)));
+});
+
+test('run: slop-clean counts remove plus simplify on checked.json and is null on markdown', async () => {
+  const dir = tmp();
+  const input = write(dir, 'checked.json', checked([verdict({ label: 'Hero' }), verdict({ verdict: 'simplify' }), verdict({ verdict: 'ask' })]));
+  const a = await run(['--mode', 'slop-clean', '--input', input, '--json']);
+  assert.equal(a.code, 0);
+  assert.equal(JSON.parse(a.output).false_alarms, 2);
+  const text = await run(['--mode', 'slop-clean', '--input', input]);
+  assert.match(text.output, /Hero/);
+  const md = write(dir, 'c.md', 'Fine.\n');
+  const b = await run(['--mode', 'slop-clean', '--input', md, '--json']);
+  assert.equal(b.code, 0);
+  assert.equal(JSON.parse(b.output).false_alarms, null);
+});
+
+test('run: slop modes reject a checked.json without a verdicts array', async () => {
+  const dir = tmp();
+  const bad = write(dir, 'checked.json', { counts: {} });
+  const r = await run(['--mode', 'slop-clean', '--input', bad]);
+  assert.equal(r.code, 2);
+  assert.match(r.output, /verdicts/);
+});
+
+describe('slop verdicts', () => {
+  const truth = [{ id: 'S1', type: 'slop', title: 'Two boxes', all_of: [['search'], ['different']] }];
+  const verdict = (overrides) => ({ label: 'Search', verdict: 'fix', reason: '', evidence: '', if_removed: '', promised: '', got: '', ...overrides });
+
+  test('a fix counts as flagged, and promised and got are read', () => {
+    const result = scoreSlop(truth, chunksFromChecked({ verdicts: [verdict({ promised: 'search', got: 'different behaviour' })] }));
+    assert.deepEqual(result.matched.map((item) => item.id), ['S1']);
+  });
+
+  test('a fix on a decoy counts against the run', () => {
+    const decoys = [{ id: 'D1', type: 'decoy', title: 'Sales', all_of: [['contact sales']] }];
+    const result = scoreSlop(decoys, chunksFromChecked({ verdicts: [verdict({ label: 'Contact sales' })] }));
+    assert.equal(result.decoy_hits.length, 1);
+  });
+});
+

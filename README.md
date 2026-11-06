@@ -5,13 +5,22 @@
 
 **English** | [繁體中文](README.zh-TW.md)
 
-An agent skill that sends simulated users through your live website and reports where they got lost, where they gave up, and which features to question.
+Two agent skills for seeing your live website the way an outsider does. One sends simulated users through it and reports where they got lost or gave up. The other asks of everything on it: why is this here?
 
 Your coding agent can ship a feature in minutes. It can't tell you whether anyone wanted it. Ask it to review your site and it reads the page like an auditor, then hands you a long list. Real visitors don't do that. They arrive with a goal, skim, get stuck, and leave.
 
 So these personas visit instead. Each gets its own browser, a reason for being there, and a point where it gives up. They use the site for real, and what happens to them becomes the report.
 
 It finds where a product breaks down. It does not prove what users want: everything it reports is a hypothesis to check with real people.
+
+## Two Skills
+
+| Skill | Asks | Use it | Cost per run |
+|---|---|---|---|
+| `persona-walkthrough` | Where do people get stuck or give up? | Before a release | About 430,000 tokens |
+| [`slop-check`](#slop-check) | What should not exist, and what is missing? | While building | About 100,000 tokens, 3 to 7 minutes |
+
+Most of this page is about `persona-walkthrough`. `slop-check` has [its own section](#slop-check).
 
 ## Quick Start
 
@@ -43,7 +52,7 @@ npx skills add gn01763009/user-thoughts
 
 ```bash
 git clone https://github.com/gn01763009/user-thoughts
-cp -r user-thoughts/skills/persona-walkthrough ~/.claude/skills/
+cp -r user-thoughts/skills/persona-walkthrough user-thoughts/skills/slop-check ~/.claude/skills/
 ```
 
 </details>
@@ -75,7 +84,7 @@ Background agents can't answer permission prompts, so allow the browser in your 
 Test http://localhost:3000 as a real user.
 ```
 
-Or call it directly: `/user-thoughts:persona-walkthrough http://localhost:3000`. A manual install uses `/persona-walkthrough`.
+Or call it directly: `/user-thoughts:persona-walkthrough http://localhost:3000`. A manual install uses `/persona-walkthrough`. For the other skill, ask what you can cut, or call `/user-thoughts:slop-check`.
 
 It asks two optional questions first: who the site is for, and what you believe users will value most. The report lands in `.user-thoughts/runs/<date>-<host>/report.md`, so add `.user-thoughts/` to your `.gitignore`.
 
@@ -176,6 +185,53 @@ Read these numbers with care:
 - **Injection is not an improvement.** The plain agent resisted too, and the hostile test wasn't rerun after the last persona change.
 
 The full history is in [docs/evaluation.md](docs/evaluation.md). In a separate check, the skill fired on 8 of 8 runs of four matching prompts, and on 0 of 6 runs of three unrelated ones ([results](evals/cases/RESULTS.md)). That's only seven prompts, and other installed skills could change it.
+
+## Slop Check
+
+Personas find where people get stuck. They are poor at asking whether something should exist, so this skill does only that.
+
+```
+What can we cut from http://localhost:3000?
+```
+
+Tell it who the site is for, the main job, and what the business needs. A reviewer with no memory of building the site then does this:
+
+1. **Rebuild.** Before opening the site, it writes what the product should be from the purpose alone. Afterwards it compares.
+2. **Six tests.** It applies these to each section, control, claim and number.
+3. **Report.** Rebuild, Cut, Fix, Simplify, Ask, Protect, in that order.
+
+| Test | Question |
+|---|---|
+| Job | Which step of the main job does this serve? |
+| Deletion | What would a person lose if it were gone? |
+| Swap | Would these words be just as true on a competitor's site? |
+| Truth | Can this number or claim be traced to something real? |
+| Promise | Use it. Did it do what its label said? |
+| Twin | Is something else doing the same job? Give both the same input and compare. |
+
+Taste alone can't delete anything. If something serves no step and no business need, it goes. If the reviewer can't tell why it exists, it asks you, because a section that does nothing for the visitor may be why the visitor arrived.
+
+**Results.** Sonnet in both arms, same purpose, browser and source access, with every result read by a person.
+
+| Measure | Plain agent | slop-check |
+|---|---|---|
+| Test site, planted slop of 8 | 7, 8 | 8, 8, 8 |
+| Test site, decoys flagged | 1, 1 | 0, 0, 0 |
+| Clean site, recommended cuts | 9 | 0, 0 |
+| Real site A, 4 confirmed problems | 0 fully found | 2 of 4 in one run, about 1.5 in the other |
+| Real site A, praised a button without clicking it | twice | never |
+
+Real site A has about 10,000 files. A person confirmed those four problems by hand.
+
+Read these with care:
+
+- **The test site does not separate them much.** Given a purpose, source and one first-principles question, a plain agent found nearly everything. Most of the gain shows on real sites.
+- **The rules were tuned on real sites.** The Promise and Twin tests came from failures on site A. A rule for cutting came from a second real site, where the first version cut nothing. After the change it named cuts with evidence, but that site is no longer unseen.
+- **On an unseen third site,** it cut nothing, and that site had already been pruned. It found problems a plain agent missed, and the plain agent found one it missed: photos that stopped months ago.
+- **A plain agent is still bolder.** It makes bigger product calls, some correct and some unverified. It also stated at least one fact that was wrong.
+- **Applying the fixes is untested,** and so is every agent other than Claude Code.
+
+The history is in [docs/slop-check-design.md](docs/slop-check-design.md). In a trigger check with both skills installed, all 11 cases passed ([results](evals/cases/RESULTS.md)).
 
 ## What It Doesn't Do
 

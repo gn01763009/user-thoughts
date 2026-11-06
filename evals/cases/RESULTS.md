@@ -24,3 +24,23 @@ Cost: $0.54 (list-price estimate). Suite run once.
 Description change: none (no misses).
 
 Caveat: 2 runs per case, only 7 prompts, and only the first invocation is checked; this does not show the skill output is good.
+
+## With both skills installed
+
+Date: 2026-11-06, after `slop-check` was added. Same command and settings: 2 runs per case. Cost: $0.83.
+
+| Case | Expected | Runs passed |
+|---|---|---|
+| no-trigger-playwright-fix | no trigger | 2/2 |
+| no-trigger-react-review | no trigger | 2/2 |
+| no-trigger-unit-tests | no trigger | 2/2 |
+| slop-ai | trigger | 2/2 |
+| slop-cut | trigger | 2/2 |
+| slop-not-on-user-test | no trigger | 2/2 |
+| slop-zh | trigger | 2/2 |
+| trigger-ai-assistant-demand | trigger | 2/2 |
+| trigger-test-as-user | trigger | 2/2 |
+| trigger-why-bounce | trigger | 2/2 |
+| trigger-zh-homepage | trigger | 2/2 |
+
+`slop-*` cases check for `slop-check`. `slop-not-on-user-test` confirms a user-testing request does not fire it. Whether `persona-walkthrough` also fires on a `slop-*` prompt was not measured.

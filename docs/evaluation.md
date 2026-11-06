@@ -1,5 +1,7 @@
 # Evaluation
 
+This page covers `persona-walkthrough`. For `slop-check`, see [slop-check-design.md](slop-check-design.md).
+
 How the skill was tested, what changed along the way, and what the numbers can and cannot support.
 
 The site, problems and metric targets are defined in [design.md](design.md). The target values are this project's own judgement, not an established standard.

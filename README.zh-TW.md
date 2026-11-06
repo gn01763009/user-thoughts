@@ -5,13 +5,22 @@
 
 [English](README.md) | **繁體中文**
 
-一個 agent skill：派模擬使用者實際逛你的線上網站，回報他們在哪裡迷路、在哪裡放棄，以及哪些功能值得質疑。
+兩個 agent skill，讓你用局外人的角度看自己的線上網站。一個派模擬使用者實際逛網站，回報他們在哪裡迷路或放棄；另一個追問網站上的每樣東西：為什麼要有它？
 
 Coding agent 幾分鐘就能做出一個功能，卻無法告訴你有沒有人想要它。請它審查網站，它會像稽核員一樣把頁面讀過一遍，再交給你一長串清單。真正的訪客不是這樣用網站的：他們帶著目的進來，快速掃過，卡住，然後離開。
 
 所以這個 skill 改派 persona 去「造訪」。每個 persona 都有自己的瀏覽器、來訪的理由，以及放棄的條件。他們真的動手操作，遭遇到的事就是報告內容。
 
 它能找出產品在哪裡出問題，但無法證明使用者想要什麼。所有輸出都是假說，要再找真人驗證。
+
+## 兩個 skill
+
+| Skill | 回答的問題 | 什麼時候用 | 每次成本 |
+|---|---|---|---|
+| `persona-walkthrough` | 使用者在哪裡卡住或放棄？ | 發布前 | 約 43 萬 tokens |
+| [`slop-check`](#slop-check) | 什麼不該存在？少了什麼？ | 建站過程中 | 約 10 萬 tokens，3 到 7 分鐘 |
+
+這一頁大多在講 `persona-walkthrough`，`slop-check` 有[獨立的段落](#slop-check)。
 
 ## 快速開始
 
@@ -43,7 +52,7 @@ npx skills add gn01763009/user-thoughts
 
 ```bash
 git clone https://github.com/gn01763009/user-thoughts
-cp -r user-thoughts/skills/persona-walkthrough ~/.claude/skills/
+cp -r user-thoughts/skills/persona-walkthrough user-thoughts/skills/slop-check ~/.claude/skills/
 ```
 
 </details>
@@ -75,7 +84,7 @@ npm install -g agent-browser && agent-browser install
 用真實使用者的角度測試 http://localhost:3000
 ```
 
-也可以直接呼叫：`/user-thoughts:persona-walkthrough http://localhost:3000`。手動安裝則用 `/persona-walkthrough`。
+也可以直接呼叫：`/user-thoughts:persona-walkthrough http://localhost:3000`。手動安裝則用 `/persona-walkthrough`。另一個 skill 只要問有什麼可以砍，或呼叫 `/user-thoughts:slop-check`。
 
 開始前會問兩個選填問題：網站是給誰用的，以及你認為使用者最重視什麼。報告會放在 `.user-thoughts/runs/<日期>-<主機>/report.md`，語言跟著你使用的語言。記得把 `.user-thoughts/` 加進 `.gitignore`。
 
@@ -176,6 +185,53 @@ Persona 完成任務的比例：含問題的站 4 個中有 0 個，對照站 4 
 - **Injection 不算進步。** 一般 agent 同樣沒有上當，而且最後一次修改 persona 後，injection 測試沒有重跑。
 
 完整歷程在 [docs/evaluation.md](docs/evaluation.md)（英文）。另外單獨測了觸發：四個該觸發的提示跑 8 次全部觸發，三個無關的提示跑 6 次都沒有觸發（[結果](evals/cases/RESULTS.md)）。這只有七個提示，裝了其他 skill 時結果可能不同。
+
+## Slop Check
+
+Persona 擅長找出使用者卡在哪裡，卻不擅長問「這東西該不該存在」，所以這個 skill 只做這件事。
+
+```
+http://localhost:3000 有什麼可以砍掉的？
+```
+
+告訴它網站給誰用、主要任務是什麼、商業上需要什麼。接著由一個沒有建站記憶的 reviewer 來做：
+
+1. **重建。** 打開網站之前，只憑目的寫下產品應該長什麼樣，之後再比較。
+2. **六個測試。** 套用到每個區塊、控制項、宣稱和數字。
+3. **報告。** 依序是重建、要砍、要修、要簡化、要問你的、要保護的。
+
+| 測試 | 問題 |
+|---|---|
+| 任務 | 它服務主要任務的哪一步？ |
+| 刪除 | 拿掉後，使用者會失去什麼？ |
+| 替換 | 這段話放到競品網站上也成立嗎？ |
+| 真實 | 這個數字或宣稱有來源嗎？ |
+| 承諾 | 實際用過之後，它有做到標籤說的事嗎？ |
+| 雙胞胎 | 有別的東西做同一件事嗎？給同樣的輸入，比較結果。 |
+
+只憑審美不能判刪除。不服務任何任務步驟、也不服務任何商業需求的東西才砍。說不出為什麼存在時就問你，因為對訪客沒用的區塊，可能正是訪客進來的原因。
+
+**測試結果。** 兩組都用 Sonnet，目的、瀏覽器和原始碼權限相同，每項結果都由人讀過。
+
+| 指標 | 一般 agent | slop-check |
+|---|---|---|
+| 測試站植入的 slop（共 8） | 7、8 | 8、8、8 |
+| 測試站誤判誘餌 | 1、1 | 0、0、0 |
+| 對照站建議刪除 | 9 | 0、0 |
+| 真實站 A，4 個已確認的問題 | 完整抓到 0 個 | 一次 2 個，另一次約 1.5 個 |
+| 真實站 A，沒點過按鈕就稱讚 | 2 次 | 0 次 |
+
+真實站 A 約有 10,000 個檔案，那 4 個問題由人親自確認。
+
+解讀時請注意：
+
+- **測試站分不太出差異。** 只要給目的、原始碼和一句第一性原則的提問，一般 agent 就幾乎全抓到。主要差距出現在真實網站。
+- **規則是對著真實網站調整的。** 承諾和雙胞胎測試來自真實站 A 的失敗；放寬刪除的規則來自第二個真實站，當時第一版完全不敢砍。修改後它能列出有證據的刪除項目，但那個站已經不算沒看過。
+- **在沒看過的第三個真實站，** 它沒有判刪除，而那個站之前已經精簡過。它找到一般 agent 漏掉的問題，但也漏掉一般 agent 找到的問題：照片幾個月前就停止更新。
+- **一般 agent 仍然比較敢下判斷。** 它會做更大的產品判斷，有的對，有的未經驗證，也至少說錯過一個事實。
+- **實際套用修正還沒測過，** 其他 agent 也一樣。
+
+完整歷程在 [docs/slop-check-design.md](docs/slop-check-design.md)（英文）。兩個 skill 同時安裝時的觸發測試，11 個案例全部通過（[結果](evals/cases/RESULTS.md)）。
 
 ## 它不會做什麼
 

@@ -18,7 +18,7 @@ It finds where a product breaks down. It does not prove what users want: everyth
 | Skill | Asks | Use it | Cost per run |
 |---|---|---|---|
 | `persona-walkthrough` | Where do people get stuck or give up? | Before a release | About 430,000 tokens |
-| [`slop-check`](#slop-check) | What should not exist, and what is missing? | While building | About 100,000 tokens, 3 to 7 minutes |
+| [`slop-check`](#slop-check) | What should not exist, and what is missing? | While building | About 100,000 tokens, 3 to 7 minutes, or about US$0.60 on a small site |
 
 Most of this page is about `persona-walkthrough`. `slop-check` has [its own section](#slop-check).
 
@@ -65,20 +65,40 @@ npm install -g agent-browser && agent-browser install
 
 This installs [agent-browser](https://github.com/vercel-labs/agent-browser) and downloads Chrome, about 190 MB. You also need Node 20 or later.
 
-Background agents can't answer permission prompts, so allow the browser in your Claude Code settings:
+### 3. Allow what it needs
+
+Background agents can't answer permission prompts, and these skills work outside your project folder. So turn on accept edits for the session (Shift+Tab), and add these to `permissions.allow` in your Claude Code settings.
+
+For `slop-check`:
 
 ```json
 {
   "permissions": {
-    "allow": ["Bash(agent-browser:*)", "Bash(npx -y agent-browser:*)"]
+    "allow": ["Bash(npx -y agent-browser:*)"]
   }
 }
 ```
 
-> [!WARNING]
-> Every test run so far bypassed permission prompts, so this setup is untried in stricter modes. Personas also write to their run folder with shell commands. If a mode blocks those, they finish as `INCOMPLETE` and the report says so.
+For `persona-walkthrough`, add two more. It reads its own persona files and runs a merge script:
 
-### 3. Point it at your site
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx -y agent-browser:*)",
+      "Bash(node */merge-findings.mjs *)",
+      "Read(~/.claude/plugins/cache/user-thoughts/**)"
+    ]
+  }
+}
+```
+
+With a manual copy, use `Read(~/.claude/skills/persona-walkthrough/**)` instead.
+
+> [!NOTE]
+> Both skills ran end to end with these rules and accept edits in non-interactive sessions, on Claude Code 2.1.319, with the plugin loaded from a folder. `persona-walkthrough` was tested with one persona. The interactive app and the installed plugin path above have not been tried yet.
+
+### 4. Point it at your site
 
 ```
 Test http://localhost:3000 as a real user.
@@ -229,7 +249,8 @@ Read these with care:
 - **The rules were tuned on real sites.** The Promise and Twin tests came from failures on site A. A rule for cutting came from a second real site, where the first version cut nothing. After the change it named cuts with evidence, but that site is no longer unseen.
 - **On an unseen third site,** it cut nothing, and that site had already been pruned. It found problems a plain agent missed, and the plain agent found one it missed: photos that stopped months ago.
 - **A plain agent is still bolder.** It makes bigger product calls, some correct and some unverified. It also stated at least one fact that was wrong.
-- **Applying the fixes is untested,** and so is every agent other than Claude Code.
+- **Applying the fixes has been tried once.** A fresh session made 5 fixes on a branch of a real site. Four were right. One merged three false cards into one card that made the same false claims, and it reported the job as done. A rule was added for this and has not been retested. Read the diff yourself.
+- **Other agents are untested.**
 
 The history is in [docs/slop-check-design.md](docs/slop-check-design.md). In a trigger check with both skills installed, all 11 cases passed ([results](evals/cases/RESULTS.md)).
 

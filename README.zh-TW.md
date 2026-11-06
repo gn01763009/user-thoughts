@@ -18,7 +18,7 @@ Coding agent 幾分鐘就能做出一個功能，卻無法告訴你有沒有人�
 | Skill | 回答的問題 | 什麼時候用 | 每次成本 |
 |---|---|---|---|
 | `persona-walkthrough` | 使用者在哪裡卡住或放棄？ | 發布前 | 約 43 萬 tokens |
-| [`slop-check`](#slop-check) | 什麼不該存在？少了什麼？ | 建站過程中 | 約 10 萬 tokens，3 到 7 分鐘 |
+| [`slop-check`](#slop-check) | 什麼不該存在？少了什麼？ | 建站過程中 | 約 10 萬 tokens，3 到 7 分鐘；小型網站約 0.6 美元 |
 
 這一頁大多在講 `persona-walkthrough`，`slop-check` 有[獨立的段落](#slop-check)。
 
@@ -65,20 +65,40 @@ npm install -g agent-browser && agent-browser install
 
 這會安裝 [agent-browser](https://github.com/vercel-labs/agent-browser) 並下載約 190 MB 的 Chrome。另外需要 Node 20 以上。
 
-背景 agent 無法回應權限詢問，所以要在 Claude Code 設定裡放行瀏覽器：
+### 3. 開放需要的權限
+
+背景 agent 無法回應權限詢問，而且這些 skill 會用到專案資料夾以外的東西。所以請在該 session 開啟「自動接受編輯」（Shift+Tab），並在 Claude Code 設定的 `permissions.allow` 加入以下規則。
+
+`slop-check` 需要：
 
 ```json
 {
   "permissions": {
-    "allow": ["Bash(agent-browser:*)", "Bash(npx -y agent-browser:*)"]
+    "allow": ["Bash(npx -y agent-browser:*)"]
   }
 }
 ```
 
-> [!WARNING]
-> 目前所有測試都跳過了權限提示，所以這個設定還沒在較嚴格的模式下試過。Persona 也會用 shell 指令寫入執行目錄，如果被擋下，會以 `INCOMPLETE` 結束，報告裡也會標明。
+`persona-walkthrough` 要多兩條，因為它要讀自己的 persona 檔案，還要執行合併腳本：
 
-### 3. 指定你的網站
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx -y agent-browser:*)",
+      "Bash(node */merge-findings.mjs *)",
+      "Read(~/.claude/plugins/cache/user-thoughts/**)"
+    ]
+  }
+}
+```
+
+手動複製安裝的話，改用 `Read(~/.claude/skills/persona-walkthrough/**)`。
+
+> [!NOTE]
+> 兩個 skill 都用這些規則加上「自動接受編輯」，在非互動 session 完整跑過（Claude Code 2.1.319，plugin 從資料夾載入）。`persona-walkthrough` 只測過 1 個 persona。互動介面和上面的已安裝 plugin 路徑都還沒試過。
+
+### 4. 指定你的網站
 
 ```
 用真實使用者的角度測試 http://localhost:3000
@@ -229,7 +249,8 @@ http://localhost:3000 有什麼可以砍掉的？
 - **規則是對著真實網站調整的。** 承諾和雙胞胎測試來自真實站 A 的失敗；放寬刪除的規則來自第二個真實站，當時第一版完全不敢砍。修改後它能列出有證據的刪除項目，但那個站已經不算沒看過。
 - **在沒看過的第三個真實站，** 它沒有判刪除，而那個站之前已經精簡過。它找到一般 agent 漏掉的問題，但也漏掉一般 agent 找到的問題：照片幾個月前就停止更新。
 - **一般 agent 仍然比較敢下判斷。** 它會做更大的產品判斷，有的對，有的未經驗證，也至少說錯過一個事實。
-- **實際套用修正還沒測過，** 其他 agent 也一樣。
+- **實際套用修正只試過一次。** 全新 session 在真實網站的分支上做了 5 項修改，4 項正確；另 1 項把 3 張不實的卡片合併成 1 張，不實內容卻還在，而且回報已完成。為此新增了規則，但還沒重測。請自己看過 diff。
+- **其他 agent 都還沒測過。**
 
 完整歷程在 [docs/slop-check-design.md](docs/slop-check-design.md)（英文）。兩個 skill 同時安裝時的觸發測試，11 個案例全部通過（[結果](evals/cases/RESULTS.md)）。
 

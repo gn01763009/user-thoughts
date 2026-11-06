@@ -6,7 +6,7 @@ Personas that run at the same time need separate browsers. A browser MCP gives t
 
 Pick the first that works:
 
-1. **`agent-browser` (parallel).** Run `agent-browser --version`, or if that is missing, `npx -y agent-browser --version`. If it answers, use it. On first use run `agent-browser install` (or the `npx` form) to fetch Chrome, about 190 MB.
+1. **`agent-browser` (parallel).** Run `npx -y agent-browser --version`. If it answers, use `npx -y agent-browser` as the prefix. On first use run `agent-browser install` (or the `npx` form) to fetch Chrome, about 190 MB.
 2. **A browser MCP (serial).** If your tool list holds a browser MCP, such as Playwright MCP, Chrome DevTools MCP or Claude in Chrome, use it one persona at a time.
 3. **Neither.** Stop and show this:
 

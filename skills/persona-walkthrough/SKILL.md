@@ -49,21 +49,17 @@ Do these in order. All of them happen before any persona starts.
 or has permission to test it, and whether it is production or staging. Stop if they do not have permission.
 Set `forms_allowed` to `true` only for localhost or a staging site the user owns, otherwise `false`.
 
-**Check the site responds.** Run `curl -sS -o /dev/null -w "%{http_code}" <url>`. Stop and tell the user if
-it does not answer.
-
-**Choose the browser layer.** Read `references/browser.md` and follow its preflight. It gives you one of:
+**Choose the browser layer.** Read `${CLAUDE_SKILL_DIR}/references/browser.md` and follow its preflight. It gives you one of:
 
 - `parallel`: `agent-browser` is available. Personas run at the same time in separate sessions.
 - `serial`: only a browser MCP is available. Personas run one at a time.
 - Neither: stop, show the install command from `references/browser.md`, and end. Fetching HTML or reading
   source is not a substitute, because it removes the thing being tested.
 
-**Ask about background agents.** Background subagents cannot answer permission prompts. If this session
-would prompt for `agent-browser`, tell the user to allow it before you continue, by adding
-`Bash(agent-browser:*)` and `Bash(npx -y agent-browser:*)` to `permissions.allow` in their Claude Code settings
-or by running in a mode that already allows it. Personas also append to files in the run directory with shell
-commands. If those are denied they end `INCOMPLETE`, which you report.
+**Check permissions.** This skill needs to read its own files, run the browser, run its merge script and write to the
+run folder. If any of these is denied, stop and show the user the permission rules in the project README, including
+reading this skill's folder and accepting edits. Do not fall back to `curl` or to reading HTML, because that removes the
+thing being tested.
 
 **Ask the builder one optional question.** "What do you believe users will value most here? Up to five
 things, or skip." Store the answer word for word in the run directory as `builder-claims.md`. This file is
@@ -73,8 +69,8 @@ a brief.
 **Ask who it is for, in one sentence.** Use it to write arrivals. If the user skips this, personas arrive
 from a shared link with no context, which is a fair test of whether the homepage explains itself.
 
-**Create the run directory.** `.user-thoughts/runs/<YYYYMMDD-HHMM>-<host>/`, with one empty folder per
-persona containing `screens/`. Write `run.json`:
+**Create the run directory** by writing `run.json` to `.user-thoughts/runs/<YYYYMMDD-HHMM>-<host>/`, which creates the
+folder:
 
 ```json
 {
@@ -115,18 +111,19 @@ Each persona gets a different arrival, drawn from its goal shape in its persona 
 
 ## Step 3: Dispatch the personas
 
-The brief for each persona agent holds paths and values only. Do not paste file contents, and do not add
-any opinion about the site.
+The brief for each persona agent holds paths and values only. Do not paste file contents, and do not add any opinion
+about the site.
 
 ```text
-You are a simulated visitor to a website. Read these two files, then follow them.
-Protocol: <skill dir>/references/persona-protocol.md
-Your persona: <skill dir>/assets/personas/<persona>.md
+You are a simulated visitor to a website. Read these three files, then follow them.
+Protocol: ${CLAUDE_SKILL_DIR}/references/persona-protocol.md
+Feature questions: ${CLAUDE_SKILL_DIR}/references/feature-questions.md
+Your persona: ${CLAUDE_SKILL_DIR}/assets/personas/<persona>.md
 Overlay, if any: <text or "none">
 
 Site: <url>
 Your arrival: <arrival>
-Browser: <agent-browser command prefix with --session ut-<run>-<persona>, or the MCP tool names>
+Browser: <browser command prefix with --session ut-<run>-<persona>, or the MCP tool names>
 Your directory: <absolute run dir>/<persona>
 forms_allowed: <true or false>
 Write everything in English except quotes, which stay in the page's language.
@@ -151,7 +148,7 @@ its result.
 ## Step 4: First merge
 
 ```bash
-node <skill dir>/scripts/merge-findings.mjs <run dir>
+node ${CLAUDE_SKILL_DIR}/scripts/merge-findings.mjs <run dir>
 ```
 
 Read `merged.json`, not the persona files. Fix only these two things before going on:
@@ -172,7 +169,7 @@ so use `feature:<key>`. Leave out the persona's observation, interpretation, imp
 verifier checks the page rather than a conclusion.
 
 ```text
-Read <skill dir>/references/verifier-protocol.md, then follow it.
+Read ${CLAUDE_SKILL_DIR}/references/verifier-protocol.md, then follow it.
 Site: <url>
 Browser: <agent-browser command prefix with --session ut-<run>-verify, or the MCP tool names>
 Write to: <run dir>/verification.jsonl
@@ -188,7 +185,7 @@ Reply with exactly: Status: <DONE|BLOCKED> and the file path.
 
 Run `merge-findings.mjs` again. It applies the verification results.
 
-Write `report.md` in the run directory from `assets/report-template.md`, in the language the user is using.
+Write `report.md` in the run directory from `${CLAUDE_SKILL_DIR}/assets/report-template.md`, in the language the user is using.
 Quotes stay in the language of the page.
 
 Take severity, band, status and counts from `merged.json` unchanged. Those numbers are the method's

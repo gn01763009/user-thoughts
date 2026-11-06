@@ -2,7 +2,7 @@
 
 `slop-check` asks of every element in a product: why is this here? It runs while building, on a local URL and optionally the repository. It is the first-principles companion to `persona-walkthrough`. Personas find where people get stuck. `slop-check` finds what has no reason to exist.
 
-Status: released in 0.2.0.
+Status: released in 0.2.0, permissions fixed in 0.2.1.
 
 ## What the baseline changed
 
@@ -17,7 +17,7 @@ On a real project of about 10,000 files it failed differently. Against four prob
 - It missed an interrupting survey and contradictory counts, which need interaction to appear.
 - It told the builder to delete SEO content, adoption and a paid plan without asking why they exist.
 
-So the skill is one document with two new tests, Promise and Twin, and a rule that anything possibly serving the business with unknown needs becomes a question. The scripts were not built. Everything below the next heading is the earlier design, kept for the record, and its formats are superseded by `skills/slop-check/references/reviewer-protocol.md`.
+So the skill is one document with two new tests, Promise and Twin, and a rule that anything possibly serving the business with unknown needs becomes a question. The scripts were not built. Everything below the next heading is the earlier design, kept for the record, and its formats are superseded by the Reviewer protocol section of `skills/slop-check/SKILL.md`.
 
 ## Results of the first version
 
@@ -68,6 +68,17 @@ A second real site, not used for tuning, exposed the opposite failure. Even with
 The plain agent stayed stronger in some ways on the third site. Both of its runs noticed that the photos had stopped months ago, which is a real weakness for a site whose job is giving fans a reason to return. Neither skill run did. It also makes bolder product calls, some of them unverified.
 
 Not tested: applying the fixes, a stated purpose that is wrong, and any non-web product. Injection was tested on the first version only.
+
+## What the first real use changed
+
+All earlier runs bypassed permission prompts. Running the skill as a user would, in a fresh session without that bypass, found that it could not start.
+
+- The reviewer could not read a protocol file outside the user's project, so the protocol now lives in `SKILL.md` and travels in the brief.
+- Compound shell commands did not match the allow rule, so the reviewer now runs one browser command per call.
+- The browser cannot create folders, so the reviewer writes `screens/.keep` first.
+- `allowed-tools` with `${CLAUDE_SKILL_DIR}` did not grant reads, and made the skill itself need approval. `` !`cat` `` injection also needs permission. So `persona-walkthrough`, which has too many files to inline, asks the user for one extra read rule.
+
+A fresh session then applied five fixes to a real site on a branch. Four were right and one was not: it merged three false cards into one card with the same false claims, and said it was done. It kept to the instruction to leave `ask` items alone. Two rules were added, that a fix must make the claim true, and that an item appears in one section only. The second held in a regression run. The first has not been retested.
 
 ## Earlier design
 

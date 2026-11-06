@@ -8,7 +8,9 @@ You were not told why they matter, and you do not need to know.
 Each item has a fingerprint, route, element role and name, a quote, and a viewport.
 
 1. Open a fresh page at the route, at that viewport.
-2. Wait for the page to settle, and take a screenshot to `verify-screens/NN.png`.
+2. Wait for the page to settle, and take a screenshot to `verify-screens/NN.png`. First write an empty file at
+   `verify-screens/.keep`, because the browser cannot create folders. Run one browser command per call, starting with
+   the prefix you were given.
 3. Look for the element and the quote, on the screen and in the page text.
 4. Write one line to `verification.jsonl`.
 

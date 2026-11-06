@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1 (2026-11-07)
+
+Both skills failed under normal permissions, because every earlier test had bypassed them.
+
+- `slop-check`: the reviewer protocol moved into `SKILL.md`, and the reviewer runs one browser command per call.
+- `persona-walkthrough`: agents write with file tools and need no shell beyond the browser and the merge script.
+- README lists the exact permission rules for each skill.
+- `slop-check`: a fix must make the claim true, and an item appears in one section only.
+
 ## 0.2.0 (2026-11-06)
 
 - `slop-check` skill: a fresh reviewer asks why each thing exists, using a Rebuild step and six tests, and may only delete with a fact.

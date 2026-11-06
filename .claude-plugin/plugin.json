@@ -1,6 +1,6 @@
 {
   "name": "user-thoughts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "See your live site as an outsider would: simulated users find where people give up, and a first-principles review asks why each thing exists.",
   "author": {
     "name": "gn01763009"

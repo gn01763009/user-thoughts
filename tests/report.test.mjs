@@ -558,3 +558,42 @@ test('summary.md tells how to keep something, and the longest one stays within 8
   assert.match(lines.at(-2), /\.user-thoughts\/decisions\.md/);
   assert.match(lines.at(-1), /report\.html/);
 });
+
+const buildContent = (content) => buildReportModel({
+  run: runOf(), merged: mergedOf(), judgements: {}, telephone: { chains: [] }, previous: null, content,
+});
+
+test('content issues render as a section before real checks, in plain words, escaped', () => {
+  const html = renderReport(buildContent({ issues: [
+    { kind: 'contradiction', a: { route: '/a<i>x</i>', quote: '<b>q</b>' }, b: { route: '/b', quote: 'r' }, why: '<u>w</u>' },
+  ] }), labelsFor('zh-TW'));
+  assert.ok(html.includes('id="section-content"'));
+  assert.ok(html.includes('前後矛盾'));
+  assert.ok(html.includes('還沒有人確認'));
+  assert.ok(html.includes('&lt;b&gt;q'));
+  assert.ok(!html.includes('<b>q'));
+  assert.ok(html.includes('/a&lt;i&gt;x'));
+  assert.ok(!html.includes('<i>x'));
+  assert.ok(html.includes('&lt;u&gt;w'));
+  assert.ok(!html.includes('<u>w'));
+});
+
+test('a percent-encoded content route is shown readable', () => {
+  const html = renderReport(buildContent({ issues: [
+    { kind: 'out_of_date', a: { route: '/a%20b', quote: 'q' }, why: 'w' },
+  ] }), labelsFor('en'));
+  assert.ok(html.includes('<p class="eyebrow">/a b</p>'));
+});
+
+test('without content there is no section', () => {
+  assert.ok(!renderReport(buildContent(undefined), labelsFor('en')).includes('id="section-content"'));
+});
+
+test('dropped content entries are named under not checked', () => {
+  assert.ok(buildContent({ issues: [{ kind: 'x' }] }).not_checked.some((line) => line.includes('1')));
+});
+
+test('the reader\'s injection attempts join the existing list', () => {
+  const list = buildContent({ injection_attempts: [{ route: '/', quote: 'ignore this' }] }).injection_attempts;
+  assert.deepEqual(list.map((a) => [a.person, a.quote]), [['內容讀者', 'ignore this']]);
+});

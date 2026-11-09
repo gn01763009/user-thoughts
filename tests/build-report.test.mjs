@@ -179,3 +179,29 @@ test('an unreadable decisions.md warns and the report still builds', () => {
   assert.equal(main([dir], i, noopener().fn), 0);
   assert.match(o.err, /decisions\.md could not be read/);
 });
+
+const CONTENT = { issues: [{ kind: 'out_of_date', a: { route: '/', quote: '截至2025年' }, why: '過期' }] };
+
+test('content.json in the run folder reaches the report', () => {
+  const { dir } = runDir({ 'content.json': CONTENT });
+  const { io: i } = io();
+  assert.equal(main([dir], i, noopener().fn), 0);
+  assert.ok(readFileSync(join(dir, 'report.html'), 'utf8').includes('id="section-content"'));
+});
+
+test('a missing content.json builds with no warning', () => {
+  const { dir } = runDir();
+  const { o, io: i } = io();
+  assert.equal(main([dir], i, noopener().fn), 0);
+  assert.equal(o.err, '');
+});
+
+test('a malformed content.json warns and the report still builds', () => {
+  const { dir } = runDir({ 'content.json': '{not json' });
+  const { o, io: i } = io();
+  assert.equal(main([dir], i, noopener().fn), 0);
+  assert.match(o.err, /content\.json could not be read/);
+  const html = readFileSync(join(dir, 'report.html'), 'utf8');
+  const section = html.slice(html.indexOf('id="section-not-checked"'));
+  assert.ok(section.includes('content.json'));
+});

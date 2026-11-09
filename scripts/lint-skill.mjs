@@ -27,7 +27,6 @@ const PERSONA_KEYS = ['id', 'label', 'evidence', 'viewport', 'max_steps', 'no_pr
 const PERSONA_NUMERIC_KEYS = ['max_steps', 'no_progress_limit', 'leave_urge_limit'];
 const BOM = /^﻿/;
 const BRIEFS_FILE = 'references/briefs.md';
-const PERSON_BRIEF_HEADING = /^##\s+Person brief\s*$/i;
 const SECTION_HEADING = /^#{1,2}\s/;
 const CODE_FENCE = /^\s*(```|~~~)/;
 const BRIEF_LEAK = /vision|願景|builder-claims|assumption|假設|decisions\.md/i;
@@ -171,11 +170,12 @@ function checkPersonas(skillDir, skillRel) {
 
 // ---------- briefs.md ----------
 
-// Lines of the "## Person brief" section that sit inside code fences, with 1-based line numbers.
+// Lines of the "## <heading>" section that sit inside code fences, with 1-based line numbers.
 // Headings inside a fence do not end the section. Returns null when the section is absent.
-function personBriefBlockLines(text) {
+function briefBlockLines(text, heading) {
   const lines = text.replace(BOM, '').split(/\r?\n/);
-  const start = lines.findIndex((line) => PERSON_BRIEF_HEADING.test(line));
+  const headingPattern = new RegExp(`^##\\s+${heading}\\s*$`, 'i');
+  const start = lines.findIndex((line) => headingPattern.test(line));
   if (start === -1) return null;
   const fenced = [];
   let inFence = false;
@@ -192,15 +192,21 @@ function personBriefBlockLines(text) {
   return fenced;
 }
 
-// The person brief goes to every simulated visitor, so the builder's vision and hidden assumption must never be in it.
-export function checkBriefLeak(briefsText) {
-  const fenced = personBriefBlockLines(briefsText);
-  if (fenced === null) return ['has no "## Person brief" section to check'];
-  if (fenced.length === 0) return ['the "## Person brief" section has no fenced code block to check'];
+function leakErrors(fenced, label) {
   return fenced.flatMap(({ number, line }) => {
     const match = BRIEF_LEAK.exec(line);
-    return match ? [`Person brief line ${number} mentions "${match[0]}"`] : [];
+    return match ? [`${label} line ${number} mentions "${match[0]}"`] : [];
   });
+}
+
+// The person and reader briefs go to agents that must never see the builder's vision or hidden assumption.
+// The reader brief is optional here: only a present one is checked.
+export function checkBriefLeak(briefsText) {
+  const person = briefBlockLines(briefsText, 'Person brief');
+  if (person === null) return ['has no "## Person brief" section to check'];
+  if (person.length === 0) return ['the "## Person brief" section has no fenced code block to check'];
+  const reader = briefBlockLines(briefsText, 'Reader brief') ?? [];
+  return [...leakErrors(person, 'Person brief'), ...leakErrors(reader, 'Reader brief')];
 }
 
 // ---------- plugin manifests ----------

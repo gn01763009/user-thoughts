@@ -84,6 +84,22 @@ export function conflictsSection(model, labels) {
   return `<div id="section-conflicts" class="block"><h2 class="sr">${e(labels.conflicts_title)}</h2>\n${model.conflicts.map((c) => conflictBlock(c, labels)).join('')}</div>\n`;
 }
 
+function placeBlock(place, labels) {
+  return `<p class="eyebrow">${routeText(place.route, labels)}</p><p>${e(labels.quote_open)}${e(place.quote)}${e(labels.quote_close)}</p>`;
+}
+
+function contentBlock(issue, labels) {
+  const places = [issue.a, issue.b].filter((place) => place !== null).map((place) => placeBlock(place, labels)).join('');
+  return `<div class="claim"><div><p class="eyebrow">${e(labels[`content_kind_${issue.kind}`])}</p><p class="claim-text">${e(issue.why)}</p></div>`
+    + `<div>${places}</div></div>`;
+}
+
+export function contentSection(model, labels) {
+  if (model.content_issues.length === 0) return '';
+  const note = `<p class="note">${e(labels.content_note)}</p>`;
+  return section('content', labels.content_title, note + model.content_issues.map((issue) => contentBlock(issue, labels)).join(''));
+}
+
 function realCheckBlock(c, labels) {
   return `<div class="claim"><div><p class="eyebrow">${e(labels.real_check_who)}</p><p class="claim-text">${e(c.who)}</p>`
     + `<p class="eyebrow">${e(labels.real_check_ask)}</p><p>${e(c.ask)}</p></div>`

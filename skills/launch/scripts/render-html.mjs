@@ -5,7 +5,7 @@ import { CSS } from './report-theme.mjs';
 import { masthead, overviewSection } from './report-overview.mjs';
 import { peopleSection } from './report-person.mjs';
 import {
-  assumptionsSection, commentsSection, conflictsSection, decidedSection, injectionSection, notCheckedSection, realChecksSection, rerunSection, telephoneSection, testLimitsSection, warningSection,
+  assumptionsSection, commentsSection, conflictsSection, contentSection, decidedSection, injectionSection, notCheckedSection, realChecksSection, rerunSection, telephoneSection, testLimitsSection, warningSection,
 } from './report-sections.mjs';
 
 export { escapeHtml };
@@ -15,7 +15,7 @@ const CONTENT_SECURITY_POLICY = "default-src 'none'; img-src 'self' file: data:;
 // Spec order. A section with nothing to say returns '' and is left out.
 const SECTIONS = [
   warningSection, injectionSection, rerunSection, overviewSection, peopleSection,
-  telephoneSection, commentsSection, assumptionsSection, conflictsSection, realChecksSection, decidedSection, testLimitsSection, notCheckedSection,
+  telephoneSection, commentsSection, assumptionsSection, conflictsSection, contentSection, realChecksSection, decidedSection, testLimitsSection, notCheckedSection,
 ];
 
 function documentHead(title) {

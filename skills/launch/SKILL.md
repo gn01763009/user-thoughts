@@ -126,9 +126,9 @@ Neither goes into any brief, and you never paraphrase them to a person, a relay 
 
 | Depth | People | Steps per person | Adds |
 |---|---|---|---|
-| quick | 3 | 8 | nothing |
-| standard | 6 | the persona file's `max_steps` | word of mouth |
-| full | 9 | the persona file's `max_steps` | word of mouth and launch comments |
+| quick | 3 | 8 | content reader |
+| standard | 6 | the persona file's `max_steps` | content reader and word of mouth |
+| full | 9 | the persona file's `max_steps` | content reader, word of mouth and launch comments |
 
 Settle the depth before recommending anyone: use `--depth` or the depth the request names, otherwise ask with this
 table and suggest standard. You may ask in the same message as Steps 3 and 4.
@@ -205,6 +205,8 @@ Each person is a fresh agent, never a fork. A fork carries this conversation, an
 - **No subagent tool:** walk each person yourself from a fresh start, and add to `not_checked` in Step 11 that one
   mind walked every path, after reading the product, so independence is reduced.
 
+**Content reader.** Also send one fresh agent, never a fork, the Reader brief from `references/briefs.md`: in the same message as the people in parallel mode, after them in serial mode. It follows `references/content-reader.md` and never holds up the run: if it reports BLOCKED or does not return, or there is no subagent tool, say so in `not_checked` in Step 11.
+
 Wait for everyone. A person who does not return is `INCOMPLETE`, never someone who found nothing. Check for
 `summary.json` in each folder. Giving up is a result, not a failure. You may re-run one failed person once, and never
 because you dislike the result.
@@ -266,7 +268,7 @@ node ${CLAUDE_SKILL_DIR}/scripts/build-report.mjs <run dir> --open
 ```
 
 It writes `report.html` and `summary.md`, prints the summary, then prints the report's path. If it warns that a file
-could not be read, repair that file (formats are in `references/briefs.md`) and rebuild once. Pass the summary and path
+could not be read, repair that file (formats are in `references/briefs.md`; a malformed `content.json` is left alone, because the report lists it) and rebuild once. Pass the summary and path
 to the builder unchanged, with nothing added. The report itself lists page content aimed at AI agents, incomplete
 people and malformed records. Do not write `report.html`, `summary.md` or any other report text yourself. Close the
 browser sessions as `references/browser.md` describes.

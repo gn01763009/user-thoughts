@@ -4,6 +4,7 @@ import { gateJudgements, gateTelephone, stepKey } from './judgements.mjs';
 import { overviewQuote } from './report-moment.mjs';
 import { prettyRoute } from './report-format.mjs';
 import { cardProfile } from './stories.mjs';
+import { gateContent } from './content-issues.mjs';
 
 export const APPLE_STATUS = 'experimental';
 
@@ -113,13 +114,14 @@ function notReproducedLines(merged, labels) {
 
 // What this run could not cover: the coordinator's list, then people who did not finish, malformed records,
 // findings the verifier could not reproduce and unreadable files.
-function notChecked({ judged, merged, people, labels, unreadable }) {
+function notChecked({ judged, merged, people, labels, unreadable, contentDropped = 0 }) {
   const incomplete = asArray(merged.incomplete).map((entry) =>
     fillText(labels.incomplete_person, { name: nameOf(people, entry?.persona ?? ''), reason: entry?.reason ?? '' }));
   const parseErrors = asArray(merged.parse_errors).length;
   const parseLine = parseErrors > 0 ? [fillText(labels.parse_errors_note, { n: parseErrors })] : [];
   const unreadableLines = asArray(unreadable).map((file) => fillText(labels.unreadable_file, { file }));
-  return [...asArray(judged?.not_checked), ...incomplete, ...parseLine, ...notReproducedLines(merged, labels), ...unreadableLines];
+  const contentLine = contentDropped > 0 ? [fillText(labels.content_dropped, { n: contentDropped })] : [];
+  return [...asArray(judged?.not_checked), ...incomplete, ...parseLine, ...notReproducedLines(merged, labels), ...contentLine, ...unreadableLines];
 }
 
 function overviewOf(person) {
@@ -131,7 +133,7 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [] }, labels = labelsFor(run.language)) {
+export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
   const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
   const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
   const testLimits = asArray(gatedJudgements?.test_limits);
@@ -139,6 +141,8 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
   const people = markTestLimits(profiled, testLimits);
   const gatedTelephone = telephone === undefined ? null : gateTelephone(telephone, people);
   const chains = asArray(gatedTelephone?.chains);
+  const gatedContent = gateContent(content);
+  const readerAttempts = gatedContent.injection_attempts.map((a) => ({ ...a, persona: null, person: labels.content_reader }));
   const droppedCount = asArray(merged.dropped_voices).length
     + asArray(gatedJudgements?.dropped).length + asArray(gatedTelephone?.dropped).length;
   return {
@@ -150,17 +154,18 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
     vision: run.vision,
     understanding: run.understanding,
     apple: { ...merged.apple, status: APPLE_STATUS },
-    injection_attempts: injectionAttempts(merged, people),
+    injection_attempts: [...injectionAttempts(merged, people), ...readerAttempts],
     overview: people.map(overviewOf),
     people,
     telephone: chains,
     comments: buildComments(run, people, chains, labels),
     assumptions: asArray(gatedJudgements?.assumptions),
     conflicts: asArray(gatedJudgements?.conflicts),
+    content_issues: gatedContent.issues,
     real_checks: asArray(gatedJudgements?.real_checks),
     test_limits: testLimits,
     decided,
-    not_checked: notChecked({ judged: gatedJudgements, merged, people, labels, unreadable }),
+    not_checked: notChecked({ judged: gatedJudgements, merged, people, labels, unreadable, contentDropped: gatedContent.dropped }),
     top_finding: topFinding(merged, people, labels, skippedSteps(testLimits, decided)),
     rerun: buildRerun(run, merged, previous, labels),
     dropped_count: droppedCount,

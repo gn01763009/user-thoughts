@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Usage: node build-report.mjs <run dir> [--open]
-// Reads run.json and merged.json (required), judgements.json, telephone.json and decisions.md (optional; warns if unreadable),
+// Reads run.json and merged.json (required), judgements.json, telephone.json, decisions.md and content.json (optional; warns if unreadable),
 // writes report.html and summary.md, prints the summary.
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
@@ -99,6 +99,7 @@ export function main(argv, io = { out: process.stdout, err: process.stderr }, op
   const judgements = readCoordinatorFile(dir, 'judgements.json', io);
   const telephone = readCoordinatorFile(dir, 'telephone.json', io);
   const decisions = readCoordinatorFile(dir, 'decisions.md', io, parseDecisions);
+  const content = readCoordinatorFile(dir, 'content.json', io);
   const model = buildReportModel({
     run: run.value,
     merged: merged.value,
@@ -106,7 +107,8 @@ export function main(argv, io = { out: process.stdout, err: process.stderr }, op
     telephone: telephone.value,
     previous: readPrevious(dir, run.value),
     decisions: decisions.value ?? [],
-    unreadable: [...judgements.unreadable, ...telephone.unreadable, ...decisions.unreadable],
+    content: content.value,
+    unreadable: [...judgements.unreadable, ...telephone.unreadable, ...decisions.unreadable, ...content.unreadable],
   });
   const labels = labelsFor(run.value.language);
   const summary = renderSummary(model, labels);

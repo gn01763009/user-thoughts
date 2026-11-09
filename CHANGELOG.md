@@ -5,6 +5,7 @@
 - Marks what the test setup may have caused (`test_limits`), so the report separates those steps from real findings.
 - Says who to ask and what to ask for the biggest findings (`real_checks`), as questions about past behaviour.
 - Remembers what the builder decided to keep (`decided`), so the report shows it in its own section and it no longer competes for the top finding.
+- Adds a content reader, one more agent who plays nobody and lists where the site's own content disagrees with itself (contradictions, stale dates, sums that do not add up), with quotes, in its own report section.
 - Adds a sixth person for whom the product barely matters (`low-stakes`), so standard depth is now 6 people and full is 9.
 
 ## 1.0.0 (2026-11-09)

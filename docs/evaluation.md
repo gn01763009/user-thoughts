@@ -145,7 +145,7 @@ The bar set for this round was: planted recall of at least 9 of 11 in both runs,
 | Condition | As scored | By reading the matches |
 |---|---|---|
 | Planted recall at least 9/11, both runs | 9/11 and 9/11: pass | At most 8/11 and 7/11: **fail** |
-| Mean heldout recall at least 0.55 | 0.77: pass | A separate review read these matches by hand and reported that the result holds up; that reading is not reproduced here |
+| Mean heldout recall at least 0.55 | 0.77: pass | A separate AI review read these matches and reported that the result holds up; that reading is not reproduced here |
 | Decoys 0 in all four runs | 1 in `t16-planted-2` (D3): **fail** | The D3 match reads as a false match, so 0 |
 | The bar | **Fail** | **Fail** |
 
@@ -208,12 +208,12 @@ Planted matched U1, U2, U4, U5, V1, V2, V4, V5 and missed U3, U6, V3. The promis
 
 **Second planted run (`planted-2`, with kept decisions).** Same site, same prompt, with `.user-thoughts/decisions.md` seeded with three kept decisions (card up front, newsletter popup, English only). It finished with a result event and a `report.html` containing `section-decided`. 6 people including `p6-low-stakes`. Script score: recall 8/11 (0.73), value recall 0.80, promise recall 0.50, 0 decoys; matched U1, U2, U4, U5, V1, V2, V4, V5, P1, missed U3, U6, V3, P2. It took 422 s and cost 3.19 USD. Two `Write` calls were denied (`telephone.json` and `judgements.json`, each a mistyped path outside the project) and both files exist after the retry. The low-stakes person took 2 steps, with name, `facts`, `about` and `cares` filled, and no `stopped_me` impact. `test_limits` was empty again.
 
-**Read by hand.** Every printed match was read in full against `evals/ground-truth/planted.json`, with the other chunks that matched the same item, because the script prints only the first.
+**Read by an AI agent, not a person.** Every printed match was read in full against `evals/ground-truth/planted.json`, with the other chunks that matched the same item, because the script prints only the first.
 
 | | First planted run | Second planted run (`planted-2`) |
 |---|---|---|
 | Script | 8/11, value 0.80, promise 0.50, 1 decoy | 8/11, value 0.80, promise 0.50, 0 decoys |
-| By hand | 7/11 (0.64), value 3/5 (0.60), promise 1/2 (0.50), 0 decoys | 7/11 (0.64), value 3/5 (0.60), promise 0/2 (0.00), 0 decoys |
+| Read by an agent | 7/11 (0.64), value 3/5 (0.60), promise 1/2 (0.50), 0 decoys | 7/11 (0.64), value 3/5 (0.60), promise 0/2 (0.00), 0 decoys |
 | True hits | U1, U2, U4, U5, V1, V2, V4, P1 | U1, U2, U4, U5, V1, V2, V4 |
 | False matches | V5, D3 | V5, P1 |
 
@@ -224,9 +224,9 @@ Planted matched U1, U2, U4, U5, V1, V2, V4, V5 and missed U3, U6, V3. The promis
 - D3 in the first run is a false decoy hit. The chunk is about the preview not showing what the client sees, matched on "due date"; nobody called the form too long.
 - U1, U2, U4 and U5 are complaints in both runs.
 
-So by hand the two planted runs are equal at 7/11 on usability and value, and the by-hand count is below the script count in both. The script's 8/11 is overstated by V5. Both fail the 9/11 bar either way, and the by-hand decoy count is 0 in both.
+So as read by the agent the two planted runs are equal at 7/11 on usability and value, and that count is below the script count in both. The script's 8/11 is overstated by V5. Both fail the 9/11 bar either way, and the decoy count as read by the agent is 0 in both.
 
-**Clean run, by hand.** The false alarm is p2's finding that tapping "Start free" under the demo form did nothing. The link in the message is a real anchor to `signup.html`, and the screenshot shows it intact. Re-testing the clean site in a phone-sized browser, the click went to `signup.html`. The page also has a second "Start free" in the top bar, as the person's own note allowed. The site did not misbehave; this is a false alarm from a missed tap, so by hand the clean site had 1 false alarm that was not the site's fault.
+**Clean run, read by an agent.** The false alarm is p2's finding that tapping "Start free" under the demo form did nothing. The link in the message is a real anchor to `signup.html`, and the screenshot shows it intact. Re-testing the clean site in a phone-sized browser, the click went to `signup.html`. The page also has a second "Start free" in the top bar, as the person's own note allowed. The site did not misbehave; this is a false alarm from a missed tap, so by hand the clean site had 1 false alarm that was not the site's fault.
 
 **`decided` has now run live.** With the decisions file seeded, the coordinator copied it to the run folder unchanged and wrote two `decided` entries, the card-up-front and newsletter lines, each word for word. It did not cite the English-only line, and no person ran into a language problem, so nothing was over-matched. Every source of the findings and features about the card and the sign-up (the sign-up form, "See it in action", pricing "Start free", the card-required feature) is listed in the card entry's evidence. The newsletter entry lists every source of the close-button and popup findings, but two sources of the popup feature entries (p4 step 1 and p5 step 1) are not listed, so the evidence is nearly but not fully complete. The top finding (the seven-step tour) is not a decided item. No seeded decision text reached any `Agent` prompt or any person's files; it appears only in the coordinator's own read, copy and `judgements.json` write. One run shows `decided` working, not that it always does.
 
@@ -241,7 +241,7 @@ Notes on the runs: both streams contain several `"type":"result"` lines, because
 - **Sites.** `planted` has 11 planted problems (U1 to U6 for usability, V1 to V5 for unwanted features) and 3 decoys. `clean` is the same product with the problems removed. `hostile` carries instructions aimed at AI agents.
 - **Plain agent.** The same model, a browser, and this prompt: "Review the website from a user's perspective. Tell me what's wrong with it, where a real user would struggle or give up, and which features users probably would not want."
 - **Model.** Sonnet for every agent in both arms.
-- **Scoring.** `evals/score.mjs` matches text with regular expressions from `evals/ground-truth/planted.json`, and a person reads every match. A regular expression cannot tell praise from complaint.
+- **Scoring.** `evals/score.mjs` matches text with regular expressions from `evals/ground-truth/planted.json`, and an AI agent reads every match. A regular expression cannot tell praise from complaint.
 
 ### Runs
 
@@ -261,7 +261,7 @@ All scores below use the corrected regular expressions, so they differ from the 
 | 4 (final) | Skill, run A | same 3 strangers as round 3, new `committed-user` | 0.82 | 5 | 4 | none | U3, V3 |
 | 4 (final) | Skill, run B | same 3 strangers as round 3, new `committed-user` | 0.91 | 6 | 4 | none | V3 |
 
-Round 1 scores were produced later by running the saved persona output through the fixed merge script. Nobody read those matches by hand.
+Round 1 scores were produced later by running the saved persona output through the fixed merge script. Nobody read those matches.
 
 The plain agent ran only on the first version of the planted site. Later changes to that site touched the signed-in flow, which no plain agent reached.
 
@@ -307,7 +307,7 @@ The one item not reproduced was a real catch: a persona had recorded the page a 
 
 ## Corrections made after reading the matches
 
-| Item | What the script said | What a person found | Change |
+| Item | What the script said | What the reading agent found | Change |
 |---|---|---|---|
 | V3 | Matched in round 2 | False match: "seamless synergy" in the hero copy, nothing about the AI Insights block | Tightened the rule |
 | U6 | Missed in one run | Real detection: "No menu is visible on phone" | Widened the rule |

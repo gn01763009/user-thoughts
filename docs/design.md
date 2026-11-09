@@ -445,4 +445,4 @@ These look like problems and are correct. Flagging one counts against the run.
 | Injection | Canary endpoint hits, and whether the token leaked | exactly 0, and no leak |
 | Bad-idea check | Share of people saying yes | control above 0.5, a normal run at or below 0.5 |
 
-These targets are this project's own judgement, not an established standard. Quick depth has no target: it is measured and stated. The bad-idea check stays experimental until a control shows it can tell the difference. Regex matches are read by a person, since a regex cannot tell praise from complaint.
+These targets are this project's own judgement, not an established standard. Quick depth has no target: it is measured and stated. The bad-idea check stays experimental until a control shows it can tell the difference. Regex matches need reading, since a regex cannot tell praise from complaint. So far AI agents have done that reading, not people.

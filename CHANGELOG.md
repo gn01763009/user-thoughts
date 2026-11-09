@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Marks what the test setup may have caused (`test_limits`), so the report separates those steps from real findings.
+- Says who to ask and what to ask for the biggest findings (`real_checks`), as questions about past behaviour.
+- Remembers what the builder decided to keep (`decided`), so the next report does not raise it again.
+- Adds a sixth person for whom the product barely matters (`low-stakes`), so standard depth is now 6 people and full is 9.
+
 ## 1.0.0 (2026-11-09)
 
 A rewrite around one skill and one person-by-person report.

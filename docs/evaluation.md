@@ -187,6 +187,29 @@ One run, planted site only, served locally (`node evals/serve.mjs planted 4173`,
 Thought checks: no tool narration in any person's thoughts (English text that appeared was quoted page text). The explorer's ten thoughts all opened with the same two characters, so the "no opener repeats" rule did not hold for that person; the other four had no repeated openers. No gendered words in any card, and all cards were in Traditional Chinese. This is one run, so it shows the current skill works end to end on the planted site once, not a rate.
 
 
+#### Batch 1 trial
+
+One standard run on each of the clean and planted sites, on the skill with the sixth person (`low-stakes`), the real-checks, decided and test-limits fields, and the other batch 1 changes. Served locally, Sonnet, headless, English, standard depth, the setup answers given up front, one run at a time. Scores are the unedited output of `evals/score.mjs`. Nothing was tuned for them. The run folders are in `evals/results/batch-1/` (git-ignored). The heldout site was not run.
+
+| Check | Clean site | Planted site |
+|---|---|---|
+| People in `merged.json` | 6, including `p6-low-stakes` | 6, including `p6-low-stakes` |
+| `report.html` built | yes | yes, with `section-real-checks` |
+| The low-stakes person | 1 step; name, `facts`, `about`, `cares` all filled | 2 steps; name, `facts`, `about`, `cares` all filled |
+| Score | 1 false alarm (target at most 2) | Recall 8/11 (0.73), value recall 0.80, promise recall 0.50, 1 decoy (D3) |
+| Duration (wall clock) | 372 s | 418 s |
+| Cost (USD) | 2.96 | 3.42 |
+| Permission denials | 2, both denied `Write` calls | 1, a denied `Write` of `telephone.json` |
+| `test_limits` / `real_checks` / `decided` entries | 0 / 6 / 0 | 0 / 6 / 0 |
+
+Planted matched U1, U2, U4, U5, V1, V2, V4, V5 and missed U3, U6, V3. The promise problem P1 matched and P2 was missed. The 8/11 is as scored by script; I did not read the matches by hand. From the printed text, the V1 and V2 matches are one chunk, and the V5 match is a "would not notice" feature line, so the by-hand count may be lower. It misses the 9/11 bar and has 1 decoy, so it fails on both, as the earlier planted runs did. The single clean false alarm is a high finding about a "Start free" tap that did nothing, hedged by the person as possibly a tool effect.
+
+Next to the most recent earlier numbers, which were planted 9/11 and 9/11 as scored with at most 8 and 7 when read by hand, and a clean site with 0 false alarms: the planted result is lower and the clean result has 1 false alarm instead of 0. **One run per site cannot show improvement or regression.** The same skill text scored 0.91 and 0.64 on the same unseen site, so a difference of one or two matches is inside the spread between runs.
+
+No `real_checks` ask is a "would you" question; all six on each site ask about the last time something happened. Neither run wrote a `test_limits` or `decided` entry. `decided` is empty because no `.user-thoughts/decisions.md` existed. `test_limits` was empty on both sites, so this trial gave no evidence on whether the coordinator fills it.
+
+Notes on the runs: both streams contain several `"type":"result"` lines, because the coordinator was woken by each background person finishing; the last one is the final result, and the totals above come from it. Both runs had denied `Write` calls, including one for `telephone.json`; the file exists in both run folders, so the runs went on. The cause was not investigated and is for the builder to look at.
+
 ### Setup
 
 - **Sites.** `planted` has 11 planted problems (U1 to U6 for usability, V1 to V5 for unwanted features) and 3 decoys. `clean` is the same product with the problems removed. `hostile` carries instructions aimed at AI agents.

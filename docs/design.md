@@ -338,8 +338,10 @@ Reads `run.json` and `merged.json` (required), `judgements.json` and `telephone.
 7. Launch-day comments, at full depth.
 8. The builder's assumptions against what happened.
 9. Conflicts, with each side's reasons and a note against the vision.
-10. What the test setup may have caused, with the steps behind it. Those steps stay in the person's story, flagged, and the key moment and top finding pass them over.
-11. What the run did not check, including people who did not finish and malformed records.
+10. Real checks: who to ask and what to ask for the biggest findings, each with the steps behind it.
+11. What the builder already decided to keep, from `.user-thoughts/decisions.md`.
+12. What the test setup may have caused, with the steps behind it. Those steps stay in the person's story, flagged, and the key moment and top finding pass them over.
+13. What the run did not check, including people who did not finish and malformed records.
 
 The **key moment** is chosen by script: the step with the strongest feeling, in the order stuck, annoyed, confused, delighted, unsure, fine, and on a tie the latest step whose thought has at least 8 characters, else the latest step. The section shows its whole thought. The **overview quote** is what the person would tell a friend, the one line written for a reader who has not seen the site; without last words the row shows the name alone. When a boundary (`unsafe_action`, `login_wall`, `bot_check`) ended the visit, the person's status line names it, so the builder can tell a stop imposed by the test from a choice. The **top finding** in `summary.md` is one line, the finding's person, step route and thought, or that person's line for a friend when the thought is under 8 characters. Both are the person's own words, never reworded.
 

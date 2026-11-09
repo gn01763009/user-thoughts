@@ -71,14 +71,14 @@ Five setup steps, all of which you can answer in your first message:
 | Depth | People | Adds | Time | Cost (USD) |
 |---|---|---|---|---|
 | quick | 3, about 8 steps each | nothing | 250 s, one run | 1.48, one run |
-| standard | 5 | word-of-mouth chain | 301 to 433 s (5 to 7 minutes), 13 runs | 2.10 to 2.75, 13 runs |
-| full | 8 | word-of-mouth chain and launch-day comments | not measured | not measured |
+| standard | 6 | word-of-mouth chain | 372 and 418 s (6 to 7 minutes), 2 runs | 2.96 and 3.42, 2 runs |
+| full | 9 | word-of-mouth chain and launch-day comments | not measured | not measured |
 
-Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard range mixes skill versions across its 13 runs. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
+Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard figures come from 2 runs of the current skill, one per test site; the earlier 5-person standard runs took 301 to 433 s and cost 2.10 to 2.75 USD. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
 
 ## What the report looks like
 
-The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 5 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
+The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
 
 <p>
   <img src="docs/assets/report-overview.png" alt="The top of a report: the headline, then one row per person with what they would tell a friend, who they are, why they came and how their visit ended" width="49%">
@@ -89,9 +89,11 @@ These images are from a run on Tallywren, a fictional product in this repository
 
 The report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
 
+After the people's stories, the report lists who to ask and what to ask for the biggest findings, what you already decided to keep, and what may only be an effect of the test setup.
+
 ## How it works
 
-- **One-visit people.** Each person gets a concrete situation and their own browser. They start as a fresh agent and are told to ignore project notes, so they do not get your code or your vision. A project's `CLAUDE.md` may still be visible to them, so don't put your vision there. They do the task with real clicks and leave when their patience runs out, which counts as a result. Afterwards they answer an exit interview: did I get it done, would I come back, and how would I describe this to a friend. They are built from nine persona files with written limits. Standard and full always include an explorer, who opens every menu item.
+- **One-visit people.** Each person gets a concrete situation and their own browser. They start as a fresh agent and are told to ignore project notes, so they do not get your code or your vision. A project's `CLAUDE.md` may still be visible to them, so don't put your vision there. They do the task with real clicks and leave when their patience runs out, which counts as a result. Afterwards they answer an exit interview: did I get it done, would I come back, and how would I describe this to a friend. They are built from ten persona files with written limits. Standard and full always include an explorer, who opens every menu item.
 - **Evidence rule.** Apart from the answer to the bad-idea question, which is about a plan and not a step, a voice counts only if it traces to a step the person really took. A script drops a thought with no screenshot, last words that cite no real step, a finding from a step the person did not take, and any judgement that points at a step nobody took. Praise and criticism follow the same rule. Severity is computed from what happened to people, not from a model's opinion, and a separate agent re-checks serious items knowing only where to look.
 - **Bad-idea check (experimental).** In the exit interview, each person hears about a planned feature that works against what they came for, phrased as a real plan. If more than half say yes, the report warns that this batch may be flattering you. It is experimental because it [could not be validated](#results), and the report labels it the same way.
 - **Word-of-mouth chain.** Standard and full. What each person would tell a friend goes to a fresh agent, who passes it to another fresh agent who has never seen the product. Each one receives only the sentence before it. The last line, what kind of site this seems to be and who it is for, is set beside your vision.

@@ -7,7 +7,7 @@ lines.
 
 No brief may name, quote or paraphrase the builder's vision, the hidden assumption in `builder-claims.md`, anything in `decisions.md`, a card's
 `why_chosen` or `apple_pitch`, or your own opinion of the site. `npm run lint` checks the person brief template for
-the vision and the assumption. It cannot see the values you put into the card fields, which you write after hearing
+the vision, the assumption and `decisions.md`. It cannot see the values you put into the card fields, which you write after hearing
 the vision, so keeping those clear of it is your responsibility.
 
 ## Person brief
@@ -197,9 +197,9 @@ translating, shortening or merging. If a relay returns nothing, leave that chain
   met it, give an empty `evidence` list and the report marks it not encountered.
 - `conflicts`: only questions where at least two sides each cite their own steps. `label` names a side in a few
   words. `vision_note` says how the builder's vision bears on the two sides. It is never a head count.
-- `test_limits`: `limit` is `location` (the site needed this visitor's position and the test browser had none), `account` (it needed a real account, a login or a code a test visitor cannot get), `forms_off` (a form stayed unsent because this run is browse-only), `automation` (only an automated browser would meet this, such as being blocked as a bot) or `other`. `note` is one sentence in the run's language: what the test setup did and why a real visitor would not meet it. If a real visitor in the same situation would hit the same wall, it is a finding about the site and does not belong here.
+- `test_limits`: `limit` is `location` (the site needed this visitor's position and the test browser had none), `account` (it needed a real account, a login or a code a test visitor cannot get), `forms_off` (a form stayed unsent because this run is browse-only), `automation` (only an automated browser would meet this, such as being blocked as a bot) or `other`. `note` is one sentence in the run's language: what the test setup did and why a real visitor would not meet it. If a real visitor in the same situation would hit the same wall, it is a finding about the site and does not belong here. `evidence` lists every `persona` and `step` where the test setup caused it, taken from the finding's `sources`.
 - `real_checks`: `who` is a role and a recent situation someone could actually recruit, for example "A freelancer who sent an invoice from a phone in the last month". Never an identity label or a simulated person's name. `ask` is one question about what that person did last time, for example "The last time a client chased you for an invoice, what did you do first?", and never "would you use", "do you like" or "how likely". Write both in the run's language. `evidence` copies `persona` and `step` from the finding's `sources`.
-- `decided`: `decision` is one line of `<run dir>/decisions.md` without its leading `- `, copied exactly. That file holds what the builder chose to keep as it is, one `- ` line each, in their words. The script drops an entry whose text is not in the file or that cites no real step.
+- `decided`: `decision` is one line of `<run dir>/decisions.md` without its leading `- `, copied exactly. That file holds what the builder chose to keep as it is, one `- ` line each, in their words. The script drops an entry whose text is not in the file or that cites no real step. `evidence` lists every `persona` and `step` in the `sources` of the findings this line settles.
 - `not_checked`: plain sentences.
 - A `{ "persona", "step" }` pair is a raw reference. The script drops it if that person kept no such step, and shows
   the person's own thought at that step in place of any wording of yours.

@@ -6,7 +6,7 @@ export const TEST_LIMITS = Object.freeze(['location', 'account', 'forms_off', 'a
 export const MAX_REAL_CHECKS = 6;
 export const stepKey = (persona, step) => `${persona}#${step}`;
 
-const BULLET_LINE = /^\s*-\s+(.+?)\s*$/;
+const BULLET_LINE = /^\s*-\s+(\S.*?)\s*$/;
 
 // The bullet lines of decisions.md, without their leading "- ". Anything else is ignored.
 export function parseDecisions(text) {

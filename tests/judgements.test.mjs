@@ -160,6 +160,7 @@ test('at most six real checks are kept', () => {
 test('parseDecisions reads bullet lines only and copes with CRLF and blanks', () => {
   assert.deepEqual(parseDecisions('# 決定\r\n\r\n- 首頁不放價格\r\n-  要先看案例 \r\n不是項目\n- \n'), ['首頁不放價格', '要先看案例']);
   assert.deepEqual(parseDecisions(undefined), []);
+  assert.deepEqual(parseDecisions('-   \n'), []);
 });
 
 test('a decided entry must be a line of decisions.md, word for word, and cite a real step', () => {

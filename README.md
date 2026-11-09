@@ -116,7 +116,7 @@ Everything here ran on Sonnet, headless, on local test sites. Each test ran once
 - **The known site is not a clean measure.** The skill was tuned on it. A plain agent with no skill scored 8 of 11 on the same site, so this README does not claim the skill beats one there.
 - **The unseen site is the fairer test, and it is noisy.** The same skill text scored 0.91 and 0.64. That is two runs and one blind baseline, on Sonnet only.
 - **The bad-idea check tells you nothing yet.** The agreeable control did not say yes either, so the test could not tell a flattering batch from an honest one.
-- **Which version was tested.** The clean and known test sites were each run once on the skill as it now stands (clean: 1 false alarm; known: 8/11 recall, 1 decoy). The unseen and hostile sites were not rerun on it; their results come from earlier versions.
+- **Which version was tested.** The clean and known test sites were each run once on the skill as it now stands (clean: 1 false alarm; known: 8/11 recall, 1 decoy). The unseen and hostile sites were not rerun on it; their results come from earlier versions. The results table above comes from earlier versions, so its clean-site row shows 0 false alarms.
 - **Quick depth** scored 7/11 with no decoys, in one run on the known site, before the later changes.
 - **`--rerun`** has run end to end once: quick depth, one person, on localhost.
 

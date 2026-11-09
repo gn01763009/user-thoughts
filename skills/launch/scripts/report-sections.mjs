@@ -84,6 +84,17 @@ export function conflictsSection(model, labels) {
   return `<div id="section-conflicts" class="block"><h2 class="sr">${e(labels.conflicts_title)}</h2>\n${model.conflicts.map((c) => conflictBlock(c, labels)).join('')}</div>\n`;
 }
 
+function realCheckBlock(c, labels) {
+  return `<div class="claim"><div><p class="eyebrow">${e(labels.real_check_who)}</p><p class="claim-text">${e(c.who)}</p>`
+    + `<p class="eyebrow">${e(labels.real_check_ask)}</p><p>${e(c.ask)}</p></div>`
+    + `<div>${refList(c.evidence, labels)}</div></div>`;
+}
+
+export function realChecksSection(model, labels) {
+  if (model.real_checks.length === 0) return '';
+  return section('real-checks', labels.real_checks_title, model.real_checks.map((c) => realCheckBlock(c, labels)).join(''));
+}
+
 function testLimitBlock(t, labels) {
   return `<div class="claim"><div><p class="eyebrow">${e(labels[`test_limit_${t.limit}`])}</p><p class="claim-text">${e(t.note)}</p></div>`
     + `<div>${refList(t.evidence, labels)}</div></div>`;

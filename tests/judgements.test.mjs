@@ -70,7 +70,7 @@ test('not_checked keeps only non-empty strings', () => {
 test('non-object input yields empty sections and one dropped entry', () => {
   for (const bad of ['x', null, undefined, [], 5]) {
     const out = gateJudgements(bad, people);
-    assert.deepEqual(out, { assumptions: [], conflicts: [], test_limits: [], not_checked: [],
+    assert.deepEqual(out, { assumptions: [], conflicts: [], real_checks: [], test_limits: [], not_checked: [],
       dropped: [{ persona: null, kind: 'judgements', step: null, reason: out.dropped[0].reason }] });
   }
   assert.equal(gateTelephone('x', people).dropped[0].kind, 'telephone');
@@ -133,4 +133,26 @@ test('a test limit with an unknown kind, no note or no valid step is dropped', (
 test('judgements without test_limits, or not an object, give an empty list', () => {
   assert.deepEqual(gateJudgements({}, people).test_limits, []);
   assert.deepEqual(gateJudgements(null, people).test_limits, []);
+});
+
+test('a real check keeps who and ask and shows the person\'s own step', () => {
+  const out = gateJudgements({ real_checks: [{ who: 'w', ask: 'a', evidence: [ref('p1', 1)] }] }, people);
+  assert.equal(out.real_checks[0].who, 'w');
+  assert.equal(out.real_checks[0].ask, 'a');
+  assert.equal(out.real_checks[0].evidence[0].thought, 'thought 1');
+});
+
+test('a real check without who, ask or a valid step is dropped', () => {
+  const out = gateJudgements({ real_checks: [
+    { who: '', ask: 'a', evidence: [ref('p1', 1)] },
+    { who: 'w', ask: '', evidence: [ref('p1', 1)] },
+    { who: 'w', ask: 'a', evidence: [ref('p1', 9)] },
+  ] }, people);
+  assert.deepEqual(out.real_checks, []);
+  assert.equal(out.dropped.filter((d) => d.kind === 'real_check').length, 3);
+});
+
+test('at most six real checks are kept', () => {
+  const entries = Array.from({ length: 8 }, (_, i) => ({ who: `w${i}`, ask: 'a', evidence: [ref('p1', 1)] }));
+  assert.deepEqual(gateJudgements({ real_checks: entries }, people).real_checks.map((c) => c.who), ['w0', 'w1', 'w2', 'w3', 'w4', 'w5']);
 });

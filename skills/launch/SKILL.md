@@ -252,6 +252,7 @@ Write `<run dir>/judgements.json` in the format in `references/briefs.md`, citin
 - **Conflicts:** only where at least two sides each cite their own steps. The `vision_note` weighs the sides against
   the builder's vision, not by counting heads.
 - **Test limits:** a step goes in `test_limits` only when you can name what in the test setup caused it and a real visitor in that person's situation would not have hit it (`references/briefs.md`). A confusing page is never a test limit. The finding and the person's story stay as they are.
+- **Real checks:** take the findings in the main or tentative band, most severe first, leave out test limits, decided items and anything not reproduced, and write a `real_checks` entry for up to 6 of them (`references/briefs.md`).
 - **Not checked:** say honestly what this run did not cover: pages or tasks nobody reached, people who were blocked
   or incomplete, forms left unsent on production, what the chosen depth leaves out, and that demand cannot be judged
   by simulated people.

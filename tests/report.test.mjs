@@ -525,3 +525,13 @@ test('test limits render in plain words, after conflicts, and escape the note', 
   assert.ok(!html.includes('<b>n'));
   assert.ok(html.indexOf('id="section-test-limits"') < html.indexOf('id="section-not-checked"') || !html.includes('id="section-not-checked"'));
 });
+
+test('real checks show who and what to ask and escape both', () => {
+  const judgements = { real_checks: [{ who: '<i>w</i>', ask: '上次怎麼做', evidence: [{ persona: 'p2', step: 2 }] }] };
+  const html = renderReport(build({}, {}, { judgements }), labelsFor('zh-TW'));
+  assert.ok(html.includes('id="section-real-checks"'));
+  assert.ok(html.includes('找誰'));
+  assert.ok(html.includes('問什麼'));
+  assert.ok(html.includes('上次怎麼做'));
+  assert.ok(html.includes('&lt;i&gt;w'));
+});

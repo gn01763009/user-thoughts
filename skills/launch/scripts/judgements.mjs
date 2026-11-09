@@ -3,6 +3,7 @@
 // comes from the person's own step, never from coordinator text.
 
 export const TEST_LIMITS = Object.freeze(['location', 'account', 'forms_off', 'automation', 'other']);
+export const MAX_REAL_CHECKS = 6;
 export const stepKey = (persona, step) => `${persona}#${step}`;
 
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -72,6 +73,17 @@ function gateTestLimit(raw, people) {
   return { item: { limit, note, evidence: refs }, dropped };
 }
 
+function gateRealCheck(raw, people) {
+  const who = isObject(raw) && isText(raw.who) ? raw.who : '';
+  const ask = isObject(raw) && isText(raw.ask) ? raw.ask : '';
+  const { refs, dropped } = resolveRefs(isObject(raw) ? raw.evidence : null, people, 'evidence');
+  if (who === '' || ask === '' || refs.length === 0) {
+    const why = who === '' ? 'real check without who' : ask === '' ? 'real check without a question' : 'real check without a valid step';
+    return { dropped: [...dropped, drop('real_check', null, null, why)] };
+  }
+  return { item: { who, ask, evidence: refs }, dropped };
+}
+
 function gateSection(raw, key, people, gateOne) {
   if (raw[key] === undefined) return { items: [], dropped: [] };
   if (!Array.isArray(raw[key])) return { items: [], dropped: [drop('judgements', null, null, `${key} is not an array`)] };
@@ -81,21 +93,24 @@ function gateSection(raw, key, people, gateOne) {
 
 export function gateJudgements(raw, people) {
   if (!isObject(raw)) {
-    return { assumptions: [], conflicts: [], test_limits: [], not_checked: [], dropped: [drop('judgements', null, null, 'judgements is not an object')] };
+    return { assumptions: [], conflicts: [], real_checks: [], test_limits: [], not_checked: [], dropped: [drop('judgements', null, null, 'judgements is not an object')] };
   }
   const assumptions = gateSection(raw, 'assumptions', people, gateAssumption);
   const conflicts = gateSection(raw, 'conflicts', people, gateConflict);
+  const realChecks = gateSection(raw, 'real_checks', people, gateRealCheck);
   const testLimits = gateSection(raw, 'test_limits', people, gateTestLimit);
   const notChecked = raw.not_checked;
   const badNotChecked = notChecked !== undefined && !Array.isArray(notChecked);
   return {
     assumptions: assumptions.items,
     conflicts: conflicts.items,
+    real_checks: realChecks.items.slice(0, MAX_REAL_CHECKS),
     test_limits: testLimits.items,
     not_checked: Array.isArray(notChecked) ? notChecked.filter(isText) : [],
     dropped: [
       ...assumptions.dropped,
       ...conflicts.dropped,
+      ...realChecks.dropped,
       ...testLimits.dropped,
       ...(badNotChecked ? [drop('judgements', null, null, 'not_checked is not an array')] : []),
     ],

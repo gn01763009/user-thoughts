@@ -247,6 +247,7 @@ Replies are copied character for character. The script puts the person's own `te
   "assumptions": [{ "claim": "…", "happened": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "conflicts": [{ "question": "…", "sides": [{ "label": "…", "reasons": [{ "persona": "p2-explorer", "step": 4 }] }], "vision_note": "…" }],
   "test_limits": [{ "limit": "location", "note": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
+  "real_checks": [{ "who": "…", "ask": "…", "evidence": [{ "persona": "p2-novice", "step": 4 }] }],
   "not_checked": ["…"]
 }
 ```

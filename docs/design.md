@@ -36,19 +36,21 @@ Agents do not read each other's output. Each person gets a fresh context and the
 | Depth | People | Steps per person | Adds |
 |---|---|---|---|
 | quick | 3 | 8 | nothing |
-| standard | 5 | the persona file's `max_steps` | word-of-mouth chain |
-| full | 8 | the persona file's `max_steps` | word-of-mouth chain and launch-day comments |
+| standard | 6 | the persona file's `max_steps` | word-of-mouth chain |
+| full | 9 | the persona file's `max_steps` | word-of-mouth chain and launch-day comments |
 
-Each person is built on one of nine persona files in `skills/launch/assets/personas/`. Standard and full always include an `explorer`.
+Each person is built on one of ten persona files in `skills/launch/assets/personas/`. Standard and full always include an `explorer`.
 
 ## Run directory
 
 ```
 .user-thoughts/
   last-setup.json         the saved setup for this project
+  decisions.md            what the builder chose to keep as it is
   runs/<YYYYMMDD-HHMM>-<host>/
     run.json
     builder-claims.md     the hidden assumption; never shown to a person, relay or verifier
+    decisions.md          copy of the builder's kept decisions; never shown to a person, relay or verifier
     aliases.json          optional; {"variant-key": "canonical-key"} for feature keys
     <person-id>/          for example p2-on-the-go
       exit-interview.md
@@ -246,6 +248,9 @@ Replies are copied character for character. The script puts the person's own `te
 {
   "assumptions": [{ "claim": "…", "happened": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "conflicts": [{ "question": "…", "sides": [{ "label": "…", "reasons": [{ "persona": "p2-explorer", "step": 4 }] }], "vision_note": "…" }],
+  "test_limits": [{ "limit": "location", "note": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
+  "real_checks": [{ "who": "…", "ask": "…", "evidence": [{ "persona": "p2-novice", "step": 4 }] }],
+  "decided": [{ "decision": "…", "evidence": [{ "persona": "p2-novice", "step": 4 }] }],
   "not_checked": ["…"]
 }
 ```
@@ -322,7 +327,7 @@ There is no overall score. One number would imply a precision this method does n
 
 ## Report (`build-report.mjs`)
 
-Reads `run.json` and `merged.json` (required), `judgements.json` and `telephone.json` (optional). Writes `report.html` and `summary.md` and prints the summary. A person's words go into the report unchanged. `report.html` is one static file with inline CSS, no scripts and no external resources, and every piece of text is escaped. A content security policy in the page allows no script at all. Each person's section opens with who they are, their key moment (one screenshot and the thought behind it), what they would tell a friend and their bad-idea reaction; only the full walk, every step with its thumbnail, sits one tap away in a native `<details>`. It opens with how many people came, how many finished and the builder's vision. Its sections, in order, each appearing only when it has content:
+Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.json` and `decisions.md` (optional). Writes `report.html` and `summary.md` and prints the summary. A person's words go into the report unchanged. `report.html` is one static file with inline CSS, no scripts and no external resources, and every piece of text is escaped. A content security policy in the page allows no script at all. Each person's section opens with who they are, their key moment (one screenshot and the thought behind it), what they would tell a friend and their bad-idea reaction; only the full walk, every step with its thumbnail, sits one tap away in a native `<details>`. It opens with how many people came, how many finished and the builder's vision. Its sections, in order, each appearing only when it has content:
 
 1. A flattery warning, when the bad-idea check's `warn` is true.
 2. Page content aimed at AI agents, recorded and not obeyed.
@@ -333,11 +338,14 @@ Reads `run.json` and `merged.json` (required), `judgements.json` and `telephone.
 7. Launch-day comments, at full depth.
 8. The builder's assumptions against what happened.
 9. Conflicts, with each side's reasons and a note against the vision.
-10. What the run did not check, including people who did not finish and malformed records.
+10. Real checks: who to ask and what to ask for the biggest findings, each with the steps behind it.
+11. What the builder already decided to keep, from `.user-thoughts/decisions.md`.
+12. What the test setup may have caused, with the steps behind it. Those steps stay in the person's story, flagged, and the key moment and top finding pass them over.
+13. What the run did not check, including people who did not finish and malformed records.
 
 The **key moment** is chosen by script: the step with the strongest feeling, in the order stuck, annoyed, confused, delighted, unsure, fine, and on a tie the latest step whose thought has at least 8 characters, else the latest step. The section shows its whole thought. The **overview quote** is what the person would tell a friend, the one line written for a reader who has not seen the site; without last words the row shows the name alone. When a boundary (`unsafe_action`, `login_wall`, `bot_check`) ended the visit, the person's status line names it, so the builder can tell a stop imposed by the test from a choice. The **top finding** in `summary.md` is one line, the finding's person, step route and thought, or that person's line for a friend when the thought is under 8 characters. Both are the person's own words, never reworded.
 
-`summary.md` is 5 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, the top finding and the report path.
+`summary.md` is 6 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, the top finding, how to keep something as it is, and the report path.
 
 Verification never stops a report. If the verifier is blocked or does not return, the run carries on and the reason goes under "not checked".
 
@@ -437,4 +445,4 @@ These look like problems and are correct. Flagging one counts against the run.
 | Injection | Canary endpoint hits, and whether the token leaked | exactly 0, and no leak |
 | Bad-idea check | Share of people saying yes | control above 0.5, a normal run at or below 0.5 |
 
-These targets are this project's own judgement, not an established standard. Quick depth has no target: it is measured and stated. The bad-idea check stays experimental until a control shows it can tell the difference. Regex matches are read by a person, since a regex cannot tell praise from complaint.
+These targets are this project's own judgement, not an established standard. Quick depth has no target: it is measured and stated. The bad-idea check stays experimental until a control shows it can tell the difference. Regex matches need reading, since a regex cannot tell praise from complaint. So far AI agents have done that reading, not people.

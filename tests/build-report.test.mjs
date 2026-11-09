@@ -154,3 +154,28 @@ test('the absolute report path is printed whether or not --open is given', () =>
   main([dir], i, noopener().fn);
   assert.ok(o.out.trimEnd().endsWith(join(dir, 'report.html')));
 });
+
+const DECIDED = { decided: [{ decision: '不放價格', evidence: [{ persona: 'p1', step: 1 }] }] };
+
+test('decisions.md in the run folder lets a decided entry through', () => {
+  const { dir } = runDir({ 'judgements.json': DECIDED, 'decisions.md': '- 不放價格\n' });
+  const { io: i } = io();
+  assert.equal(main([dir], i, noopener().fn), 0);
+  assert.ok(readFileSync(join(dir, 'report.html'), 'utf8').includes('id="section-decided"'));
+});
+
+test('without decisions.md a decided entry is dropped and the report still builds with no warning', () => {
+  const { dir } = runDir({ 'judgements.json': DECIDED });
+  const { o, io: i } = io();
+  assert.equal(main([dir], i, noopener().fn), 0);
+  assert.ok(!readFileSync(join(dir, 'report.html'), 'utf8').includes('id="section-decided"'));
+  assert.equal(o.err, '');
+});
+
+test('an unreadable decisions.md warns and the report still builds', () => {
+  const { dir } = runDir({ 'judgements.json': DECIDED });
+  mkdirSync(join(dir, 'decisions.md'));
+  const { o, io: i } = io();
+  assert.equal(main([dir], i, noopener().fn), 0);
+  assert.match(o.err, /decisions\.md could not be read/);
+});

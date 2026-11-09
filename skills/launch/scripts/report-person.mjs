@@ -24,6 +24,8 @@ function introduction(person, labels) {
     + `${paragraph('situation', e(person.situation))}${paragraph('chosen', chosen)}</header>`;
 }
 
+const testLimitNote = (step, labels) => (step.test_limit ? paragraph('note', e(labels.test_limit_step_note)) : '');
+
 function moment(person, labels) {
   const step = keyMoment(person);
   const none = `<p class="no-moment">${e(labels.no_moment)}</p>`;
@@ -32,7 +34,7 @@ function moment(person, labels) {
   const quote = `<blockquote class="key">${e(labels.quote_open)}${e(step.thought)}${e(labels.quote_close)}</blockquote>`;
   const caption = `<figcaption>${dotted([stepWord, `<span>${feelingText(step.feeling, labels)}</span>`])}</figcaption>`;
   const shot = screenshotLink(step.screenshot, `${person.name} ${stepWord}`, 'shot') || none;
-  return `<figure class="moment">${quote}${shot}${caption}</figure>`;
+  return `<figure class="moment">${quote}${shot}${caption}</figure>${testLimitNote(step, labels)}`;
 }
 
 function badIdeaLine(person, model, labels) {
@@ -54,7 +56,7 @@ function afterwards(person, model, labels) {
 function stepItem(step, person, labels) {
   const caption = dotted([e(step.action), `<span class="route">${routeText(step.route, labels)}</span>`, `<span>${feelingText(step.feeling, labels)}</span>`]);
   const thumb = screenshotLink(step.screenshot, `${person.name} ${fill(labels.step_n, { n: step.step })}`, 'thumb');
-  return `<li value="${e(step.step)}"><div class="walk-step"><div><p>${e(step.thought)}</p><p class="cap">${caption}</p></div>${thumb}</div></li>`;
+  return `<li value="${e(step.step)}"><div class="walk-step"><div><p>${e(step.thought)}</p><p class="cap">${caption}</p></div>${thumb}</div>${testLimitNote(step, labels)}</li>`;
 }
 
 function endLine(person, labels) {

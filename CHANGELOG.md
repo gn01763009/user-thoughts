@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Marks what the test setup may have caused (`test_limits`), so the report separates those steps from real findings.
+- Says who to ask and what to ask for the biggest findings (`real_checks`), as questions about past behaviour.
+- Remembers what the builder decided to keep (`decided`), so the report shows it in its own section and it no longer competes for the top finding.
+- Adds a sixth person for whom the product barely matters (`low-stakes`), so standard depth is now 6 people and full is 9.
+
 ## 1.0.0 (2026-11-09)
 
 A rewrite around one skill and one person-by-person report.
@@ -11,7 +18,7 @@ A rewrite around one skill and one person-by-person report.
 - New mechanisms: one-visit people with an exit interview, the evidence rule, the bad-idea check (experimental), the word-of-mouth chain, launch-day comments (full depth), and re-run after a fix.
 - People have a short introduction (`facts`, `about`, `cares`) and their own `voice`, and their thoughts are what they would say at that moment.
 - Permission rules changed: the `Read` rule and three `node` rules now name the skill's absolute folder, replacing the tilde `Read` rule and the wildcard-folder `node` rule, because a wildcard folder could let a web page steer an agent into running a script it wrote. Agents reach the browser only through `scripts/browser.mjs`, which allows a fixed list of commands. See the README.
-- Evaluation: on the known test site v1 reached 9/11 as scored but at most 8/11 and 7/11 when read by hand, so the 9/11 bar was not met and v1 was accepted with it unmet; an unseen site scored 0.91 and 0.64 against 0.55 for one blind run of a plain agent, and the bad-idea check could not be validated. See [docs/evaluation.md](docs/evaluation.md). The last full run of this release scored 8/11 with one decoy false alarm.
+- Evaluation: on the known test site v1 reached 9/11 as scored but at most 8/11 and 7/11 when read by an AI agent, so the 9/11 bar was not met and v1 was accepted with it unmet; an unseen site scored 0.91 and 0.64 against 0.55 for one blind run of a plain agent, and the bad-idea check could not be validated. See [docs/evaluation.md](docs/evaluation.md). The last full run of this release scored 8/11 with one decoy false alarm.
 
 ## 0.2.1 (2026-11-07)
 

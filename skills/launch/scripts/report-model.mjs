@@ -1,6 +1,6 @@
 // Pure assembly of the report model from merged.json, gated judgements and telephone chains.
 import { labelsFor } from './labels.mjs';
-import { gateJudgements, gateTelephone } from './judgements.mjs';
+import { gateJudgements, gateTelephone, stepKey } from './judgements.mjs';
 import { overviewQuote } from './report-moment.mjs';
 import { prettyRoute } from './report-format.mjs';
 import { cardProfile } from './stories.mjs';
@@ -68,9 +68,9 @@ const charCount = (text) => Array.from(text).length;
 
 // Who, where and what they thought, in the run's language. A mutter is not a finding: under
 // MIN_FINDING_CHARS the person's own line for a friend stands in, and the English record is the last resort.
-function topFinding(merged, people, labels) {
-  const main = asArray(merged.findings).find((f) => f.band === 'main');
-  const source = main?.sources?.[0];
+function topFinding(merged, people, labels, skip) {
+  const sources = asArray(merged.findings).filter((f) => f.band === 'main').flatMap((f) => asArray(f.sources));
+  const source = sources.find((s) => !skip.has(stepKey(s?.persona, s?.step)));
   const person = people.find((p) => p.id === source?.persona);
   const step = person?.steps?.find((s) => s.step === source?.step);
   const thought = isText(step?.thought) ? oneLine(step.thought) : '';
@@ -83,6 +83,17 @@ function topFinding(merged, people, labels) {
   }
   return isText(source?.observed) ? source.observed : null;
 }
+
+// Steps the coordinator marked as caused by the test setup. They stay in the story, flagged.
+function markTestLimits(people, testLimits) {
+  const marked = new Set(testLimits.flatMap((t) => t.evidence.map((r) => stepKey(r.persona, r.step))));
+  return people.map((person) => ({
+    ...person,
+    steps: person.steps.map((s) => (marked.has(stepKey(person.id, s.step)) ? { ...s, test_limit: true } : s)),
+  }));
+}
+
+const skippedSteps = (...groups) => new Set(groups.flat().flatMap((g) => g.evidence.map((r) => stepKey(r.persona, r.step))));
 
 // Page content aimed at AI agents: recorded by a person, never obeyed. Shown so the builder sees it.
 function injectionAttempts(merged, people) {
@@ -120,9 +131,12 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable }, labels = labelsFor(run.language)) {
-  const people = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
-  const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, people);
+export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [] }, labels = labelsFor(run.language)) {
+  const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
+  const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
+  const testLimits = asArray(gatedJudgements?.test_limits);
+  const decided = asArray(gatedJudgements?.decided);
+  const people = markTestLimits(profiled, testLimits);
   const gatedTelephone = telephone === undefined ? null : gateTelephone(telephone, people);
   const chains = asArray(gatedTelephone?.chains);
   const droppedCount = asArray(merged.dropped_voices).length
@@ -143,8 +157,11 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
     comments: buildComments(run, people, chains, labels),
     assumptions: asArray(gatedJudgements?.assumptions),
     conflicts: asArray(gatedJudgements?.conflicts),
+    real_checks: asArray(gatedJudgements?.real_checks),
+    test_limits: testLimits,
+    decided,
     not_checked: notChecked({ judged: gatedJudgements, merged, people, labels, unreadable }),
-    top_finding: topFinding(merged, people, labels),
+    top_finding: topFinding(merged, people, labels, skippedSteps(testLimits, decided)),
     rerun: buildRerun(run, merged, previous, labels),
     dropped_count: droppedCount,
   };

@@ -71,14 +71,14 @@ Five setup steps, all of which you can answer in your first message:
 | Depth | People | Adds | Time | Cost (USD) |
 |---|---|---|---|---|
 | quick | 3, about 8 steps each | nothing | 250 s, one run | 1.48, one run |
-| standard | 5 | word-of-mouth chain | 301 to 433 s (5 to 7 minutes), 13 runs | 2.10 to 2.75, 13 runs |
-| full | 8 | word-of-mouth chain and launch-day comments | not measured | not measured |
+| standard | 6 | word-of-mouth chain | 372 to 422 s (6 to 7 minutes), 3 runs | 2.96 to 3.42, 3 runs |
+| full | 9 | word-of-mouth chain and launch-day comments | not measured | not measured |
 
-Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard range mixes skill versions across its 13 runs. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
+Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard figures come from 3 runs of the current skill (the clean site once, the known site twice); the earlier 5-person standard runs took 301 to 433 s and cost 2.10 to 2.75 USD. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
 
 ## What the report looks like
 
-The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 5 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
+The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
 
 <p>
   <img src="docs/assets/report-overview.png" alt="The top of a report: the headline, then one row per person with what they would tell a friend, who they are, why they came and how their visit ended" width="49%">
@@ -89,9 +89,11 @@ These images are from a run on Tallywren, a fictional product in this repository
 
 The report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
 
+After the people's stories, the report lists who to ask and what to ask for the biggest findings, what you already decided to keep, and what may only be an effect of the test setup.
+
 ## How it works
 
-- **One-visit people.** Each person gets a concrete situation and their own browser. They start as a fresh agent and are told to ignore project notes, so they do not get your code or your vision. A project's `CLAUDE.md` may still be visible to them, so don't put your vision there. They do the task with real clicks and leave when their patience runs out, which counts as a result. Afterwards they answer an exit interview: did I get it done, would I come back, and how would I describe this to a friend. They are built from nine persona files with written limits. Standard and full always include an explorer, who opens every menu item.
+- **One-visit people.** Each person gets a concrete situation and their own browser. They start as a fresh agent and are told to ignore project notes, so they do not get your code or your vision. A project's `CLAUDE.md` may still be visible to them, so don't put your vision there. They do the task with real clicks and leave when their patience runs out, which counts as a result. Afterwards they answer an exit interview: did I get it done, would I come back, and how would I describe this to a friend. They are built from ten persona files with written limits. Standard and full always include an explorer, who opens every menu item.
 - **Evidence rule.** Apart from the answer to the bad-idea question, which is about a plan and not a step, a voice counts only if it traces to a step the person really took. A script drops a thought with no screenshot, last words that cite no real step, a finding from a step the person did not take, and any judgement that points at a step nobody took. Praise and criticism follow the same rule. Severity is computed from what happened to people, not from a model's opinion, and a separate agent re-checks serious items knowing only where to look.
 - **Bad-idea check (experimental).** In the exit interview, each person hears about a planned feature that works against what they came for, phrased as a real plan. If more than half say yes, the report warns that this batch may be flattering you. It is experimental because it [could not be validated](#results), and the report labels it the same way.
 - **Word-of-mouth chain.** Standard and full. What each person would tell a friend goes to a fresh agent, who passes it to another fresh agent who has never seen the product. Each one receives only the sentence before it. The last line, what kind of site this seems to be and who it is for, is set beside your vision.
@@ -100,21 +102,21 @@ The report goes person by person. It opens with an overview, one row per person 
 
 ## Results
 
-Everything here ran on Sonnet, headless, on local test sites. Each test ran once or twice, so none of this is a rate. "As scored" is the output of a regular-expression scorer, and "read by hand" is a person checking each match. The full record, including earlier versions, is in [docs/evaluation.md](docs/evaluation.md).
+Everything here ran on Sonnet, headless, on local test sites. Each test ran once or twice, so none of this is a rate. "As scored" is the output of a regular-expression scorer, and "read by an agent" is a separate AI agent checking each match. No person has checked these matches. The full record, including earlier versions, is in [docs/evaluation.md](docs/evaluation.md).
 
 | Test | Result | Bar | Verdict |
 |---|---|---|---|
-| Known test site, 11 planted problems and 3 decoys, two final standard runs | As scored: 9/11 and 9/11, with 1 decoy wrongly flagged in one run, so it fails on the decoy. Read by hand: at most 8/11 and 7/11, so it fails on recall | At least 9/11 in both runs, 0 decoys | **Not met** |
+| Known test site, 11 planted problems and 3 decoys, two final standard runs | As scored: 9/11 and 9/11, with 1 decoy wrongly flagged in one run, so it fails on the decoy. Read by an agent: at most 8/11 and 7/11, so it fails on recall | At least 9/11 in both runs, 0 decoys | **Not met** |
 | Unseen test site, 11 planted problems, two standard runs | 0.91 and 0.64, mean 0.77 | Mean at least 0.55, one blind run of a plain agent with no skill | Met, on very little data |
 | Clean site, the known site with its problems removed | 0 false alarms | At most 2 | Met |
 | Hostile site, pages with instructions aimed at AI agents | Canary 0, token not leaked | Canary 0, no leak | Met |
 | Bad-idea check | People said yes 0 of 5, and a control told to be agreeable also said yes 0 of 5 | Control mostly yes, people mostly no | **Could not be validated** |
 
-- **The recall bar was not met, and v1 was accepted anyway.** The builder reviewed these numbers and accepted v1 with the 9/11 bar unmet. Read by hand it was not one match away from passing.
+- **The recall bar was not met, and v1 was accepted anyway.** The builder reviewed these numbers and accepted v1 with the 9/11 bar unmet. Read by an agent it was not one match away from passing.
 - **The known site is not a clean measure.** The skill was tuned on it. A plain agent with no skill scored 8 of 11 on the same site, so this README does not claim the skill beats one there.
 - **The unseen site is the fairer test, and it is noisy.** The same skill text scored 0.91 and 0.64. That is two runs and one blind baseline, on Sonnet only.
 - **The bad-idea check tells you nothing yet.** The agreeable control did not say yes either, so the test could not tell a flattering batch from an honest one.
-- **Which version was tested.** The known and unseen runs were not repeated after the last change to the skill, a rule against submitting forms that would place an order. The clean and hostile runs came before the report redesign and the later text changes. Only one standard run on the planted site (8/11 recall, 1 decoy) ran on the skill as it now stands; the clean, hostile and unseen sites were not rerun on it.
+- **Which version was tested.** The clean site was run once and the known site twice on the skill as it now stands (clean: 1 false alarm, which on an agent's reading was a missed tap and not a fault of the site; known: 8/11 recall by script in both runs, 7/11 read by an agent in both, so the 9/11 bar was missed either way). The unseen and hostile sites were not rerun on it; their results come from earlier versions. The results table above comes from earlier versions, so its clean-site row shows 0 false alarms.
 - **Quick depth** scored 7/11 with no decoys, in one run on the known site, before the later changes.
 - **`--rerun`** has run end to end once: quick depth, one person, on localhost.
 

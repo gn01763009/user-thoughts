@@ -127,8 +127,8 @@ Neither goes into any brief, and you never paraphrase them to a person, a relay 
 | Depth | People | Steps per person | Adds |
 |---|---|---|---|
 | quick | 3 | 8 | nothing |
-| standard | 5 | the persona file's `max_steps` | word of mouth |
-| full | 8 | the persona file's `max_steps` | word of mouth and launch comments |
+| standard | 6 | the persona file's `max_steps` | word of mouth |
+| full | 9 | the persona file's `max_steps` | word of mouth and launch comments |
 
 Settle the depth before recommending anyone: use `--depth` or the depth the request names, otherwise ask with this
 table and suggest standard. You may ask in the same message as Steps 3 and 4.
@@ -141,8 +141,8 @@ file in `assets/personas/`. Defaults:
 | Depth | Bases |
 |---|---|
 | quick | `goal-first-timer`, `on-the-go`, `committed-user` |
-| standard | the quick three, plus `novice`, `explorer` |
-| full | the standard five, plus `returning-regular`, `assistive-tech`, `reading-difference` |
+| standard | the quick three, plus `novice`, `explorer`, `low-stakes` |
+| full | the standard six, plus `returning-regular`, `assistive-tech`, `reading-difference` |
 
 Write each card for this product. The id is `p<n>-<base>`, for example `p2-on-the-go`; it is also the person's folder
 name and the `persona` value in their records. The name is in the run's language. The situation is a concrete circumstance and behaviour: where they are, what device, how much time, what is
@@ -184,6 +184,7 @@ Formats for every file here are in `${CLAUDE_SKILL_DIR}/references/briefs.md`.
 5. Write `<run dir>/<id>/exit-interview.md` for each person from `assets/exit-interview.md`, as
    `references/briefs.md` describes; at full depth it adds the launch-comment question and how to record it. This
    also creates the person's folder. Never put either question in a brief: people learn of them only after the walk.
+6. If `.user-thoughts/decisions.md` exists, copy it to `<run dir>/decisions.md` (a failed Read means there is none). Like the vision, it never goes into a brief.
 
 The `apple_pitch` is a planned feature that directly works against what this person came for: they would have to pay,
 sign up or wait first before doing what they came to do. Make it specific to their card and phrase it like a real plan
@@ -251,6 +252,9 @@ Write `<run dir>/judgements.json` in the format in `references/briefs.md`, citin
 - **Assumptions:** check every line of `builder-claims.md` against what actually happened.
 - **Conflicts:** only where at least two sides each cite their own steps. The `vision_note` weighs the sides against
   the builder's vision, not by counting heads.
+- **Test limits:** a step goes in `test_limits` only when you can name what in the test setup caused it and a real visitor in that person's situation would not have hit it (`references/briefs.md`). A confusing page is never a test limit. The finding and the person's story stay as they are.
+- **Decided:** when a person ran into something a line of `<run dir>/decisions.md` plainly settles, add it to `decided`, with that line copied word for word (`references/briefs.md`).
+- **Real checks:** go down `merged.json` `findings` in order, which is already most severe first, keeping the main and tentative bands, leaving out test limits, decided items and anything not reproduced, and write a `real_checks` entry for up to 6 of them (`references/briefs.md`).
 - **Not checked:** say honestly what this run did not cover: pages or tasks nobody reached, people who were blocked
   or incomplete, forms left unsent on production, what the chosen depth leaves out, and that demand cannot be judged
   by simulated people.
@@ -267,26 +271,18 @@ to the builder unchanged, with nothing added. The report itself lists page conte
 people and malformed records. Do not write `report.html`, `summary.md` or any other report text yourself. Close the
 browser sessions as `references/browser.md` describes.
 
+**Decisions.** If the builder says afterwards that something should stay as it is, add their words, unchanged, as one `- ` line to `.user-thoughts/decisions.md` with the file tools.
+
 ## Rerun one person
 
-`--rerun <person-id>` walks one person again after the builder has changed the product.
-
-1. Do Step 1. Read `.user-thoughts/last-setup.json`. If it is missing or has no card with that id, stop and list the
-   ids it has. If its `url` is not this URL, stop and say which URL it was saved for.
-2. Start a new run folder, named as Step 1 says. Write `run.json` with the saved `url`, `depth`, `language`, `vision` and `understanding`,
-   only this person in `personas` and `people` (the card as saved, with any `overlay`; an older card gets a `voice`, as briefs.md says), `rerun_of` set to `runs[<id>]` from
-   `last-setup.json`, and the other fields as in Step 7. Copy `builder-claims.md` from that earlier run if it exists.
-3. Write the exit interview with the same pitch, then do Steps 8, 9, 11 and 12 for this person in a new session.
-4. The person starts from the beginning with no memory. Never pass the earlier trace, outcome or findings into the
-   brief, so a change made before the point where they gave up is still walked through.
-5. Skip word of mouth. Afterwards set `runs[<id>]` in `last-setup.json` to the new folder. The report shows both
-   timelines side by side.
+`--rerun <person-id>` walks one person again after the builder has changed the product. Read `references/rerun.md` and follow it.
 
 ## Common mistakes
 
 | Mistake | What to do instead |
 |---|---|
 | Putting the vision or the assumption into a brief, or hinting at either | Keep both in the run files, out of every brief. |
+| Marking a confusing page as a test limit | Only what the test setup caused and a real visitor would not hit. |
 | An identity label in place of a situation, or as the source of a voice | Describe where they are, what they have and what is at stake. Voices come from that too. |
 | Naming a feature in an arrival | State the need. The site has to show it can meet it. |
 | Writing a verdict into a card, such as "will love it" | Let the situation lead wherever it leads. |

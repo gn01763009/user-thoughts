@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { parseFrontmatter, lintRepo, main, checkBriefLeak, referencedPaths } from '../scripts/lint-skill.mjs';
+import { parseFrontmatter, lintRepo, main, checkBriefLeak, referencedPaths, checkPersonaFile } from '../scripts/lint-skill.mjs';
 
 const SCRIPT_PATH = fileURLToPath(new URL('../scripts/lint-skill.mjs', import.meta.url));
 const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -316,6 +316,10 @@ describe('checkBriefLeak', () => {
     assert.equal(checkBriefLeak('## Person brief\n```text\nVision: {{vision}}\n```').length, 1);
   });
 
+  test('checkBriefLeak flags a person brief that names decisions.md', () => {
+    assert.equal(checkBriefLeak(personBrief(['Site: {{url}}', 'Notes: decisions.md'])).length, 1);
+  });
+
   test('flags every leak word inside the person brief block, in any case', () => {
     for (const line of ['Goal: {{願景}}', 'Claims: builder-claims.md', 'ASSUMPTION: users love it', '假設：大家都喜歡']) {
       const errors = checkBriefLeak(personBrief(['Site: {{url}}', line]));
@@ -449,4 +453,17 @@ describe('main', () => {
     assert.equal(run.status, 0, run.stderr);
     assert.match(run.stdout, /lint ok/);
   });
+});
+
+test('low-stakes is a short walk and is in the standard bases', () => {
+  const read = (rel) => readFileSync(new URL(`../skills/launch/${rel}`, import.meta.url), 'utf8');
+  const persona = read('assets/personas/low-stakes.md');
+  assert.deepEqual(checkPersonaFile('low-stakes.md', persona), []);
+  assert.match(persona, /^max_steps: 5$/m);
+  assert.match(persona, /^no_progress_limit: 1$/m);
+  const skill = read('SKILL.md');
+  assert.match(skill, /\| standard \| 6 \|/);
+  assert.match(skill, /\| full \| 9 \|/);
+  assert.match(skill, /\| standard \| the quick three, plus `novice`, `explorer`, `low-stakes` \|/);
+  assert.match(skill, /\| full \| the standard six, plus /);
 });

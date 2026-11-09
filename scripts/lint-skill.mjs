@@ -30,7 +30,7 @@ const BRIEFS_FILE = 'references/briefs.md';
 const PERSON_BRIEF_HEADING = /^##\s+Person brief\s*$/i;
 const SECTION_HEADING = /^#{1,2}\s/;
 const CODE_FENCE = /^\s*(```|~~~)/;
-const BRIEF_LEAK = /vision|願景|builder-claims|assumption|假設/i;
+const BRIEF_LEAK = /vision|願景|builder-claims|assumption|假設|decisions\.md/i;
 
 // ---------- frontmatter ----------
 

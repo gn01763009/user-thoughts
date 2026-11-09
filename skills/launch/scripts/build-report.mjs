@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 // Usage: node build-report.mjs <run dir> [--open]
-// Reads run.json and merged.json (required), judgements.json and telephone.json (optional; warns if unreadable),
+// Reads run.json and merged.json (required), judgements.json, telephone.json and decisions.md (optional; warns if unreadable),
 // writes report.html and summary.md, prints the summary.
 import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { isMainModule } from './is-main.mjs';
+import { parseDecisions } from './judgements.mjs';
 import { buildReportModel } from './report-model.mjs';
 import { labelsFor } from './labels.mjs';
 import { renderReport } from './render-html.mjs';
@@ -23,11 +24,11 @@ function readOptional(path) {
 }
 
 // A missing file is normal. A file that is there but cannot be read is reported, and the report is still built.
-function readCoordinatorFile(dir, file, io) {
+function readCoordinatorFile(dir, file, io, parse = JSON.parse) {
   const path = join(dir, file);
   if (!existsSync(path)) return { value: undefined, unreadable: [] };
   try {
-    return { value: readJson(path), unreadable: [] };
+    return { value: parse(readFileSync(path, 'utf8')), unreadable: [] };
   } catch (err) {
     io.err.write(`Warning: ${file} could not be read (${err.message}). The report was built without it.\n`);
     return { value: undefined, unreadable: [file] };
@@ -97,13 +98,15 @@ export function main(argv, io = { out: process.stdout, err: process.stderr }, op
   }
   const judgements = readCoordinatorFile(dir, 'judgements.json', io);
   const telephone = readCoordinatorFile(dir, 'telephone.json', io);
+  const decisions = readCoordinatorFile(dir, 'decisions.md', io, parseDecisions);
   const model = buildReportModel({
     run: run.value,
     merged: merged.value,
     judgements: judgements.value,
     telephone: telephone.value,
     previous: readPrevious(dir, run.value),
-    unreadable: [...judgements.unreadable, ...telephone.unreadable],
+    decisions: decisions.value ?? [],
+    unreadable: [...judgements.unreadable, ...telephone.unreadable, ...decisions.unreadable],
   });
   const labels = labelsFor(run.value.language);
   const summary = renderSummary(model, labels);

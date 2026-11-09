@@ -93,7 +93,7 @@ function markTestLimits(people, testLimits) {
   }));
 }
 
-const skippedSteps = (testLimits) => new Set(testLimits.flatMap((t) => t.evidence.map((r) => stepKey(r.persona, r.step))));
+const skippedSteps = (...groups) => new Set(groups.flat().flatMap((g) => g.evidence.map((r) => stepKey(r.persona, r.step))));
 
 // Page content aimed at AI agents: recorded by a person, never obeyed. Shown so the builder sees it.
 function injectionAttempts(merged, people) {
@@ -131,10 +131,11 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable }, labels = labelsFor(run.language)) {
+export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [] }, labels = labelsFor(run.language)) {
   const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
-  const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled);
+  const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
   const testLimits = asArray(gatedJudgements?.test_limits);
+  const decided = asArray(gatedJudgements?.decided);
   const people = markTestLimits(profiled, testLimits);
   const gatedTelephone = telephone === undefined ? null : gateTelephone(telephone, people);
   const chains = asArray(gatedTelephone?.chains);
@@ -158,8 +159,9 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
     conflicts: asArray(gatedJudgements?.conflicts),
     real_checks: asArray(gatedJudgements?.real_checks),
     test_limits: testLimits,
+    decided,
     not_checked: notChecked({ judged: gatedJudgements, merged, people, labels, unreadable }),
-    top_finding: topFinding(merged, people, labels, skippedSteps(testLimits)),
+    top_finding: topFinding(merged, people, labels, skippedSteps(testLimits, decided)),
     rerun: buildRerun(run, merged, previous, labels),
     dropped_count: droppedCount,
   };

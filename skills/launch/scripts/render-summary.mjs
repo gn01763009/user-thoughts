@@ -1,4 +1,4 @@
-// summary.md: 5 to 8 plain lines. No score. Pure function.
+// summary.md: 6 to 8 plain lines. No score. Pure function.
 import { hasStarted, prettyRoute } from './report-format.mjs';
 
 const MAX_CHARS = 120;
@@ -57,6 +57,7 @@ export function renderSummary(model, labels) {
     wordOfMouthLine(model, labels),
     ...findingLine(model, labels),
     ...injectionLine(model, labels),
+    labels.decide_hint,
     `${labels.report_link}${labels.sep_colon}${REPORT_PATH}`,
   ];
   return `${lines.map(oneLine).join('\n')}\n`;

@@ -316,6 +316,10 @@ describe('checkBriefLeak', () => {
     assert.equal(checkBriefLeak('## Person brief\n```text\nVision: {{vision}}\n```').length, 1);
   });
 
+  test('checkBriefLeak flags a person brief that names decisions.md', () => {
+    assert.equal(checkBriefLeak(personBrief(['Site: {{url}}', 'Notes: decisions.md'])).length, 1);
+  });
+
   test('flags every leak word inside the person brief block, in any case', () => {
     for (const line of ['Goal: {{願景}}', 'Claims: builder-claims.md', 'ASSUMPTION: users love it', '假設：大家都喜歡']) {
       const errors = checkBriefLeak(personBrief(['Site: {{url}}', line]));

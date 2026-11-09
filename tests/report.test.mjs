@@ -183,7 +183,7 @@ test('summary.md uses the placeholder without chains, omits the finding line, an
   const labels = labelsFor('zh-TW');
   const bare = build({}, { findings: [] }, { telephone: { chains: [] } });
   const lines = renderSummary(bare, labels).trimEnd().split('\n');
-  assert.equal(lines.length, 5);
+  assert.equal(lines.length, 6);
   assert.ok(lines.some((l) => l.includes(labels.placeholder)));
   const long = '字'.repeat(130);
   const model = build({}, { findings: [{ band: 'main', sources: [{ observed: long }] }] });
@@ -534,4 +534,27 @@ test('real checks show who and what to ask and escape both', () => {
   assert.ok(html.includes('問什麼'));
   assert.ok(html.includes('上次怎麼做'));
   assert.ok(html.includes('&lt;i&gt;w'));
+});
+
+test('a decided item is shown with who ran into it, escaped, and is not the top finding', () => {
+  const findings = [
+    { band: 'main', sources: [{ persona: 'p2', step: 2, observed: 'x' }] },
+    { band: 'main', sources: [{ persona: 'p1', step: 1, observed: 'y' }] },
+  ];
+  const model = buildReportModel({
+    run: runOf(), merged: mergedOf({ findings }), telephone: { chains: [] }, previous: null, decisions: ['<i>d</i>'],
+    judgements: { decided: [{ decision: '<i>d</i>', evidence: [{ persona: 'p2', step: 2 }] }] },
+  });
+  assert.match(model.top_finding, /小美/);
+  const html = renderReport(model, labelsFor('zh-TW'));
+  assert.ok(html.includes('id="section-decided"'));
+  assert.ok(html.includes('&lt;i&gt;d'));
+  assert.ok(!html.includes('<i>d'));
+});
+
+test('summary.md tells how to keep something, and the longest one stays within 8 lines', () => {
+  const lines = renderSummary(build({}, { injection_attempts: [{ persona: 'p1', route: '/', quote: 'q' }] }), labelsFor('zh-TW')).trimEnd().split('\n');
+  assert.ok(lines.length <= 8);
+  assert.match(lines.at(-2), /\.user-thoughts\/decisions\.md/);
+  assert.match(lines.at(-1), /report\.html/);
 });

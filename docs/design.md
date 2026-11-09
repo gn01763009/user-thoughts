@@ -46,9 +46,11 @@ Each person is built on one of nine persona files in `skills/launch/assets/perso
 ```
 .user-thoughts/
   last-setup.json         the saved setup for this project
+  decisions.md            what the builder chose to keep as it is
   runs/<YYYYMMDD-HHMM>-<host>/
     run.json
     builder-claims.md     the hidden assumption; never shown to a person, relay or verifier
+    decisions.md          copy of the builder's kept decisions; never shown to a person, relay or verifier
     aliases.json          optional; {"variant-key": "canonical-key"} for feature keys
     <person-id>/          for example p2-on-the-go
       exit-interview.md
@@ -248,6 +250,7 @@ Replies are copied character for character. The script puts the person's own `te
   "conflicts": [{ "question": "…", "sides": [{ "label": "…", "reasons": [{ "persona": "p2-explorer", "step": 4 }] }], "vision_note": "…" }],
   "test_limits": [{ "limit": "location", "note": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "real_checks": [{ "who": "…", "ask": "…", "evidence": [{ "persona": "p2-novice", "step": 4 }] }],
+  "decided": [{ "decision": "…", "evidence": [{ "persona": "p2-novice", "step": 4 }] }],
   "not_checked": ["…"]
 }
 ```
@@ -340,7 +343,7 @@ Reads `run.json` and `merged.json` (required), `judgements.json` and `telephone.
 
 The **key moment** is chosen by script: the step with the strongest feeling, in the order stuck, annoyed, confused, delighted, unsure, fine, and on a tie the latest step whose thought has at least 8 characters, else the latest step. The section shows its whole thought. The **overview quote** is what the person would tell a friend, the one line written for a reader who has not seen the site; without last words the row shows the name alone. When a boundary (`unsafe_action`, `login_wall`, `bot_check`) ended the visit, the person's status line names it, so the builder can tell a stop imposed by the test from a choice. The **top finding** in `summary.md` is one line, the finding's person, step route and thought, or that person's line for a friend when the thought is under 8 characters. Both are the person's own words, never reworded.
 
-`summary.md` is 5 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, the top finding and the report path.
+`summary.md` is 6 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, the top finding, how to keep something as it is, and the report path.
 
 Verification never stops a report. If the verifier is blocked or does not return, the run carries on and the reason goes under "not checked".
 

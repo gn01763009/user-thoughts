@@ -6,6 +6,14 @@ export const TEST_LIMITS = Object.freeze(['location', 'account', 'forms_off', 'a
 export const MAX_REAL_CHECKS = 6;
 export const stepKey = (persona, step) => `${persona}#${step}`;
 
+const BULLET_LINE = /^\s*-\s+(.+?)\s*$/;
+
+// The bullet lines of decisions.md, without their leading "- ". Anything else is ignored.
+export function parseDecisions(text) {
+  if (typeof text !== 'string') return [];
+  return text.split(/\r?\n/).map((line) => BULLET_LINE.exec(line)?.[1]).filter((line) => line !== undefined);
+}
+
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const isText = (v) => typeof v === 'string' && v.trim() !== '';
 const drop = (kind, persona, step, reason) => ({ persona, kind, step, reason });
@@ -84,21 +92,32 @@ function gateRealCheck(raw, people) {
   return { item: { who, ask, evidence: refs }, dropped };
 }
 
-function gateSection(raw, key, people, gateOne) {
+function gateDecided(raw, people, decisions) {
+  const decision = isObject(raw) && typeof raw.decision === 'string' ? raw.decision : '';
+  const { refs, dropped } = resolveRefs(isObject(raw) ? raw.evidence : null, people, 'evidence');
+  if (!decisions.includes(decision) || refs.length === 0) {
+    const why = !decisions.includes(decision) ? 'decided text is not a line of decisions.md' : 'decided without a valid step';
+    return { dropped: [...dropped, drop('decided', null, null, why)] };
+  }
+  return { item: { decision, evidence: refs }, dropped };
+}
+
+function gateSection(raw, key, people, gateOne, context) {
   if (raw[key] === undefined) return { items: [], dropped: [] };
   if (!Array.isArray(raw[key])) return { items: [], dropped: [drop('judgements', null, null, `${key} is not an array`)] };
-  const results = raw[key].map((entry) => gateOne(entry, people));
+  const results = raw[key].map((entry) => gateOne(entry, people, context));
   return { items: results.filter((r) => r.item).map((r) => r.item), dropped: results.flatMap((r) => r.dropped) };
 }
 
-export function gateJudgements(raw, people) {
+export function gateJudgements(raw, people, decisions = []) {
   if (!isObject(raw)) {
-    return { assumptions: [], conflicts: [], real_checks: [], test_limits: [], not_checked: [], dropped: [drop('judgements', null, null, 'judgements is not an object')] };
+    return { assumptions: [], conflicts: [], real_checks: [], test_limits: [], decided: [], not_checked: [], dropped: [drop('judgements', null, null, 'judgements is not an object')] };
   }
   const assumptions = gateSection(raw, 'assumptions', people, gateAssumption);
   const conflicts = gateSection(raw, 'conflicts', people, gateConflict);
   const realChecks = gateSection(raw, 'real_checks', people, gateRealCheck);
   const testLimits = gateSection(raw, 'test_limits', people, gateTestLimit);
+  const decided = gateSection(raw, 'decided', people, gateDecided, decisions);
   const notChecked = raw.not_checked;
   const badNotChecked = notChecked !== undefined && !Array.isArray(notChecked);
   return {
@@ -106,12 +125,14 @@ export function gateJudgements(raw, people) {
     conflicts: conflicts.items,
     real_checks: realChecks.items.slice(0, MAX_REAL_CHECKS),
     test_limits: testLimits.items,
+    decided: decided.items,
     not_checked: Array.isArray(notChecked) ? notChecked.filter(isText) : [],
     dropped: [
       ...assumptions.dropped,
       ...conflicts.dropped,
       ...realChecks.dropped,
       ...testLimits.dropped,
+      ...decided.dropped,
       ...(badNotChecked ? [drop('judgements', null, null, 'not_checked is not an array')] : []),
     ],
   };

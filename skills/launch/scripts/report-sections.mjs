@@ -95,6 +95,15 @@ export function realChecksSection(model, labels) {
   return section('real-checks', labels.real_checks_title, model.real_checks.map((c) => realCheckBlock(c, labels)).join(''));
 }
 
+function decidedBlock(d, labels) {
+  return `<div class="claim"><div><p class="claim-text">${e(d.decision)}</p></div><div>${refList(d.evidence, labels)}</div></div>`;
+}
+
+export function decidedSection(model, labels) {
+  if (model.decided.length === 0) return '';
+  return section('decided', labels.decided_title, model.decided.map((d) => decidedBlock(d, labels)).join(''));
+}
+
 function testLimitBlock(t, labels) {
   return `<div class="claim"><div><p class="eyebrow">${e(labels[`test_limit_${t.limit}`])}</p><p class="claim-text">${e(t.note)}</p></div>`
     + `<div>${refList(t.evidence, labels)}</div></div>`;

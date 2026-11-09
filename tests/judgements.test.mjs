@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { gateJudgements, gateTelephone } from '../skills/launch/scripts/judgements.mjs';
+import { gateJudgements, gateTelephone, parseDecisions } from '../skills/launch/scripts/judgements.mjs';
 
 const mkStep = (n) => ({ step: n, route: '/', action: 'a', thought: `thought ${n}`, feeling: 'fine', screenshot: `p1/screens/0${n}.png`, progress: true });
 const p1 = {
@@ -70,7 +70,7 @@ test('not_checked keeps only non-empty strings', () => {
 test('non-object input yields empty sections and one dropped entry', () => {
   for (const bad of ['x', null, undefined, [], 5]) {
     const out = gateJudgements(bad, people);
-    assert.deepEqual(out, { assumptions: [], conflicts: [], real_checks: [], test_limits: [], not_checked: [],
+    assert.deepEqual(out, { assumptions: [], conflicts: [], real_checks: [], test_limits: [], decided: [], not_checked: [],
       dropped: [{ persona: null, kind: 'judgements', step: null, reason: out.dropped[0].reason }] });
   }
   assert.equal(gateTelephone('x', people).dropped[0].kind, 'telephone');
@@ -155,4 +155,19 @@ test('a real check without who, ask or a valid step is dropped', () => {
 test('at most six real checks are kept', () => {
   const entries = Array.from({ length: 8 }, (_, i) => ({ who: `w${i}`, ask: 'a', evidence: [ref('p1', 1)] }));
   assert.deepEqual(gateJudgements({ real_checks: entries }, people).real_checks.map((c) => c.who), ['w0', 'w1', 'w2', 'w3', 'w4', 'w5']);
+});
+
+test('parseDecisions reads bullet lines only and copes with CRLF and blanks', () => {
+  assert.deepEqual(parseDecisions('# 決定\r\n\r\n- 首頁不放價格\r\n-  要先看案例 \r\n不是項目\n- \n'), ['首頁不放價格', '要先看案例']);
+  assert.deepEqual(parseDecisions(undefined), []);
+});
+
+test('a decided entry must be a line of decisions.md, word for word, and cite a real step', () => {
+  const out = gateJudgements({ decided: [
+    { decision: '首頁不放價格', evidence: [ref('p1', 1)] },
+    { decision: '換個說法', evidence: [ref('p1', 1)] },
+    { decision: '首頁不放價格', evidence: [ref('p1', 9)] },
+  ] }, people, ['首頁不放價格']);
+  assert.deepEqual(out.decided.map((d) => d.decision), ['首頁不放價格']);
+  assert.equal(out.dropped.filter((d) => d.kind === 'decided').length, 2);
 });

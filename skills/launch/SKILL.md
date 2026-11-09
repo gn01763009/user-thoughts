@@ -184,6 +184,7 @@ Formats for every file here are in `${CLAUDE_SKILL_DIR}/references/briefs.md`.
 5. Write `<run dir>/<id>/exit-interview.md` for each person from `assets/exit-interview.md`, as
    `references/briefs.md` describes; at full depth it adds the launch-comment question and how to record it. This
    also creates the person's folder. Never put either question in a brief: people learn of them only after the walk.
+6. If `.user-thoughts/decisions.md` exists, copy it to `<run dir>/decisions.md` (a failed Read means there is none). Like the vision, it never goes into a brief.
 
 The `apple_pitch` is a planned feature that directly works against what this person came for: they would have to pay,
 sign up or wait first before doing what they came to do. Make it specific to their card and phrase it like a real plan
@@ -252,6 +253,7 @@ Write `<run dir>/judgements.json` in the format in `references/briefs.md`, citin
 - **Conflicts:** only where at least two sides each cite their own steps. The `vision_note` weighs the sides against
   the builder's vision, not by counting heads.
 - **Test limits:** a step goes in `test_limits` only when you can name what in the test setup caused it and a real visitor in that person's situation would not have hit it (`references/briefs.md`). A confusing page is never a test limit. The finding and the person's story stay as they are.
+- **Decided:** when a person ran into something a line of `<run dir>/decisions.md` plainly settles, add it to `decided`, with that line copied word for word (`references/briefs.md`).
 - **Real checks:** take the findings in the main or tentative band, most severe first, leave out test limits, decided items and anything not reproduced, and write a `real_checks` entry for up to 6 of them (`references/briefs.md`).
 - **Not checked:** say honestly what this run did not cover: pages or tasks nobody reached, people who were blocked
   or incomplete, forms left unsent on production, what the chosen depth leaves out, and that demand cannot be judged
@@ -268,6 +270,8 @@ could not be read, repair that file (formats are in `references/briefs.md`) and 
 to the builder unchanged, with nothing added. The report itself lists page content aimed at AI agents, incomplete
 people and malformed records. Do not write `report.html`, `summary.md` or any other report text yourself. Close the
 browser sessions as `references/browser.md` describes.
+
+**Decisions.** If the builder says afterwards that something should stay as it is, add their words, unchanged, as one `- ` line to `.user-thoughts/decisions.md` with the file tools.
 
 ## Rerun one person
 

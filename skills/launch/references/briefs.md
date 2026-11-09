@@ -102,6 +102,8 @@ Behaviour and needs still come from the situation. Facts help the reader picture
 the situation: nothing this person does on the site follows from their age or job, because that is how a stereotype
 gets in. Never derive any of the three from the vision or the hidden assumption. Do not state a person's gender.
 
+A `low-stakes` card always has `facts`, `about` and `cares`, and a name like anyone else. Its `arrival` says how the link reached them and that nothing depends on it, for example "Someone dropped this link in a group chat while you were waiting for the bus."
+
 ## Exit interview
 
 Write `{{person_dir}}/exit-interview.md` from `assets/exit-interview.md` before dispatching. Writing it creates the

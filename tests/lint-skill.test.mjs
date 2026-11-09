@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { parseFrontmatter, lintRepo, main, checkBriefLeak, referencedPaths } from '../scripts/lint-skill.mjs';
+import { parseFrontmatter, lintRepo, main, checkBriefLeak, referencedPaths, checkPersonaFile } from '../scripts/lint-skill.mjs';
 
 const SCRIPT_PATH = fileURLToPath(new URL('../scripts/lint-skill.mjs', import.meta.url));
 const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -453,4 +453,17 @@ describe('main', () => {
     assert.equal(run.status, 0, run.stderr);
     assert.match(run.stdout, /lint ok/);
   });
+});
+
+test('low-stakes is a short walk and is in the standard bases', () => {
+  const read = (rel) => readFileSync(new URL(`../skills/launch/${rel}`, import.meta.url), 'utf8');
+  const persona = read('assets/personas/low-stakes.md');
+  assert.deepEqual(checkPersonaFile('low-stakes.md', persona), []);
+  assert.match(persona, /^max_steps: 5$/m);
+  assert.match(persona, /^no_progress_limit: 1$/m);
+  const skill = read('SKILL.md');
+  assert.match(skill, /\| standard \| 6 \|/);
+  assert.match(skill, /\| full \| 9 \|/);
+  assert.match(skill, /\| standard \| the quick three, plus `novice`, `explorer`, `low-stakes` \|/);
+  assert.match(skill, /\| full \| the standard six, plus /);
 });

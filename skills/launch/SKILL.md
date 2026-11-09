@@ -127,8 +127,8 @@ Neither goes into any brief, and you never paraphrase them to a person, a relay 
 | Depth | People | Steps per person | Adds |
 |---|---|---|---|
 | quick | 3 | 8 | nothing |
-| standard | 5 | the persona file's `max_steps` | word of mouth |
-| full | 8 | the persona file's `max_steps` | word of mouth and launch comments |
+| standard | 6 | the persona file's `max_steps` | word of mouth |
+| full | 9 | the persona file's `max_steps` | word of mouth and launch comments |
 
 Settle the depth before recommending anyone: use `--depth` or the depth the request names, otherwise ask with this
 table and suggest standard. You may ask in the same message as Steps 3 and 4.
@@ -141,8 +141,8 @@ file in `assets/personas/`. Defaults:
 | Depth | Bases |
 |---|---|
 | quick | `goal-first-timer`, `on-the-go`, `committed-user` |
-| standard | the quick three, plus `novice`, `explorer` |
-| full | the standard five, plus `returning-regular`, `assistive-tech`, `reading-difference` |
+| standard | the quick three, plus `novice`, `explorer`, `low-stakes` |
+| full | the standard six, plus `returning-regular`, `assistive-tech`, `reading-difference` |
 
 Write each card for this product. The id is `p<n>-<base>`, for example `p2-on-the-go`; it is also the person's folder
 name and the `persona` value in their records. The name is in the run's language. The situation is a concrete circumstance and behaviour: where they are, what device, how much time, what is

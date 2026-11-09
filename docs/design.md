@@ -36,10 +36,10 @@ Agents do not read each other's output. Each person gets a fresh context and the
 | Depth | People | Steps per person | Adds |
 |---|---|---|---|
 | quick | 3 | 8 | nothing |
-| standard | 5 | the persona file's `max_steps` | word-of-mouth chain |
-| full | 8 | the persona file's `max_steps` | word-of-mouth chain and launch-day comments |
+| standard | 6 | the persona file's `max_steps` | word-of-mouth chain |
+| full | 9 | the persona file's `max_steps` | word-of-mouth chain and launch-day comments |
 
-Each person is built on one of nine persona files in `skills/launch/assets/personas/`. Standard and full always include an `explorer`.
+Each person is built on one of ten persona files in `skills/launch/assets/personas/`. Standard and full always include an `explorer`.
 
 ## Run directory
 

@@ -1,8 +1,8 @@
 {
   "name": "user-thoughts",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Send simulated users through a live website, black-box, and find where they give up and which features to question.",
+  "description": "See your live product through the visits of simulated people in different situations, and read what happened to each of them.",
   "type": "module",
   "license": "MIT",
   "engines": {

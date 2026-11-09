@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My bookings | Pellwick</title>
+<meta name="description" content="Your Pellwick bookings.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html">Teams</a></li><li><a href="faq.html">FAQ</a></li><li><a href="signin.html" data-account-link>Sign in</a></li></ul>
+      <a class="btn btn-primary btn-sm" href="plans.html">Book a desk</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+  </div>
+</header>
+<main id="main">
+<div class="container page-head"><span class="eyebrow">Account</span><h1>My bookings</h1><p class="lede" id="account-lede">Loading your bookings.</p><p><button class="btn btn-ghost btn-sm" id="sign-out" type="button" hidden>Sign out</button></p></div>
+<section style="padding-top:16px"><div class="container" style="max-width:760px">
+  <ul class="booking-list" id="booking-list"></ul>
+  <p id="no-bookings" hidden>No bookings yet. <a href="book.html">Book a day</a></p>
+  <p class="field-hint">Cancel free of charge until 18:00 the day before.</p>
+</div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+        <p class="footer-note">Desks by the day in Harbour Lane, Millrace, Old Tannery and Northgate.</p></div>
+      <div><h4>Work here</h4><ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html">Teams</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="faq.html">FAQ</a></li><li><a href="faq.html#contact">Contact</a></li><li><a href="account.html">My bookings</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="faq.html#privacy">Privacy</a></li><li><a href="faq.html#terms">Terms</a></li></ul></div>
+    </div>
+    <div class="footer-base">&copy; 2026 Pellwick Workrooms Ltd.</div>
+  </div>
+</footer>
+<script src="js/session.js" defer></script>
+<script src="js/menu.js" defer></script>
+<script src="js/account.js" defer></script>
+</body>
+</html>

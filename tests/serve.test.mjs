@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, dirname, relative } from 'node:path';
-import { readdirSync, statSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { startServer, mimeFor, parseServeArgs } from '../evals/serve.mjs';
 
@@ -99,68 +99,51 @@ test('parseServeArgs validates the directory name and port', () => {
   assert.match(a.root, /fixtures[\\/]planted$/);
   assert.equal(parseServeArgs(['clean', '5000']).port, 5000);
   assert.throws(() => parseServeArgs([]), /usage/i);
-  assert.throws(() => parseServeArgs(['elsewhere']), /planted\|clean\|hostile\|slop/);
+  assert.throws(() => parseServeArgs(['elsewhere']), /planted\|clean\|hostile/);
   assert.throws(() => parseServeArgs(['clean', 'abc']), /port/i);
 });
 
-test('parseServeArgs accepts slop with the default port and a custom one', () => {
-  const a = parseServeArgs(['slop']);
-  assert.match(a.root, /fixtures[\\/]slop$/);
+test('parseServeArgs accepts heldout with the shared default port and a custom one', () => {
+  const a = parseServeArgs(['heldout']);
+  assert.match(a.root, /fixtures[\\/]heldout$/);
   assert.equal(a.port, 4173);
-  assert.equal(parseServeArgs(['slop', '4180']).port, 4180);
+  assert.equal(parseServeArgs(['heldout', '4176']).port, 4176);
+  assert.throws(() => parseServeArgs(['elsewhere']), /planted\|clean\|hostile\|heldout/);
 });
 
-// ---------- slop site ----------
-
-const SLOP_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'evals', 'fixtures', 'slop');
-const BANNED = /\b(planted|decoy|fixture|slop|tests?|fake|bugs?|defects?)\b/i;
-
-const listFiles = (dir) =>
-  readdirSync(dir).flatMap((name) => {
-    const path = join(dir, name);
-    return statSync(path).isDirectory() ? listFiles(path) : [path];
-  });
-
-test('no served file under fixtures/slop names its purpose', () => {
-  const files = listFiles(SLOP_ROOT);
-  assert.ok(files.length > 10);
-  for (const file of files) {
-    const rel = relative(SLOP_ROOT, file);
-    assert.doesNotMatch(rel, BANNED, `file name ${rel}`);
-    if (/\.(png|jpe?g|webp|ico|woff2)$/i.test(file)) continue;
-    const found = readFileSync(file, 'utf8').match(new RegExp(BANNED.source, 'gi'));
-    assert.equal(found, null, `${rel} contains banned word(s): ${found}`);
+test('the heldout directory serves its home page, scripts and styles', async () => {
+  const { root: heldoutRoot } = parseServeArgs(['heldout']);
+  const heldout = await startServer({ root: heldoutRoot, port: 0, logFile });
+  const get = (path) =>
+    new Promise((resolve, reject) => {
+      http.get({ host: '127.0.0.1', port: heldout.address().port, path }, (res) => {
+        res.resume();
+        res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'] }));
+      }).on('error', reject);
+    });
+  try {
+    const home = await get('/');
+    assert.equal(home.status, 200);
+    assert.match(home.type, /text\/html/);
+    assert.match((await get('/css/site.css')).type, /text\/css/);
+    assert.match((await get('/js/session.js')).type, /text\/javascript/);
+    assert.notEqual((await get('/../ground-truth/heldout.json')).status, 200);
+  } finally {
+    await new Promise((r) => heldout.close(r));
   }
 });
 
-test('slop site has no HTML comments', () => {
-  for (const file of listFiles(SLOP_ROOT).filter((f) => f.endsWith('.html'))) {
-    assert.doesNotMatch(readFileSync(file, 'utf8'), /<!--/, relative(SLOP_ROOT, file));
-  }
-});
 
-const slopPage = (name) => readFileSync(join(SLOP_ROOT, name), 'utf8');
-const slopPages = () => listFiles(SLOP_ROOT).filter((f) => f.endsWith('.html'));
+// ---------- planted site: promise problems ----------
 
-test('slop site: S5 menu has Help, Resources and Support to help.html on every page', () => {
-  for (const file of slopPages()) {
-    const html = readFileSync(file, 'utf8');
-    for (const label of ['Help', 'Resources', 'Support']) {
-      assert.match(html, new RegExp(`<a href="help\\.html"[^>]*>${label}</a>`), `${relative(SLOP_ROOT, file)} ${label}`);
-    }
-  }
-});
+const PLANTED_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'evals', 'fixtures', 'planted');
+const plantedPage = (name) => readFileSync(join(PLANTED_ROOT, name), 'utf8');
+const plantedPages = () => readdirSync(PLANTED_ROOT).filter((f) => f.endsWith('.html'));
+const navOf = (html) => html.match(/<nav[\s\S]*?<\/nav>/)[0];
 
-test('slop site: S7 report-legacy.html exists and nothing links to it', () => {
-  assert.ok(existsSync(join(SLOP_ROOT, 'report-legacy.html')));
-  for (const file of listFiles(SLOP_ROOT).filter((f) => /\.(html|js)$/.test(f))) {
-    assert.doesNotMatch(readFileSync(file, 'utf8').replace(/<title>[^<]*<\/title>/, ''), /report-legacy/, relative(SLOP_ROOT, file));
-  }
-});
-
-test('slop site: S1 two search inputs on the homepage share placeholder and accessible name', () => {
-  const html = slopPage('index.html');
-  const inputs = html.match(/<input[^>]*type="search"[^>]*>/g) ?? [];
+test('planted site: P1 header and homepage search share placeholder and accessible name', () => {
+  const html = plantedPage('index.html');
+  const inputs = [...html.matchAll(/<input[^>]*type="search"[^>]*>/g)].map((m) => m[0]);
   assert.equal(inputs.length, 2);
   const attr = (tag, name) => tag.match(new RegExp(`${name}="([^"]*)"`))?.[1];
   assert.equal(attr(inputs[0], 'placeholder'), attr(inputs[1], 'placeholder'));
@@ -168,27 +151,17 @@ test('slop site: S1 two search inputs on the homepage share placeholder and acce
   assert.ok(attr(inputs[0], 'aria-label'));
 });
 
-test('slop site: S2 AI Insights sits after the first screen and before the lower sections', () => {
-  const html = slopPage('index.html');
-  const at = (needle) => html.indexOf(needle);
-  assert.ok(at('AI Insights') > at('id="features"'));
-  assert.ok(at('AI Insights') < at('What freelancers say'));
-  assert.match(html, /Synergy score/);
-  assert.match(html, /Momentum index/);
+test('planted site: P2 Help, Resources and Support all link to help.html on every page', () => {
+  for (const file of plantedPages()) {
+    const nav = navOf(plantedPage(file));
+    for (const label of ['Help', 'Resources', 'Support']) {
+      assert.match(nav, new RegExp(`<a href="help\\.html"[^>]*>${label}</a>`), `${file} ${label}`);
+    }
+  }
 });
 
-test('slop site: S6 toggle is written to localStorage and its key is read nowhere', () => {
-  const account = slopPage('account.html');
-  assert.match(account, /Smart suggestions \(beta\)/);
-  const js = listFiles(join(SLOP_ROOT, 'js')).map((f) => readFileSync(f, 'utf8')).join('\n');
-  assert.match(js, /setItem\('tallywren\.smart-suggestions'/);
-  assert.doesNotMatch(js, /getItem\('tallywren\.smart-suggestions'/);
-});
-
-test('slop site: D4 Start free twice on the homepage body, both to signup.html; D5 help search', () => {
-  const home = slopPage('index.html').split('<main')[1].split('</main>')[0];
-  const links = home.match(/<a [^>]*href="signup\.html"[^>]*>Start free<\/a>/g) ?? [];
-  assert.equal(links.length, 2);
-  const help = slopPage('help.html');
-  assert.match(help, /<label[^>]*>Search help<\/label>/);
+test('planted site: U2 main menu still has no Pricing link', () => {
+  for (const file of plantedPages()) {
+    assert.doesNotMatch(navOf(plantedPage(file)), /href="pricing\.html"/, file);
+  }
 });

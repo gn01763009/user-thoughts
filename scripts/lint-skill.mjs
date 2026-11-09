@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Lints skills/*/SKILL.md, skills/*/assets/personas/*.md and the plugin manifests.
+// Lints skills/*/SKILL.md, skills/*/assets/personas/*.md, skills/*/references/briefs.md and the plugin manifests.
 // Usage: node scripts/lint-skill.mjs (run from the repo root)
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -26,6 +26,11 @@ const RESERVED_PREFIXES = ['claude-', 'anthropic-', 'anthropics-', 'cc-plugin-']
 const PERSONA_KEYS = ['id', 'label', 'evidence', 'viewport', 'max_steps', 'no_progress_limit', 'leave_urge_limit'];
 const PERSONA_NUMERIC_KEYS = ['max_steps', 'no_progress_limit', 'leave_urge_limit'];
 const BOM = /^﻿/;
+const BRIEFS_FILE = 'references/briefs.md';
+const PERSON_BRIEF_HEADING = /^##\s+Person brief\s*$/i;
+const SECTION_HEADING = /^#{1,2}\s/;
+const CODE_FENCE = /^\s*(```|~~~)/;
+const BRIEF_LEAK = /vision|願景|builder-claims|assumption|假設/i;
 
 // ---------- frontmatter ----------
 
@@ -164,6 +169,40 @@ function checkPersonas(skillDir, skillRel) {
     });
 }
 
+// ---------- briefs.md ----------
+
+// Lines of the "## Person brief" section that sit inside code fences, with 1-based line numbers.
+// Headings inside a fence do not end the section. Returns null when the section is absent.
+function personBriefBlockLines(text) {
+  const lines = text.replace(BOM, '').split(/\r?\n/);
+  const start = lines.findIndex((line) => PERSON_BRIEF_HEADING.test(line));
+  if (start === -1) return null;
+  const fenced = [];
+  let inFence = false;
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (CODE_FENCE.test(line)) {
+      inFence = !inFence;
+    } else if (inFence) {
+      fenced.push({ number: index + 1, line });
+    } else if (SECTION_HEADING.test(line)) {
+      break;
+    }
+  }
+  return fenced;
+}
+
+// The person brief goes to every simulated visitor, so the builder's vision and hidden assumption must never be in it.
+export function checkBriefLeak(briefsText) {
+  const fenced = personBriefBlockLines(briefsText);
+  if (fenced === null) return ['has no "## Person brief" section to check'];
+  if (fenced.length === 0) return ['the "## Person brief" section has no fenced code block to check'];
+  return fenced.flatMap(({ number, line }) => {
+    const match = BRIEF_LEAK.exec(line);
+    return match ? [`Person brief line ${number} mentions "${match[0]}"`] : [];
+  });
+}
+
 // ---------- plugin manifests ----------
 
 function parseJson(text) {
@@ -236,7 +275,14 @@ function checkSkill(root, name) {
   return [
     ...checkSkillMd(text, name, skillDir).map((error) => `${relPath}: ${error}`),
     ...checkPersonas(skillDir, `${SKILLS_DIR}/${name}`),
+    ...checkBriefsFile(skillDir, `${SKILLS_DIR}/${name}`),
   ];
+}
+
+function checkBriefsFile(skillDir, skillRel) {
+  const path = join(skillDir, BRIEFS_FILE);
+  if (!existsSync(path)) return [];
+  return checkBriefLeak(readFileSync(path, 'utf8')).map((error) => `${skillRel}/${BRIEFS_FILE}: ${error}`);
 }
 
 export function lintRepo(root) {

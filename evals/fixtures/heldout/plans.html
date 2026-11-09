@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plans and membership | Pellwick</title>
+<meta name="description" content="Pellwick membership plans for regular desk users.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html" aria-current="page">Plans</a></li><li><a href="teams.html">Teams</a></li><li><a href="faq.html">FAQ</a></li><li><a href="signin.html" data-account-link>Sign in</a></li></ul>
+      <a class="btn btn-primary btn-sm" href="plans.html">Book a desk</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+  </div>
+</header>
+<main id="main">
+<div class="container page-head"><span class="eyebrow">Plans</span><h1>Become a member</h1><p class="lede">Members get days they can count on, perks across all four spaces and the best price per day.</p></div>
+<section style="padding-top:28px"><div class="container">
+  <div class="plans">
+    <div class="card plan">
+      <h3>Roam</h3><div class="price">&pound;189 <small>a month</small></div>
+      <ul class="ticks"><li>10 days a month at any space</li><li>Two guest days a month</li><li>Lockers at every space</li></ul>
+      <a class="btn btn-ghost" href="#join" data-plan="roam">Choose Roam</a></div>
+    <div class="card plan featured"><span class="flag">Most chosen</span>
+      <h3>Resident</h3><div class="price">&pound;329 <small>a month</small></div>
+      <ul class="ticks"><li>Every weekday at your home space</li><li>Four guest days a month</li><li>Mail handling</li></ul>
+      <a class="btn btn-primary" href="#join" data-plan="resident">Choose Resident</a></div>
+    <div class="card plan">
+      <h3>Room</h3><div class="price">&pound;780 <small>a month</small></div>
+      <ul class="ticks"><li>A lockable room for up to three</li><li>Open 24 hours for members</li><li>Meeting room hours included</li></ul>
+      <a class="btn btn-ghost" href="#join" data-plan="room">Choose Room</a></div>
+  </div>
+  <div class="split" style="margin-top:56px" id="join">
+    <div><h2>Start a membership</h2><p class="lede">Tell us which plan you want. We will email you within one working day to arrange your first day and a short tour.</p>
+      <p>Memberships run month to month. Cancel with 30 days' notice.</p></div>
+    <div class="form-card">
+      <form id="join-form" novalidate>
+        <div class="field"><label for="join-plan">Plan</label><select id="join-plan" name="plan"><option value="roam">Roam, &pound;189 a month</option><option value="resident">Resident, &pound;329 a month</option><option value="room">Room, &pound;780 a month</option></select></div>
+        <div class="field"><label for="join-name">Your name</label><input id="join-name" name="name" autocomplete="name"><span class="field-error" id="join-name-error" hidden></span></div>
+        <div class="field"><label for="join-email">Email</label><input id="join-email" name="email" type="email" autocomplete="email"><span class="field-error" id="join-email-error" hidden></span></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">Send my request</button>
+      </form>
+      <div class="success-panel" id="join-success" role="status" hidden><h3>Thanks, we have your request</h3><p>We will email you within one working day.</p></div>
+    </div>
+  </div>
+  <div class="day-note">
+    <h2>Just need a day?</h2>
+    <p>Day passes start at &pound;18, with no membership. Cancel a day booking free of charge until 18:00 the day before; after that the day cannot be refunded.</p>
+    <p><a class="link-small" href="book.html">Book a single day</a></p>
+  </div>
+</div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+        <p class="footer-note">Desks by the day in Harbour Lane, Millrace, Old Tannery and Northgate.</p></div>
+      <div><h4>Work here</h4><ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html">Teams</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="faq.html">FAQ</a></li><li><a href="faq.html#contact">Contact</a></li><li><a href="account.html">My bookings</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="faq.html#privacy">Privacy</a></li><li><a href="faq.html#terms">Terms</a></li></ul></div>
+    </div>
+    <div class="footer-base">&copy; 2026 Pellwick Workrooms Ltd.</div>
+  </div>
+</footer>
+<script src="js/session.js" defer></script>
+<script src="js/menu.js" defer></script>
+<script src="js/plans.js" defer></script>
+<script src="js/activity.js" defer></script>
+</body>
+</html>

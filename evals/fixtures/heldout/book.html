@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a day | Pellwick</title>
+<meta name="description" content="Book a day at a Pellwick workroom.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html">Teams</a></li><li><a href="faq.html">FAQ</a></li><li><a href="signin.html" data-account-link>Sign in</a></li></ul>
+      <a class="btn btn-primary btn-sm" href="plans.html">Book a desk</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+  </div>
+</header>
+<main id="main">
+<div class="container booking">
+<div class="page-head" style="padding-bottom:20px"><span class="eyebrow">Book a day</span><p class="step-count" id="step-count">Step 1 of 5</p></div>
+<form id="booking-form" novalidate>
+  <section class="step quiz" id="step-quiz" aria-labelledby="quiz-title">
+    <h1 id="quiz-title">First, your work vibe</h1>
+    <p class="lede">Four quick questions so we can get to know you.</p>
+    <fieldset><legend>When do you do your best work?</legend><label><input type="radio" name="q1" value="0"> Early morning</label><label><input type="radio" name="q1" value="1"> Middle of the day</label><label><input type="radio" name="q1" value="2"> Late afternoon</label></fieldset>
+    <fieldset><legend>What is your ideal soundtrack?</legend><label><input type="radio" name="q2" value="0"> Silence</label><label><input type="radio" name="q2" value="1"> Caf&eacute; chatter</label><label><input type="radio" name="q2" value="2"> Headphones on</label></fieldset>
+    <fieldset><legend>Pick a drink</legend><label><input type="radio" name="q3" value="0"> Espresso</label><label><input type="radio" name="q3" value="1"> Green tea</label><label><input type="radio" name="q3" value="2"> Sparkling water</label></fieldset>
+    <fieldset><legend>How do you take a break?</legend><label><input type="radio" name="q4" value="0"> A short walk</label><label><input type="radio" name="q4" value="1"> A chat</label><label><input type="radio" name="q4" value="2"> A quick scroll</label></fieldset>
+    <div class="step-actions"><span></span><button class="btn btn-primary" type="button" id="quiz-next" disabled>Next</button></div>
+  </section>
+  <section class="step" id="step-where" aria-labelledby="where-title" hidden>
+    <h1 id="where-title">Where and when</h1>
+    <p class="vibe-result" id="vibe-result"></p>
+    <div class="field"><label for="space">Space</label><select id="space" name="space"><option value="">Choose a space</option><option value="harbour-lane">Harbour Lane</option><option value="millrace">Millrace</option><option value="old-tannery">Old Tannery</option><option value="northgate">Northgate</option></select><span class="field-error" id="space-error" hidden></span></div>
+    <div class="field"><label for="date">Date</label><select id="date" name="date" data-days="30"><option value="">Choose a day</option></select><span class="field-hint">Bookings open 30 days ahead.</span><span class="field-error" id="date-error" hidden></span></div>
+    <div class="step-actions"><button class="btn btn-ghost" type="button" data-back>Back</button><button class="btn btn-primary" type="button" id="where-next">Next</button></div>
+  </section>
+  <section class="step" id="step-pass" aria-labelledby="pass-title" hidden>
+    <h1 id="pass-title">Choose your pass</h1>
+    <label class="pass-option"><input type="radio" name="pass" value="drift"> <span class="pass-name">Drift</span> <span class="pass-price">&pound;18 a day</span></label>
+    <label class="pass-option"><input type="radio" name="pass" value="dock"> <span class="pass-name">Dock</span> <span class="pass-price">&pound;24 a day</span></label>
+    <label class="pass-option"><input type="radio" name="pass" value="den"> <span class="pass-name">Den</span> <span class="pass-price">&pound;45 a day</span></label>
+    <span class="field-error" id="pass-error" hidden></span>
+    <div class="step-actions"><button class="btn btn-ghost" type="button" data-back>Back</button><button class="btn btn-primary" type="button" id="pass-next">Next</button></div>
+  </section>
+  <section class="step" id="step-details" aria-labelledby="details-title" hidden>
+    <h1 id="details-title">Your details</h1>
+    <div class="field"><label for="name">Full name</label><input id="name" name="name" autocomplete="name"><span class="field-error" id="name-error" hidden></span></div>
+    <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email"><span class="field-hint">We send your booking here.</span><span class="field-error" id="email-error" hidden></span></div>
+    <div class="field" id="phone-field"><label for="phone">Mobile number</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="07700 900123"></div>
+    <label class="check"><input type="checkbox" id="desk-cover" name="cover" checked> <span>Add Desk Cover for &pound;2.50: covers your laptop and belongings against spills and accidental damage for the day.</span></label>
+    <div class="step-actions"><button class="btn btn-ghost" type="button" data-back>Back</button><button class="btn btn-primary" type="button" id="details-next">Continue</button></div>
+  </section>
+  <section class="step" id="step-review" aria-labelledby="review-title" hidden>
+    <h1 id="review-title">Review and pay</h1>
+    <table class="summary">
+      <tr><th>Space</th><td id="sum-space"></td></tr>
+      <tr><th>Date</th><td id="sum-date"></td></tr>
+      <tr><th id="sum-pass-label">Pass</th><td id="sum-pass"></td></tr>
+      <tr id="sum-cover-row"><th>Desk Cover</th><td id="sum-cover"></td></tr>
+      <tr><th>Service fee</th><td id="sum-fee"></td></tr>
+      <tr class="total"><th>Total</th><td id="sum-total"></td></tr>
+    </table>
+    <div class="reward"><strong>+120 Pellwick Points with this booking</strong><p>Badge unlocked: First Light</p><p>Level 1, Wanderer. 380 to go until Level 2.</p><div class="bar"><span></span></div></div>
+    <ul class="notes">
+      <li>First visit? Bring a photo ID. Reception checks it once so our hosts know who is in the building.</li>
+      <li>Free cancellation until 18:00 the day before. After that, the day cannot be refunded.</li>
+    </ul>
+    <div class="field"><label for="card">Card number</label><input id="card" name="card" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"><span class="field-error" id="card-error" hidden></span></div>
+    <div class="field-row"><div class="field"><label for="expiry">Expiry</label><input id="expiry" name="expiry" autocomplete="cc-exp" placeholder="MM/YY"><span class="field-error" id="expiry-error" hidden></span></div>
+    <div class="field"><label for="cvc">Security code</label><input id="cvc" name="cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123"><span class="field-error" id="cvc-error" hidden></span></div></div>
+    <div class="form-banner" id="pay-problem" role="alert" hidden></div>
+    <div class="step-actions"><button class="btn btn-ghost" type="button" data-back>Back</button><button class="btn btn-primary" type="submit" id="pay">Confirm and pay</button></div>
+  </section>
+  <section class="step" id="step-done" aria-labelledby="done-title" hidden>
+    <h1 id="done-title">You are booked</h1>
+    <p class="lede" id="done-summary"></p>
+    <p>Booking reference <strong id="done-ref"></strong>. We have emailed your confirmation to <span id="done-email"></span>.</p>
+    <p><a class="btn btn-primary" href="account.html">See my bookings</a> <a class="btn btn-ghost" href="index.html">Back to home</a></p>
+  </section>
+</form>
+</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+        <p class="footer-note">Desks by the day in Harbour Lane, Millrace, Old Tannery and Northgate.</p></div>
+      <div><h4>Work here</h4><ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html">Teams</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="faq.html">FAQ</a></li><li><a href="faq.html#contact">Contact</a></li><li><a href="account.html">My bookings</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="faq.html#privacy">Privacy</a></li><li><a href="faq.html#terms">Terms</a></li></ul></div>
+    </div>
+    <div class="footer-base">&copy; 2026 Pellwick Workrooms Ltd.</div>
+  </div>
+</footer>
+<script src="js/session.js" defer></script>
+<script src="js/menu.js" defer></script>
+<script src="js/dates.js" defer></script>
+<script src="js/booking.js" defer></script>
+<script src="js/activity.js" defer></script>
+</body>
+</html>

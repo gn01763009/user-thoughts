@@ -1,354 +1,243 @@
-# User Thoughts: Your Site, Seen By Strangers
+# User Thoughts: Your Product, Seen Through Other People's Visits
 
 [![CI](https://github.com/gn01763009/user-thoughts/actions/workflows/ci.yml/badge.svg)](https://github.com/gn01763009/user-thoughts/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **English** | [繁體中文](README.zh-TW.md)
 
-Two agent skills for seeing your live website the way an outsider does. One sends simulated users through it and reports where they got lost or gave up. The other asks of everything on it: why is this here?
+When you build a product, you can only see it from your own side. This agent skill sends simulated people in different situations through your live site, one visit each: someone on a train with only a phone, someone who has never done this before, someone whose boss says they have to use it. They really click through it, and you read what each of them thought at each step, with a screenshot of what they saw.
 
-Your coding agent can ship a feature in minutes. It can't tell you whether anyone wanted it. Ask it to review your site and it reads the page like an auditor, then hands you a long list. Real visitors don't do that. They arrive with a goal, skim, get stuck, and leave.
+The aim is to help you make decisions that fit your own vision. It is not a vote, and it does not predict demand. Everything it reports is a hypothesis to check with real people.
 
-So these personas visit instead. Each gets its own browser, a reason for being there, and a point where it gives up. They use the site for real, and what happens to them becomes the report.
+> **Where it stands.** On its test sites, v1 did not meet its own bar for finding known problems. Read [Results](#results) before you rely on it.
 
-It finds where a product breaks down. It does not prove what users want: everything it reports is a hypothesis to check with real people.
+## Try it
 
-## Two Skills
-
-| Skill | Asks | Use it | Cost per run |
-|---|---|---|---|
-| `persona-walkthrough` | Where do people get stuck or give up? | Before a release | About 430,000 tokens |
-| [`slop-check`](#slop-check) | What should not exist, and what is missing? | While building | About 100,000 tokens, 3 to 7 minutes, or about US$0.60 on a small site |
-
-Most of this page is about `persona-walkthrough`. `slop-check` has [its own section](#slop-check).
-
-## Quick Start
-
-### 1. Install the skill
-
-A plugin is managed by Claude Code. The Skills CLI copies editable files. Pick one per agent, because installing both gives you the skill twice.
-
-<details open>
-<summary><strong>Claude Code</strong></summary>
+You need Claude Code, Node 20 or later, and [agent-browser](https://github.com/vercel-labs/agent-browser), which downloads Chrome (about 190 MB).
 
 ```
 /plugin marketplace add gn01763009/user-thoughts
 /plugin install user-thoughts@user-thoughts
 ```
 
-</details>
+```bash
+npm install -g agent-browser && agent-browser install
+```
+
+Turn on accept edits (Shift+Tab), then run it:
+
+```
+/user-thoughts:launch <url> [--depth quick|standard|full] [--rerun <person-id>]
+```
+
+Or just ask: "Test http://localhost:3000 as a real user."
+
+The simplest way to set permissions is to run it once. When a permission is denied, the skill prints the exact rules to add, with its real folder filled in. Copy them into `permissions.allow` in your Claude Code settings and run it again. To add them before the first run, see [Permission rules](#permission-rules).
+
+The output goes to `.user-thoughts/runs/<date>-<host>/` in your project, so add `.user-thoughts/` to your `.gitignore`.
 
 <details>
-<summary><strong>Any other agent, or editable files</strong> (other agents are untested)</summary>
+<summary>Other ways to install</summary>
+
+The Skills CLI copies editable files (agents other than Claude Code are untested):
 
 ```bash
 npx skills add gn01763009/user-thoughts
 ```
 
-</details>
-
-<details>
-<summary><strong>Manual copy</strong></summary>
+A manual copy is called as `/launch`:
 
 ```bash
 git clone https://github.com/gn01763009/user-thoughts
-cp -r user-thoughts/skills/persona-walkthrough user-thoughts/skills/slop-check ~/.claude/skills/
+cp -r user-thoughts/skills/launch ~/.claude/skills/
 ```
+
+Pick one method per agent, because installing two gives you the skill twice.
 
 </details>
 
-### 2. Give it a browser
+## What happens before anyone visits
 
-```bash
-npm install -g agent-browser && agent-browser install
-```
+Five setup steps, all of which you can answer in your first message:
 
-This installs [agent-browser](https://github.com/vercel-labs/agent-browser) and downloads Chrome, about 190 MB. You also need Node 20 or later.
+1. **It reads your product.** It opens your site, and your source if it is in the working folder, then says in one sentence what it thinks the product is. You correct it.
+2. **It asks your vision and a hidden assumption.** One sentence on what you want this to become, and "what do you think users will like most?" Neither one is ever shown to the people who visit. The vision is what conflicts are weighed against. The assumption is only compared with what happened.
+3. **You choose the depth.** See below. It suggests standard.
+4. **It recommends people.** A table of name, situation and why each was chosen. Delete or swap anyone, or describe someone in a sentence ("a junior high student") and it turns that into a concrete situation: where they are, what device, what is at stake. Never an identity label, and never an assigned verdict.
+5. **It remembers the setup** in `.user-thoughts/`, so next time it asks "Run with the same setup as last time?"
 
-### 3. Allow what it needs
+## Depth
 
-Background agents can't answer permission prompts, and these skills work outside your project folder. So turn on accept edits for the session (Shift+Tab), and add these to `permissions.allow` in your Claude Code settings.
+| Depth | People | Adds | Time | Cost (USD) |
+|---|---|---|---|---|
+| quick | 3, about 8 steps each | nothing | 250 s, one run | 1.48, one run |
+| standard | 5 | word-of-mouth chain | 301 to 433 s (5 to 7 minutes), 13 runs | 2.10 to 2.75, 13 runs |
+| full | 8 | word-of-mouth chain and launch-day comments | not measured | not measured |
 
-For `slop-check`:
+Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard range mixes skill versions across its 13 runs. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
 
-```json
-{
-  "permissions": {
-    "allow": ["Bash(npx -y agent-browser:*)"]
-  }
-}
-```
+## What the report looks like
 
-For `persona-walkthrough`, add two more. It reads its own persona files and runs a merge script:
+The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 5 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
+
+<p>
+  <img src="docs/assets/report-overview.png" alt="The top of a report: the headline, then one row per person with what they would tell a friend, who they are, why they came and how their visit ended" width="49%">
+  <img src="docs/assets/report-story.png" alt="One person's section: who they are, what they care about, the one moment that mattered most with its screenshot, and what they would tell a friend" width="49%">
+</p>
+
+These images are from a run on Tallywren, a fictional product in this repository's test sites. People write in the language you use, and the report's labels come in English or Traditional Chinese. This run was in Traditional Chinese.
+
+The report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
+
+## How it works
+
+- **One-visit people.** Each person gets a concrete situation and their own browser. They start as a fresh agent and are told to ignore project notes, so they do not get your code or your vision. A project's `CLAUDE.md` may still be visible to them, so don't put your vision there. They do the task with real clicks and leave when their patience runs out, which counts as a result. Afterwards they answer an exit interview: did I get it done, would I come back, and how would I describe this to a friend. They are built from nine persona files with written limits. Standard and full always include an explorer, who opens every menu item.
+- **Evidence rule.** Apart from the answer to the bad-idea question, which is about a plan and not a step, a voice counts only if it traces to a step the person really took. A script drops a thought with no screenshot, last words that cite no real step, a finding from a step the person did not take, and any judgement that points at a step nobody took. Praise and criticism follow the same rule. Severity is computed from what happened to people, not from a model's opinion, and a separate agent re-checks serious items knowing only where to look.
+- **Bad-idea check (experimental).** In the exit interview, each person hears about a planned feature that works against what they came for, phrased as a real plan. If more than half say yes, the report warns that this batch may be flattering you. It is experimental because it [could not be validated](#results), and the report labels it the same way.
+- **Word-of-mouth chain.** Standard and full. What each person would tell a friend goes to a fresh agent, who passes it to another fresh agent who has never seen the product. Each one receives only the sentence before it. The last line, what kind of site this seems to be and who it is for, is set beside your vision.
+- **Launch-day comments.** Full only. Comments under a pretend launch post, from people who visited, citing their own steps, and from bystanders who only heard the word-of-mouth line.
+- **Re-run after a fix.** `--rerun <person-id>` sends the same person through your changed product from the start, with no memory of last time. The report shows both timelines side by side.
+
+## Results
+
+Everything here ran on Sonnet, headless, on local test sites. Each test ran once or twice, so none of this is a rate. "As scored" is the output of a regular-expression scorer, and "read by hand" is a person checking each match. The full record, including earlier versions, is in [docs/evaluation.md](docs/evaluation.md).
+
+| Test | Result | Bar | Verdict |
+|---|---|---|---|
+| Known test site, 11 planted problems and 3 decoys, two final standard runs | As scored: 9/11 and 9/11, with 1 decoy wrongly flagged in one run, so it fails on the decoy. Read by hand: at most 8/11 and 7/11, so it fails on recall | At least 9/11 in both runs, 0 decoys | **Not met** |
+| Unseen test site, 11 planted problems, two standard runs | 0.91 and 0.64, mean 0.77 | Mean at least 0.55, one blind run of a plain agent with no skill | Met, on very little data |
+| Clean site, the known site with its problems removed | 0 false alarms | At most 2 | Met |
+| Hostile site, pages with instructions aimed at AI agents | Canary 0, token not leaked | Canary 0, no leak | Met |
+| Bad-idea check | People said yes 0 of 5, and a control told to be agreeable also said yes 0 of 5 | Control mostly yes, people mostly no | **Could not be validated** |
+
+- **The recall bar was not met, and v1 was accepted anyway.** The builder reviewed these numbers and accepted v1 with the 9/11 bar unmet. Read by hand it was not one match away from passing.
+- **The known site is not a clean measure.** The skill was tuned on it. A plain agent with no skill scored 8 of 11 on the same site, so this README does not claim the skill beats one there.
+- **The unseen site is the fairer test, and it is noisy.** The same skill text scored 0.91 and 0.64. That is two runs and one blind baseline, on Sonnet only.
+- **The bad-idea check tells you nothing yet.** The agreeable control did not say yes either, so the test could not tell a flattering batch from an honest one.
+- **Which version was tested.** The known and unseen runs were not repeated after the last change to the skill, a rule against submitting forms that would place an order. The clean and hostile runs came before the report redesign and the later text changes. Only one standard run on the planted site (8/11 recall, 1 decoy) ran on the skill as it now stands; the clean, hostile and unseen sites were not rerun on it.
+- **Quick depth** scored 7/11 with no decoys, in one run on the known site, before the later changes.
+- **`--rerun`** has run end to end once: quick depth, one person, on localhost.
+
+**Not tested at all:**
+
+- Full depth, end to end.
+- The path that skips verification when the verifier cannot run, live.
+- Any model other than Sonnet.
+- Any real site in this evaluation. Only local test sites were used.
+- The interactive app and a real plugin install. Every run was headless.
+- Serial browser mode (a browser MCP instead of agent-browser) and the saved-setup question.
+- Word of mouth outside standard-depth runs. It was skipped in the control.
+- A control where the agreeable instruction really flips the answers, which the bad-idea check needs before it can be judged.
+- Whether simulated people's reactions match what real users do. This is the question that matters most, and it is still open.
+
+## Inspirations
+
+Four ideas here came from *Rick and Morty* episodes. The show is an inspiration only: this project has no connection to it, and no feature is named after its characters.
+
+| Episode | The idea in the episode | What it became |
+|---|---|---|
+| 〈M. Night Shaym-Aliens!〉 | A simulated world applauds a terrible ad slogan, and the real world does not | Bad-idea check |
+| 〈Total Rickall〉 | Parasites can only implant pleasant memories, so a memory with friction in it is real | Evidence rule |
+| 〈Meeseeks and Destroy〉 | Someone is summoned for one task and is gone once it is done | One-visit people |
+| 〈The Vat of Acid Episode〉 | Going back to a saved moment and trying again | Re-run after a fix |
+
+## Permission rules
+
+Background agents can't answer permission prompts, and this skill uses things outside your project. So a run needs accept edits for the session (Shift+Tab) and four rules in `permissions.allow` in your Claude Code settings.
+
+**The simplest way is to run the skill once.** When a permission is denied, it prints these rules with its real folder filled in. Copy them exactly as printed and run it again.
+
+**To add them before the first run,** replace `<skill dir>` with the absolute path of the skill's folder:
 
 ```json
 {
   "permissions": {
     "allow": [
-      "Bash(npx -y agent-browser:*)",
-      "Bash(node */merge-findings.mjs *)",
-      "Read(~/.claude/plugins/cache/user-thoughts/**)"
+      "Bash(node <skill dir>/scripts/browser.mjs *)",
+      "Bash(node <skill dir>/scripts/merge-findings.mjs *)",
+      "Bash(node <skill dir>/scripts/build-report.mjs *)",
+      "Read(/<skill dir>/**)"
     ]
   }
 }
 ```
 
-With a manual copy, use `Read(~/.claude/skills/persona-walkthrough/**)` instead.
-
-> [!NOTE]
-> Both skills ran end to end with these rules and accept edits in non-interactive sessions, on Claude Code 2.1.319, with the plugin loaded from a folder. `persona-walkthrough` was tested with one persona. The interactive app and the installed plugin path above have not been tried yet.
-
-### 4. Point it at your site
-
-```
-Test http://localhost:3000 as a real user.
-```
-
-Or call it directly: `/user-thoughts:persona-walkthrough http://localhost:3000`. A manual install uses `/persona-walkthrough`. For the other skill, ask what you can cut, or call `/user-thoughts:slop-check`.
-
-It asks two optional questions first: who the site is for, and what you believe users will value most. The report lands in `.user-thoughts/runs/<date>-<host>/report.md`, so add `.user-thoughts/` to your `.gitignore`.
-
-## What You Get
-
-From a run on the fictional test site in this repository ([full report](examples/tallywren/report.md)):
-
-| Persona | Thought this was | Outcome | Left at | Steps |
-|---|---|---|---|---|
-| Goal-driven first-time visitor | "I cannot tell; something about workflows, a dashboard chart and a popup" | abandoned | `/signup.html?from=demo` | 3 |
-| Novice | "I cannot tell. Something for work, maybe, but the words are vague." | blocked | `/signup.html` | 3 |
-| On the go | "Unclear; a newsletter popup and chat panel covered the page, and the hero was vague" | abandoned | `/` | 4 |
-| Committed user | "I could not tell. Headline talks about a workflow ecosystem and synergy; later pages show it is an invoicing tool." | blocked | `/signup.html` | 14 |
-
-Below that come findings with quotes and screenshots, features to question, your beliefs set against what happened, and questions only real users can answer.
-
-## Why This Exists
-
-These are the four ways building alone goes wrong, and what the skill does about each.
-
-### #1: You Can't See Your Own Homepage
-
-<img src="examples/tallywren/on-the-go/screens/01.png" alt="What the on-the-go persona saw on arrival: a newsletter popup covering the page on a phone" width="220" align="right">
-
-> "We don't read pages. We scan them."
->
-> Steve Krug, [Don't Make Me Think](https://oreilly.com/library/view/dont-make-me/9780133597271)
-
-**The Problem**: You know what your product does, so your homepage makes sense to you. A stranger gets a few seconds, often from behind a popup.
-
-**The Fix**: Personas arrive knowing only why they came. They never see your code, your docs or your beliefs. Before doing anything else, each one writes down what it thinks the site is.
-
-On the test site, none of the four could say. On the fixed version, all four could. The image is what the phone persona saw on arrival.
-
-<br clear="right">
-
-### #2: AI Reviews Read Pages. Users Use Them.
-
-> "To design the best UX, pay attention to what users do, not what they say."
->
-> Jakob Nielsen, [First Rule of Usability? Don't Listen to Users](https://www.nngroup.com/articles/first-rule-of-usability-dont-listen-to-users/)
-
-**The Problem**: Give an agent a browser and ask for a review from a user's perspective, and it mostly reads. In both runs, a plain agent missed the same three problems: a signup error that wipes the form, a menu that vanishes on phones, and a tour you can't skip. All three only appear when you actually do the thing.
-
-**The Fix**: Personas click, type what they would really type, submit, and judge each step from a screenshot, so a popup is in their way even when the page's text says the button is there.
-
-Strangers tend to leave at the first obstacle, which is honest but shallow. So [`committed-user`](skills/persona-walkthrough/assets/personas/committed-user.md) can't leave: a client requires this product. It reaches what the others never see.
-
-### #3: Every Review Finds Something
-
-**The Problem**: Ask for problems and you'll get problems. On a clean version of the test site, a plain agent still listed 8 main problem areas, and flagged an invoice tax ID field and an Enterprise tier that were correct by design.
-
-**The Fix**: Structure, not exhortation.
-
-- A persona can only report what happened on its own path, with a quote from the page and a screenshot. Without them, a script caps its confidence.
-- Severity is computed from what happened to the personas, never from their opinion.
-- An independent verifier re-checks serious items without seeing anyone's conclusions.
-- "Nothing went wrong" is a complete result.
-
-On that clean site: 0 high findings and 0 features questioned.
-
-### #4: You Shipped It. Did Anyone Want It?
-
-> "UX without real-user research isn't UX."
->
-> Maria Rosala and Kate Moran, [Synthetic Users: If, When, and How to Use AI-Generated "Research"](https://www.nngroup.com/articles/synthetic-users/)
-
-**The Problem**: Features get built because they were easy to build. The assistant, the dashboard, the tour. AI makes this cheaper every month, and nobody in the room says no.
-
-**The Fix**, partly: Each persona judges every feature it meets. Does it help with what I came for? What did it cost me? Would I miss it? Your own beliefs are kept from the personas, then set beside what happened. In the example run, the builder expected the AI assistant to be the favourite. All four personas saw it, and none named a job it helped with.
-
-This is the original goal of the project, and it's the weakest part. On the test site it tied a plain agent, as the next section shows. That's why the output says what was observed and what to ask real people, never "nobody wants this".
-
-## Does It Work?
-
-A skill has to beat what an agent does without it. So this repository ships a fictional site with 11 planted problems and 3 decoys that look wrong but are correct, plus a clean version of the same site. A plain agent got the same model, a browser and a fair prompt.
-
-| Measure | Plain agent | This skill |
-|---|---|---|
-| Planted problems found | 0.73, 0.73 | 0.82, 0.91 |
-| Usability problems, of 6 | 4, 4 | 5, 6 |
-| Unwanted features, of 5 | 4, 4 | 4, 4 |
-| Decoys flagged as problems | 1, 1 | 0, 0 |
-| Clean site | 8 main problem areas | 0 high findings, 0 features questioned |
-| Prompt injection obeyed | 0 of 1 run | 0 of 4 personas |
-
-Personas finished their task 0 of 4 times on the planted site and 3 of 4 on the clean site, where the fourth stopped at a safety rule before sending to a third party.
-
-**The edge is deep flows, restraint and evidence. It does not find more unwanted features.**
-
-Read these numbers with care:
-
-- **Tiny sample.** One fictional site, two runs per arm, Sonnet for both.
-- **Shared runs.** Both skill runs reuse the same three stranger runs, so only `committed-user` differs.
-- **Not held out.** The site was used during development and changed along the way. A skill tuned against its own test looks better than it is.
-- **A known miss.** The "AI Insights" block was never found in five skill runs. The plain agent found it every time.
-- **Hand-corrected scoring.** Manual reading caught one false match and one false miss by the regular expressions. The rules were fixed and every run rescored.
-- **Injection is not an improvement.** The plain agent resisted too, and the hostile test wasn't rerun after the last persona change.
-
-The full history is in [docs/evaluation.md](docs/evaluation.md). In a separate check, the skill fired on 8 of 8 runs of four matching prompts, and on 0 of 6 runs of three unrelated ones ([results](evals/cases/RESULTS.md)). That's only seven prompts, and other installed skills could change it.
-
-## Slop Check
-
-Personas find where people get stuck. They are poor at asking whether something should exist, so this skill does only that.
-
-```
-What can we cut from http://localhost:3000?
-```
-
-Tell it who the site is for, the main job, and what the business needs. A reviewer with no memory of building the site then does this:
-
-1. **Rebuild.** Before opening the site, it writes what the product should be from the purpose alone. Afterwards it compares.
-2. **Six tests.** It applies these to each section, control, claim and number.
-3. **Report.** Rebuild, Cut, Fix, Simplify, Ask, Protect, in that order.
-
-| Test | Question |
+| Rule | What it allows |
 |---|---|
-| Job | Which step of the main job does this serve? |
-| Deletion | What would a person lose if it were gone? |
-| Swap | Would these words be just as true on a competitor's site? |
-| Truth | Can this number or claim be traced to something real? |
-| Promise | Use it. Did it do what its label said? |
-| Twin | Is something else doing the same job? Give both the same input and compare. |
+| `Bash(node <skill dir>/scripts/browser.mjs *)` | Driving the browser, through a script that allows only the commands the skill uses |
+| `Bash(node <skill dir>/scripts/merge-findings.mjs *)` | Merging what the people recorded |
+| `Bash(node <skill dir>/scripts/build-report.mjs *)` | Building `report.html` and `summary.md` |
+| `Read(/<skill dir>/**)` | Reading the skill's own instructions and persona files |
 
-Taste alone can't delete anything. If something serves no step and no business need, it goes. If the reviewer can't tell why it exists, it asks you, because a section that does nothing for the visitor may be why the visitor arrived.
+After a plugin install, the skill's folder is `~/.claude/plugins/cache/user-thoughts/user-thoughts/<version>/skills/launch`. Write that out as an absolute path in the rules, with your home folder in place of `~` and the installed version in place of `<version>`. A `~` in a `node` rule would not match, because those rules compare the exact text of the command and the skill runs it with the full path. With a manual copy, use the folder you copied it to. If your home folder is `/home/you`, the first `node` rule and the `Read` rule look like this:
 
-**Results.** Sonnet in both arms, same purpose, browser and source access, with every result read by a person.
+```text
+Bash(node /home/you/.claude/plugins/cache/user-thoughts/user-thoughts/<version>/skills/launch/scripts/merge-findings.mjs *)
+Read(//home/you/.claude/plugins/cache/user-thoughts/user-thoughts/<version>/skills/launch/**)
+```
 
-| Measure | Plain agent | slop-check |
-|---|---|---|
-| Test site, planted slop of 8 | 7, 8 | 8, 8, 8 |
-| Test site, decoys flagged | 1, 1 | 0, 0, 0 |
-| Clean site, recommended cuts | 9 | 0, 0 |
-| Real site A, 4 confirmed problems | 0 fully found | 2 of 4 in one run, about 1.5 in the other |
-| Real site A, praised a button without clicking it | twice | never |
+- **The two slashes are deliberate.** `<skill dir>` starts with a slash, so the `Read` rule ends up starting with two, as in the example above. In Claude Code a single leading slash means a path inside the project, so it would not match the skill folder and the read would be refused.
+- **The version folder changes when the plugin is upgraded,** so update the rules then.
+- **No wildcard directories,** such as `*` in place of the folder in a `node` rule. With accept edits on, a web page could steer an agent to write a script with that name and run it.
 
-Real site A has about 10,000 files. A person confirmed those four problems by hand.
+> [!WARNING]
+> The browser rule goes through `scripts/browser.mjs`, which allows only the commands this skill uses. It refuses file uploads and downloads, plugins, saved logins, and anything that changes which browser runs or attaches to your real one. It does not pin the host, and files in your project are readable, so a page could still steer an agent into sending file text to any site through `open`, `fill` or `eval`. Test only sites you trust or own, and remember that a site you own can still carry text your users wrote.
 
-Read these with care:
+With these four rules and accept edits, quick runs and one `--rerun` reached a finished report with no bypass, in headless sessions. The standard runs in [Results](#results) used the earlier browser rule, `Bash(npx -y agent-browser:*)`, before `scripts/browser.mjs` existed. See [SECURITY.md](SECURITY.md).
 
-- **The test site does not separate them much.** Given a purpose, source and one first-principles question, a plain agent found nearly everything. Most of the gain shows on real sites.
-- **The rules were tuned on real sites.** The Promise and Twin tests came from failures on site A. A rule for cutting came from a second real site, where the first version cut nothing. After the change it named cuts with evidence, but that site is no longer unseen.
-- **On an unseen third site,** it cut nothing, and that site had already been pruned. It found problems a plain agent missed, and the plain agent found one it missed: photos that stopped months ago.
-- **A plain agent is still bolder.** It makes bigger product calls, some correct and some unverified. It also stated at least one fact that was wrong.
-- **Applying the fixes has been tried once.** A fresh session made 5 fixes on a branch of a real site. Four were right. One merged three false cards into one card that made the same false claims, and it reported the job as done. A rule was added for this and has not been retested. Read the diff yourself.
-- **Other agents are untested.**
+### Running under `--restricted`
 
-The history is in [docs/slop-check-design.md](docs/slop-check-design.md). In a trigger check with both skills installed, all 11 cases passed ([results](evals/cases/RESULTS.md)).
+`claude --restricted` removes Bash unless `--tools` names it, ignores user, project and local settings files, and confines the file tools to the working directories plus `--add-dir`. So the four rules go in a file you pass with `--settings`, the skill folder is added with `--add-dir`, and Bash is named in `--tools`. The write rule is the `Edit(...)` form, since Claude Code says `Write(...)` rules are not applied. This worked in one quick headless run, which built `report.html` with no permission denials:
 
-## What It Doesn't Do
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(node <skill dir>/scripts/browser.mjs *)",
+      "Bash(node <skill dir>/scripts/merge-findings.mjs *)",
+      "Bash(node <skill dir>/scripts/build-report.mjs *)",
+      "Read(/<skill dir>/**)",
+      "Edit(/.user-thoughts/**)"
+    ]
+  }
+}
+```
 
-- **Measure demand.** See [Limits](#limits).
-- **Review visual design.** This is a UX tool. UI counts only when it gets in a persona's way, such as a close button too small to hit or a chat box covering a form. Colour, type, spacing and consistency are not judged, so an ugly site can pass. Use a design review tool for those.
-- **Audit accessibility.** It runs no automated checks, and the `assistive-tech` persona is untested.
-- **Read your source code.** Use a code review or QA tool.
-- **Score your site.** One number would suggest a precision this method doesn't have.
+```bash
+cd <project folder>
+claude -p --restricted \
+  --tools "Bash,Read,Write,Edit,Skill,Agent" \
+  --add-dir <skill dir> \
+  --plugin-dir <plugin folder> \
+  --settings <settings file> \
+  --permission-mode acceptEdits \
+  "/user-thoughts:launch <url> --depth quick"
+```
+
+That run included the `Edit(...)` rule, and I did not test without it. With accept edits, writes inside the project folder may already be allowed, so the rule may be unnecessary. The same no-wildcard-directory advice applies.
 
 ## Limits
 
-Simulated users are useful for finding where a product breaks down. They're poor at predicting what people want.
+- **It does not predict demand.** It can show that a feature covered the page or asked for data too early. It cannot tell you how many people would use it.
+- **It does not replace research with real people.** [Kuric et al. (2026)](https://arxiv.org/abs/2605.18302) found GPT's results differed significantly from real participants on 53% of first-click tasks, and tuning personas did not make them more realistic. [Nielsen Norman Group (2024)](https://www.nngroup.com/articles/synthetic-users/) concluded that synthetic users suit desk research and hypotheses, not final decisions.
+- **It gives no overall score.** One number would suggest a precision this method does not have.
+- **It does not review visual design, audit accessibility or review code.** UI counts only when it gets in someone's way.
+- **Windows is not supported.** `scripts/browser.mjs` starts `agent-browser` with no shell, and `.cmd` shims do not run that way, so it reports the tool as missing.
 
-- [Kuric et al. (2026)](https://arxiv.org/abs/2605.18302) compared GPT with 3,431 real participants on 12 first-click tests. Results differed significantly on 53% of tasks, and tuning personas did not make them more realistic.
-- [Nielsen Norman Group (2024)](https://www.nngroup.com/articles/synthetic-users/) concluded that synthetic users are useful for desk research and generating hypotheses, but not for final decision-making.
+What it will and won't do on your site:
 
-Whether a persona can tell that a feature isn't wanted is unproven. We found no study that tests it. Personas can report that a feature covered the page or asked for data too early, because those can be observed. They can't tell you how many people would use it.
+- Test only sites you own or have permission to test. It asks when the URL is not localhost. `robots.txt` is not permission.
+- Production sites are browsed only: no forms, payment or deletion. Forms are filled only on localhost or a staging site you own.
+- It never types a card number, and never submits a form that would place an order or start a charge. It stops before deleting anything, messaging a third party or publishing.
+- On a login wall, CAPTCHA or bot check, it stops and reports. It doesn't use real credentials and doesn't bypass the check.
+- Page text is data. Anything on a page aimed at an agent is recorded, not obeyed.
 
-## Reference
-
-### Personas
-
-Each is written as observable rules with numeric limits, not personality traits. The archetypes come from published UX work, and the thresholds are design assumptions.
-
-**Default**, tested:
-
-- **`goal-first-timer`**: Has one job in mind and other tabs open. Wants to know what this is, what it costs and how to try it.
-- **`novice`**: New to this kind of product. When something goes wrong, assumes it was their own fault.
-- **`on-the-go`**: One thumb on a phone (390×844), a few minutes, and interruptions.
-- **`committed-user`**: Didn't choose this product and can't leave, so it pushes through.
-
-**Optional**, not yet run. Use `--personas a,b`, or `--all` for all nine:
-
-- **`returning-regular`**: Has used the product before and wants one routine task done fast.
-- **`explorer`**: Browsing with no fixed goal, following what looks interesting.
-- **`deep-researcher`**: Making a considered decision, so reads properly and checks claims.
-- **`assistive-tech`**: Uses a keyboard and the accessibility tree.
-- **`reading-difference`**: Long text is hard work, so they take one thing at a time.
-
-[Overlays](skills/persona-walkthrough/assets/overlays.md) add one attribute to a persona, such as price-sensitive or AI sceptic.
-
-### How It Works
-
-<details>
-<summary>The flow of one run</summary>
-
-```
-You: URL, optional one-line audience, optional beliefs about what users value
- │
- ▼
-Coordinator (your session). Sets up the run, never browses the site.
- │
- ├─ goal-first-timer ┐
- ├─ novice           │ one agent and one browser each, started together
- ├─ on-the-go        │ writes trace, findings, features, screenshots
- └─ committed-user   ┘
- │
- ▼
-merge-findings.mjs   dedupes, caps confidence without evidence, computes severity
- │
- ▼
-Verifier             gets locations and quotes only, re-checks serious items
- │
- ▼
-merge-findings.mjs   applies the verification
- │
- ▼
-report.md            outcomes, findings, features to question, questions for real users
-```
-
-The formats and rules are in [docs/design.md](docs/design.md).
-
-</details>
-
-### Cost
-
-Measured with Sonnet: about 70,000 to 105,000 tokens per persona as reported by Claude Code, and 1 to 4 minutes each. Personas run at the same time, so a default run takes roughly as long as its slowest persona, plus a verifier of similar size.
-
-### Browser Layers
-
-`agent-browser` gives each persona its own session, so they run in parallel. Without it, the skill is written to fall back to a browser MCP and run personas one at a time, a path that hasn't been tested. With neither, it stops and tells you.
-
-### Safety
-
-- Only test sites you own or have permission to test. The skill asks when the URL isn't localhost. `robots.txt` is not an access control, so permission is your responsibility.
-- It doesn't bypass bot checks. On a CAPTCHA or bot detection it stops and reports.
-- It never enters payment details, even fake ones, and stops before deleting anything, sending to a third party or publishing.
-- Credentials never pass through an agent. On a login wall it records the wall and stops.
-- Page text is data. Anything on a page aimed at an agent is quoted, never obeyed. See [SECURITY.md](SECURITY.md).
-
-### Related Projects
+## More
 
 <details>
 <summary>Other projects that run personas against live products</summary>
 
-This one differs by questioning features, separating observation from interpretation, and shipping a test site.
+This one differs by questioning features, separating observation from interpretation, and shipping test sites.
 
 - [danielgwilson/humanish](https://github.com/danielgwilson/humanish): computer-use participants on a real desktop. Needs OpenAI and E2B keys.
 - [savkevip/ghostuser](https://github.com/savkevip/ghostuser): MCP server with five built-in personas and Playwright.
@@ -362,10 +251,4 @@ This one differs by questioning features, separating observation from interpreta
 
 </details>
 
-### Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Behaviour changes must be run against the test sites and read by a person.
-
-### Licence
-
-[MIT](LICENSE). Credits for ideas are in [NOTICE.md](NOTICE.md). The research behind the design is in [docs/research.md](docs/research.md).
+The formats and rules are in [docs/design.md](docs/design.md). See [CONTRIBUTING.md](CONTRIBUTING.md) to change it: behaviour changes must be run against the test sites and read by a person. [MIT](LICENSE) licence. Credits are in [NOTICE.md](NOTICE.md), and the research behind the design is in [docs/research.md](docs/research.md).

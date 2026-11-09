@@ -7,12 +7,12 @@
     {
       "name": "user-thoughts",
       "source": "./",
-      "description": "See your live site as an outsider would: simulated users find where people give up, and a first-principles review asks why each thing exists.",
-      "version": "0.2.1",
+      "description": "See your live product through the visits of simulated people in different situations, and read what happened to each of them.",
+      "version": "1.0.0",
       "license": "MIT"
     }
   ],
   "metadata": {
-    "description": "See your live site as an outsider would: simulated users find where people give up, and a first-principles review asks why each thing exists."
+    "description": "See your live product through the visits of simulated people in different situations, and read what happened to each of them."
   }
 }

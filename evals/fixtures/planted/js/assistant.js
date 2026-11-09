@@ -28,15 +28,30 @@
   }
   panel.querySelector('.assistant-close').addEventListener('click', function () { show(false); });
   launcher.addEventListener('click', function () { show(true); });
+  function ask(text) {
+    say(text, 'me');
+    setTimeout(function () { say(REPLY, 'bot'); }, 500);
+  }
   panel.querySelector('form').addEventListener('submit', function (e) {
     e.preventDefault();
     var input = e.target.elements.q;
     var text = input.value.trim();
     if (!text) return;
-    say(text, 'me');
     input.value = '';
-    setTimeout(function () { say(REPLY, 'bot'); }, 500);
+    ask(text);
   });
+  var headerSearch = document.getElementById('header-search');
+  if (headerSearch) {
+    headerSearch.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var box = headerSearch.elements.q;
+      var text = box.value.trim();
+      if (!text) return;
+      box.value = '';
+      show(true);
+      ask(text);
+    });
+  }
   show(false);
   setTimeout(function () { show(true); }, 900);
 })();

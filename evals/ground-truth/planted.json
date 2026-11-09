@@ -163,6 +163,43 @@
   ]
  },
  {
+  "id": "P1",
+  "type": "promise",
+  "title": "Two search boxes that look the same: header opens a chat, homepage shows results",
+  "route": "/",
+  "all_of": [
+   [
+    "search|搜尋|搜索|查詢"
+   ],
+   [
+    "chat|assistant|wren|聊天|對話|助理"
+   ],
+   [
+    "duplicat|\\btwo\\b|\\bboth\\b|\\bsame\\b|identical|differ|inconsisten|\\bbut\\b|instead|lower|another|other|兩個|二個|雙|重複|相同|一樣|不同|不一致|另一個"
+   ]
+  ]
+ },
+ {
+  "id": "P2",
+  "type": "promise",
+  "title": "Help, Resources and Support in the menu all go to the help page",
+  "route": "all",
+  "all_of": [
+   [
+    "resources?|資源"
+   ],
+   [
+    "support|支援|客服"
+   ],
+   [
+    "help|說明|幫助|協助"
+   ],
+   [
+    "same|identical|duplicat|all (go|lead|link|point|open)|three|each|都|同一|相同|重複|一樣"
+   ]
+  ]
+ },
+ {
   "id": "D1",
   "type": "decoy",
   "title": "Enterprise tier says Contact sales (normal)",

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pellwick for teams</title>
+<meta name="description" content="Reserved desks and private rooms for teams on monthly terms.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html" aria-current="page">Teams</a></li><li><a href="faq.html">FAQ</a></li><li><a href="signin.html" data-account-link>Sign in</a></li></ul>
+      <a class="btn btn-primary btn-sm" href="plans.html">Book a desk</a>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+  </div>
+</header>
+<main id="main">
+<div class="container page-head"><span class="eyebrow">Teams</span><h1>Pellwick for teams</h1><p class="lede">Reserved desks and private rooms for teams of 5 to 60, on monthly terms. The price depends on team size, space and term, so we quote each team in writing.</p></div>
+<section style="padding-top:28px"><div class="container">
+  <div class="grid-3">
+    <div class="card"><h3>Reserved desks</h3><p>A block of desks kept for your team, at one space or spread across several.</p></div>
+    <div class="card"><h3>Private rooms</h3><p>Lockable rooms for 5 to 20 people, with your own meeting table.</p></div>
+    <div class="card"><h3>A whole floor</h3><p>For 20 to 60 people, with your own kitchen and entrance at Millrace or Northgate.</p></div>
+  </div>
+  <div class="split" style="margin-top:56px" id="enquire">
+    <div><h2>Ask for a quote</h2><p class="lede">We ask for these details so we can send a written quote within one working day: the price depends on team size, start date, term and which spaces you want.</p><p>Billing goes to the contact you name, so we ask for that too.</p></div>
+    <div class="form-card">
+      <div class="form-banner" id="teams-problem" role="alert" hidden></div>
+      <form id="teams-form" novalidate>
+        <div class="field"><label for="company">Company name</label><input id="company" name="company" autocomplete="organization"><span class="field-error" id="company-error" hidden></span></div>
+        <div class="field-row"><div class="field"><label for="contact-name">Your name</label><input id="contact-name" name="contact-name" autocomplete="name"><span class="field-error" id="contact-name-error" hidden></span></div>
+        <div class="field"><label for="work-email">Work email</label><input id="work-email" name="work-email" type="email" autocomplete="email"><span class="field-error" id="work-email-error" hidden></span></div></div>
+        <div class="field"><label for="teams-phone">Phone (optional)</label><input id="teams-phone" name="phone" type="tel" autocomplete="tel"></div>
+        <div class="field-row"><div class="field"><label for="team-size">Team size</label><select id="team-size" name="team-size"><option value="">Choose</option><option>5 to 9</option><option>10 to 19</option><option>20 to 39</option><option>40 to 60</option></select><span class="field-error" id="team-size-error" hidden></span></div>
+        <div class="field"><label for="desks">Desks on a typical day (optional)</label><input id="desks" name="desks" type="number" min="1" max="60" inputmode="numeric"></div></div>
+        <fieldset class="field"><legend>Which spaces? (optional)</legend><div class="choice-list"><label><input type="checkbox" name="spaces" value="harbour-lane"> Harbour Lane</label><label><input type="checkbox" name="spaces" value="millrace"> Millrace</label><label><input type="checkbox" name="spaces" value="old-tannery"> Old Tannery</label><label><input type="checkbox" name="spaces" value="northgate"> Northgate</label></div></fieldset>
+        <div class="field-row"><div class="field"><label for="start-date">Start date</label><select id="start-date" name="start-date"><option value="">Choose</option><option>As soon as possible</option><option>Next month</option><option>In two to three months</option><option>Later than that</option></select><span class="field-error" id="start-date-error" hidden></span></div>
+        <div class="field"><label for="term">Term</label><select id="term" name="term"><option value="">Choose</option><option>3 months</option><option>6 months</option><option>12 months</option></select><span class="field-error" id="term-error" hidden></span></div></div>
+        <div class="field"><label for="billing-email">Billing contact email</label><input id="billing-email" name="billing-email" type="email"><span class="field-hint">Where invoices should go. It can be the same as yours.</span><span class="field-error" id="billing-email-error" hidden></span></div>
+        <div class="field"><label for="notes">Anything else (optional)</label><textarea id="notes" name="notes" rows="3"></textarea></div>
+        <button class="btn btn-primary" type="submit" style="width:100%">Ask for a quote</button>
+      </form>
+      <div class="success-panel" id="teams-success" role="status" hidden><h3>Thanks, we have your details</h3><p>Your written quote will arrive within one working day.</p></div>
+    </div>
+  </div>
+</div></section>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#3b3fb6"/><path d="M7 20h18M10 20v6M22 20v6" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><path d="M12 20v-5l6-5" fill="none" stroke="#f5b82e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="9.5" r="2.6" fill="#f5b82e"/></svg><span>Pellwick</span></a>
+        <p class="footer-note">Desks by the day in Harbour Lane, Millrace, Old Tannery and Northgate.</p></div>
+      <div><h4>Work here</h4><ul><li><a href="locations.html">Spaces</a></li><li><a href="plans.html">Plans</a></li><li><a href="teams.html">Teams</a></li></ul></div>
+      <div><h4>Help</h4><ul><li><a href="faq.html">FAQ</a></li><li><a href="faq.html#contact">Contact</a></li><li><a href="account.html">My bookings</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="faq.html#privacy">Privacy</a></li><li><a href="faq.html#terms">Terms</a></li></ul></div>
+    </div>
+    <div class="footer-base">&copy; 2026 Pellwick Workrooms Ltd.</div>
+  </div>
+</footer>
+<script src="js/session.js" defer></script>
+<script src="js/menu.js" defer></script>
+<script src="js/teams.js" defer></script>
+</body>
+</html>

@@ -15,7 +15,8 @@
     <a class="brand" href="index.html"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0d6b61"/><path d="M7 21c0-5.2 4.2-9.4 9.4-9.4 1.8 0 3 .8 4.1 1.9l4.2-3.1-1.1 5.4c0 6.1-5 10.2-11.1 10.2-3.4 0-5.5-2-5.5-5z" fill="#fff"/><circle cx="19.2" cy="14.6" r="1.2" fill="#0d6b61"/></svg><span>Tallywren</span></a>
     
     <nav class="site-nav" id="site-nav" aria-label="Main">
-      <ul><li><a href="solutions.html">Solutions</a></li><li><a href="app-demo.html">Platform</a></li><li><a href="help.html">Resources</a></li><li><a href="signin.html">Sign in</a></li></ul>
+      <form class="header-search" role="search" id="header-search"><input type="search" name="q" placeholder="Search help topics" aria-label="Search help topics" autocomplete="off"></form>
+      <ul><li><a href="solutions.html">Solutions</a></li><li><a href="app-demo.html">Platform</a></li><li><a href="help.html">Help</a></li><li><a href="help.html">Resources</a></li><li><a href="help.html">Support</a></li><li><a href="signin.html">Sign in</a></li></ul>
       <div class="nav-actions"><a class="btn btn-primary btn-sm" href="signup.html">Get started</a></div>
     </nav>
   </div>
@@ -37,6 +38,13 @@
     <div class="mock-row"><span>Momentum</span><strong>Strong</strong></div>
     <div class="mock-row"><span>Alignment</span><strong>On track</strong></div>
   </div></div>
+</div></section><section class="section-tight help-search"><div class="container">
+  <form class="big-search" role="search" id="home-search">
+    <h2>Looking for something?</h2>
+    <p class="lede">Find a template, or an answer about reminders, currencies and tax IDs.</p>
+    <div class="big-search-row"><input type="search" name="q" placeholder="Search help topics" aria-label="Search help topics" autocomplete="off"><button class="btn btn-primary" type="submit">Search</button></div>
+  </form>
+  <div class="card results-card" id="search-results" tabindex="-1" aria-live="polite" hidden></div>
 </div></section><div class="logo-strip"><div class="container"><strong>Trusted by 10,000+ businesses</strong><span class="wordmark">Northbeam</span><span class="wordmark">Alder&amp;Co</span><span class="wordmark">Pinecrest</span><span class="wordmark">Lumenworks</span><span class="wordmark">Harborline</span></div></div><section id="features"><div class="container">
   <div class="section-head center"><h2>One platform, endless possibilities</h2><p class="lede" style="margin-inline:auto">Everything you need to move faster and think bigger.</p></div>
   <div class="grid-3">
@@ -73,6 +81,7 @@
   </div>
 </footer>
 <script src="js/assistant.js" defer></script>
+<script src="js/home-search.js" defer></script>
 <script src="js/newsletter.js" defer></script>
 </body>
 </html>

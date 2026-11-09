@@ -1,13 +1,18 @@
 import { test, describe, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { parseFrontmatter, lintRepo, main } from '../scripts/lint-skill.mjs';
+import { parseFrontmatter, lintRepo, main, checkBriefLeak, referencedPaths } from '../scripts/lint-skill.mjs';
 
 const SCRIPT_PATH = fileURLToPath(new URL('../scripts/lint-skill.mjs', import.meta.url));
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const SHIPPED_SKILL = join(REPO_ROOT, 'skills/launch/SKILL.md');
+const SHIPPED_BRIEFS = join(REPO_ROOT, 'skills/launch/references/briefs.md');
+const FENCE = '```';
+const personBrief = (lines) => `## Person brief\n${FENCE}text\n${lines.join('\n')}\n${FENCE}\n`;
 const DEFAULT_DESCRIPTION = 'Use when a test needs a small skill fixture.';
 const PERSONA_DEFAULTS = {
   id: 'novice',
@@ -294,6 +299,112 @@ describe('plugin manifests', () => {
       '.claude-plugin/marketplace.json': JSON.stringify({ name: 'user-thoughts' }),
     };
     assert.deepEqual(lintRepo(makeRepo(files)).errors, []);
+  });
+});
+
+describe('checkBriefLeak', () => {
+  test('the shipped person brief gives the walker the card facts, about and cares, and still passes the leak check', () => {
+    const text = readFileSync(SHIPPED_BRIEFS, 'utf8');
+    const start = text.indexOf(`${FENCE}text`, text.indexOf('## Person brief'));
+    const block = text.slice(start, text.indexOf(`\n${FENCE}`, start + FENCE.length));
+    for (const field of ['facts', 'about', 'cares']) assert.ok(block.includes(`{{${field}}}`), field);
+    assert.ok(!block.includes('why_chosen'));
+    assert.deepEqual(checkBriefLeak(text), []);
+  });
+
+  test('checkBriefLeak flags a person brief that mentions the vision', () => {
+    assert.equal(checkBriefLeak('## Person brief\n```text\nVision: {{vision}}\n```').length, 1);
+  });
+
+  test('flags every leak word inside the person brief block, in any case', () => {
+    for (const line of ['Goal: {{願景}}', 'Claims: builder-claims.md', 'ASSUMPTION: users love it', '假設：大家都喜歡']) {
+      const errors = checkBriefLeak(personBrief(['Site: {{url}}', line]));
+      assert.equal(errors.length, 1, `expected one error for ${line}`);
+    }
+  });
+
+  test('reports one error per leaking line, with its line number in the file', () => {
+    const errors = checkBriefLeak(personBrief(['Vision: {{vision}}', 'Site: {{url}}', 'Assumption: {{claims}}']));
+    assert.equal(errors.length, 2);
+    assert.match(errors[0], /line 3/);
+    assert.match(errors[1], /line 5/);
+  });
+
+  test('a clean person brief passes', () => {
+    assert.deepEqual(checkBriefLeak(personBrief(['Site: {{url}}', 'Your arrival: {{arrival}}'])), []);
+  });
+
+  test('mentions outside the person brief block are allowed', () => {
+    const text = [
+      '# Briefs',
+      'Never pass the vision to anyone.',
+      '## Person brief',
+      'Keep the vision and the assumption out of this block.',
+      `${FENCE}text`,
+      'Site: {{url}}',
+      FENCE,
+      '## judgements.json',
+      `${FENCE}json`,
+      '{"assumptions": [], "conflicts": [{"vision_note": ""}]}',
+      FENCE,
+    ].join('\n');
+    assert.deepEqual(checkBriefLeak(text), []);
+  });
+
+  test('a heading inside a code fence does not end the section', () => {
+    const errors = checkBriefLeak(personBrief(['## not a heading', 'Vision: {{vision}}']));
+    assert.equal(errors.length, 1);
+  });
+
+  test('a block after the next section heading is not part of the person brief', () => {
+    const text = `${personBrief(['Site: {{url}}'])}## Verifier brief\n${FENCE}text\nvision\n${FENCE}\n`;
+    assert.deepEqual(checkBriefLeak(text), []);
+  });
+
+  test('a missing person brief section is an error', () => {
+    const errors = checkBriefLeak('# Briefs\n## Verifier brief\n```text\nSite: {{url}}\n```\n');
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /Person brief/);
+  });
+
+  test('a person brief without a fenced block is an error', () => {
+    const errors = checkBriefLeak('## Person brief\nSite: {{url}}\n## Verifier brief\n');
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /fenced/);
+  });
+
+  test('the shipped briefs.md passes checkBriefLeak', () => {
+    assert.deepEqual(checkBriefLeak(readFileSync(SHIPPED_BRIEFS, 'utf8')), []);
+  });
+});
+
+describe('lintRepo and briefs.md', () => {
+  const briefsSkill = skillMd({ body: '# Demo\nFill each brief from `references/briefs.md`.\n' });
+
+  test('lintRepo fails when SKILL.md references a missing file', () => {
+    const { errors } = lint({ 'skills/demo-skill/SKILL.md': briefsSkill, ...MANIFESTS });
+    assertHasError(errors, /references\/briefs\.md is referenced but does not exist/);
+  });
+
+  test('lintRepo reports a person brief that leaks the vision', () => {
+    const root = validRepo({
+      'skills/demo-skill/SKILL.md': briefsSkill,
+      'skills/demo-skill/references/briefs.md': personBrief(['Vision: {{vision}}']),
+    });
+    assertHasError(lintRepo(root).errors, /skills\/demo-skill\/references\/briefs\.md: .*vision/i);
+  });
+
+  test('lintRepo passes a skill whose briefs.md keeps the person brief clean', () => {
+    const root = validRepo({
+      'skills/demo-skill/SKILL.md': briefsSkill,
+      'skills/demo-skill/references/briefs.md': personBrief(['Site: {{url}}']),
+    });
+    assert.deepEqual(lintRepo(root).errors, []);
+  });
+
+  test('the launch skill references references/briefs.md and the repo lints clean', () => {
+    assert.ok(referencedPaths(readFileSync(SHIPPED_SKILL, 'utf8')).includes('references/briefs.md'));
+    assert.deepEqual(lintRepo(REPO_ROOT).errors, []);
   });
 });
 

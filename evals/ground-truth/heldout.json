@@ -1,0 +1,244 @@
+[
+ {
+  "id": "U1",
+  "type": "usability",
+  "title": "The main Book a desk button opens a monthly membership sales page; booking a single day is a small link at the bottom",
+  "route": "/",
+  "all_of": [
+   [
+    "book a desk|book(ing)? (button|cta|link)|(main|primary|hero|top) (button|cta|call.to.action|action)|call.to.action|\\bcta\\b|訂位按鈕|預訂按鈕|主要按鈕|主按鈕|book a single day"
+   ],
+   [
+    "member(ship)?s?|monthly|plans? (page|sales)|to (the )?plans\\b|subscription|會員|月費|方案頁"
+   ],
+   [
+    "instead|not (the )?booking|rather than|unexpected|surpris|(doesn'?t|does not|did not|didn'?t|never) (start|begin|open)\\w* (a |the )?book|(leads?|led|go|goes|going|went|took|takes|sends?|sent|opens?|opened|redirect\\w*|routes?|routed|lands?|landed|points?|pointed|links?|linked)( up)? (me |you |users |people |visitors )?(on |to |at |into |straight to |the |a |an )|buried|small (text )?link|at the bottom|卻|而不是|跳到|導向|帶到|連到|連去|不是預訂"
+   ]
+  ]
+ },
+ {
+  "id": "U2",
+  "type": "usability",
+  "title": "Pass options are called Drift, Dock and Den with nothing saying what each one is",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "\\b(drift|dock|den)\\b.{0,40}\\b(drift|dock|den)\\b|pass(es)? (names?|types?|options?|tiers?|choices)|what (is|does|do) (a |an |the )?(drift|dock|den)\\b|三種.{0,6}票|票種|方案名稱"
+   ],
+   [
+    "jargon|unclear|confus|cryptic|meaningless|vague|no (description|explanation|detail|info)|(not|never|nothing|without) (\\w+ )?(explain|describ|say|tell)\\w*|(don'?t|doesn'?t|didn'?t|does not|do not|did not) (\\w+ )?(explain|describe|say|tell|know)|what (each|they|it|these|the names?)( \\w+)? (is|are|means?|includes?|offers?|gets?|do|does)|difference|術語|看不懂|不知道|不清楚|沒有說明|沒說明|差別|差異|no idea|not sure what|have to guess|unexplained|tells? (me |you )?nothing|says? nothing"
+   ]
+  ]
+ },
+ {
+  "id": "U3",
+  "type": "usability",
+  "title": "A phone number written like the field's own placeholder is rejected with only a red outline: Continue seems to do nothing and no message says why",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "phone (number|field|input|box)|mobile (number|field|input|box)|telephone|\\bcontinue\\b|電話|手機號碼|手機號|繼續"
+   ],
+   [
+    "nothing happen\\w*|did nothing|does nothing|no (visible )?(error|message|feedback|explanation|hint|indication)|silent\\w*|red (outline|border|box)|turn(s|ed)? red|(doesn'?t|does not|didn'?t|did not|won'?t|wouldn'?t) work|(can'?t|cannot|couldn'?t|could not) (see|tell) (why|what)|with (a )?spaces?|(has|have|contains?|containing|includ\\w*|typed|added) (a )?spaces?|no spaces|placeholder|reject\\w*|refus\\w*|(not|won'?t|wouldn'?t) accept|without (any )?(message|explanation|error|saying|telling)|(not|never) (say|said|explain\\w*|tell|told|show\\w*) (what|why|which)|沒反應|沒有反應|沒有任何反應|沒有(錯誤|訊息|提示|說明)|格式|空格|紅框|變紅|範例"
+   ]
+  ]
+ },
+ {
+  "id": "U4",
+  "type": "usability",
+  "title": "At 480px or less the menu opens as a full-screen panel with no way to close it",
+  "route": "all",
+  "all_of": [
+   [
+    "mobile|phone(?! booth)|narrow|small screen|480|responsive|viewport|手機|窄|小螢幕|行動版|\\b(3[2-9]\\d|4\\d\\d)\\s?px\\b"
+   ],
+   [
+    "menu|\\bnav\\b|navigation|hamburger|選單|導覽|漢堡"
+   ],
+   [
+    "(can'?t|cannot|couldn'?t|could not|no way to|unable to|impossible to) (\\w+ )?(close|dismiss|exit|get out|get back|go back|return|escape|shut)|no (visible |obvious |clear )?(close|×|x\\b|exit|dismiss)( button| control| icon)?|missing (a |an |any |the )?(close|exit|×|x\\b|dismiss)|only way (out|back|to (close|leave|exit|get out))|(won'?t|doesn'?t|does not|did not|didn'?t) (close|go away|dismiss)|stuck|trap(s|ped)?\\b|關不掉|關不了|無法關閉|沒辦法關|沒有關閉|(找不到|沒有|沒看到|看不到).{0,8}關閉|卡住"
+   ]
+  ]
+ },
+ {
+  "id": "U5",
+  "type": "usability",
+  "title": "Street addresses and opening hours are hidden until you sign in",
+  "route": "/locations.html",
+  "all_of": [
+   [
+    "(?<!e-?mail )address|opening (hours|times)|\\bhours\\b|(?<!郵件|信箱)地址|營業時間|開放時間|where (the |each |a )?(space|workroom|location)s? (is|are)"
+   ],
+   [
+    "sign.?in|log.?in|account|register|登入|註冊|帳號"
+   ],
+   [
+    "only (after|once|if|when)|\\buntil\\b|behind|locked|gated|hidden|hides?|(must|need to|needs to|needed to|have to|has to|had to|required to|got to) (first )?(sign|log|create|register)|sign.?in to (see|view|get|find)|requires?|before (you|i|seeing)|without (signing|logging|creating|an account)|(can'?t|cannot|couldn'?t|could not) see|才能|才看得到|才會顯示|才顯示|之後才|登入後|要登入|要先|需要|必須|隱藏|鎖|看不到|needs? an account|needs? to be signed"
+   ]
+  ]
+ },
+ {
+  "id": "U6",
+  "type": "usability",
+  "title": "A service fee appears only on the final step, so the total is higher than the advertised price",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "service (fee|charge)|booking fee|(extra|added) fees?|(additional|hidden|surprise|admin|processing|unexpected) (fee|charge|cost)s?|surcharge|\\bfees?\\b (appear|show|arrive|come)\\w*( up)? (too )?late\\b|\\bfee\\b.{0,60}(final|last|review|checkout|\\bend\\b)|(final|last|review|checkout).{0,60}\\bfee\\b|\\bfee was added|added (a |an )?.{0,20}\\bfee\\b|\\bfee is not (mentioned|shown|disclosed|listed)|服務費|手續費|額外費用|隱藏費用"
+   ],
+   [
+    "(only|first|just) (\\w+ )?(appears?|appeared|shows?|showed|added|revealed|at|on|when)\\b|(at|on) (the )?(last|final|end|review|checkout|payment)\\b|last (step|minute)|final (step|page|screen)|not (shown|mentioned|disclosed|listed)|never (shown|mentioned)|\\blate\\b|higher than|more than (advertised|shown|listed)|jumps?|becomes|drip|surpris|unexpected|最後|結帳|才出現|才(多|加)|第五步|沒有(提到|顯示|事先)|比.{0,8}(高|多)|突然|意外|hidden|\\bfee was added|added (a |an )?.{0,20}\\bfee\\b"
+   ]
+  ]
+ },
+ {
+  "id": "V1",
+  "type": "value",
+  "title": "Booking forces a four-question work vibe quiz before you can pick a space or date, and the result changes nothing",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "quiz|vibe|personality|questionnaire|survey|測驗|問卷|個性|(four|4) questions|questions? (about|on) my|\\bdrink\\b"
+   ],
+   [
+    "forc\\w*|(can'?t|cannot|couldn'?t|could not|no way to|unable to) (skip|bypass|avoid|get past)|no skip|unskippable|mandatory|required|must (answer|complete|take|fill)|(have|has|had|need|needs|needed) to (take|do|answer|complete|fill)|\\bquiz first|in front of|before (you|i|booking|picking|choosing|selecting|i could|you can)|pointless|irrelevant|unnecessary|nothing to do with|(does not|doesn'?t|did not|didn'?t) (change|affect|matter|influence)|changes? nothing|no (effect|purpose|point|use|bearing)|friction|waste|強制|無法跳過|不能跳過|必須|才能|要先|訂位前|預訂前|多餘|沒意義|沒有意義|無關|沒關係|沒用|why .{0,40}(need|ask|want)"
+   ]
+  ]
+ },
+ {
+  "id": "V2",
+  "type": "value",
+  "title": "Every space shows the same Only 2 desks left today badge",
+  "route": "/locations.html",
+  "all_of": [
+   [
+    "only (2|two) (desks? )?(are |is )?(left|remaining)|desks? (are |is )?(left|remaining)|\\b2 left|scarcity|urgency|只剩|剩下?(2|兩|二)|稀缺|急迫|緊迫"
+   ],
+   [
+    "\\bevery\\b|\\ball (four|4|the)\\b|\\beach\\b|\\bsame\\b|identical|\\balways\\b|never changes?|fake|false|manufactured|artificial|invented|made.?up|pressure|unverif|believ|trust|dark pattern|每個|全部|一樣|相同|假的|製造|壓力|不可信|manipulat\\w*"
+   ]
+  ]
+ },
+ {
+  "id": "V3",
+  "type": "value",
+  "title": "The review step awards points, a badge and a level that nothing explains",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "pellwick points|(\\d+|the|these|those|my|your|of|earn\\w*|get|got|reward|loyalty) points\\b|points (and|or|are|for|actually|do|buy|mean|system|balance)\\b|first light|badge unlocked|(reward|achievement) badges?|badges? and (a )?levels?|level \\d|wanderer|gamif|積分|點數|解鎖.{0,6}徽章|徽章.{0,6}(解鎖|等級|積分)|遊戲化|等級\\s*\\d"
+   ],
+   [
+    "(no|without) (\\w+ )?(explanation|purpose|use|value|reward|meaning|redemption)|(not|never|nothing) (\\w+ )?(explain|explained|explains|says?|said|tells?|told)|not clear|isn'?t clear|what (they|it|the points|points)( \\w+)? (are|is|do|does|mean|means|buy|for)|what (do|does|can) .{0,40}\\b(buy|mean|do|get|for)\\b|pointless|meaningless|useless|unclear|gimmick|nobody|unnecessary|irrelevant|childish|silly|no (idea|clue)|沒有說明|不知道|沒用|沒意義|無意義|多餘|噱頭|幼稚|有什麼用|adds? nothing"
+   ]
+  ]
+ },
+ {
+  "id": "V4",
+  "type": "value",
+  "title": "Just-booked notices keep popping up over the page",
+  "route": "all",
+  "all_of": [
+   [
+    "just booked|someone booked|recent(ly)? (booking|booked|activity)|(other|others'?|other people'?s?) bookings?|other (visitors|users|customers|members)['’]?s? bookings?|announc\\w*.{0,40}book\\w*|(activity|booking|live|social.?proof) (pop.?ups?|toasts?|notifications?|alerts?|notices?|ticker|feed)|\\btoasts?\\b|(pop.?ups?|notifications?|notices?|alerts?|banners?).{0,60}(booked|booking|bookings|reserved)|(booked|booking|bookings|reserved).{0,40}(pop.?ups?|notifications?|notices?|alerts?)|剛剛預訂|剛預訂|(預訂|訂位)(通知|提示|訊息)|(通知|彈窗|提示).{0,10}(預訂|訂了)"
+   ],
+   [
+    "keeps?|kept|repeated\\w*|again and again|every (few|couple|ten|\\d+)|constant\\w*|endless\\w*|(won'?t|doesn'?t|does not|did not|didn'?t) stop|cover(s|ed|ing)?\\b|block\\w*|obscur\\w*|distract\\w*|annoy\\w*|interrupt\\w*|fake|unverif|pressure|不停|一直|反覆|重複|遮|擋|干擾|煩|分心"
+   ]
+  ]
+ },
+ {
+  "id": "V5",
+  "type": "value",
+  "title": "A paid Desk Cover add-on is ticked by default in the booking details",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "desk cover|add.?on|insurance|upsell|附加|加購|保險"
+   ],
+   [
+    "pre.?(ticked|checked|selected)|already (ticked|checked|selected|added)|(ticked|checked|selected|added|on|in|enabled|included) by default|default(s|ed)? (on|to)|opt.?out|sneak\\w*|without (asking|consent|me choosing)|automatically added|預設|預先勾選|已勾選|自動勾選|自動加入|偷偷|untick\\w*|uncheck\\w*"
+   ]
+  ]
+ },
+ {
+  "id": "P1",
+  "type": "promise",
+  "title": "The homepage Check availability form looks like it searches your space and date, but booking starts blank",
+  "route": "/",
+  "all_of": [
+   [
+    "check availability|quick.?(book|search)|(homepage|home page|front page) (form|widget|search|box)|availability (form|widget|search|box)|find a desk|查詢空位|快速預訂|首頁的(表單|搜尋)|首頁.{0,6}表單"
+   ],
+   [
+    "\\bspace\\b|location|\\bdate\\b|choice|selection|日期|地點|空間|空位|選擇|選好|availab\\w*"
+   ],
+   [
+    "\\blost\\b|loses|drop(s|ped)?\\b|ignor\\w*|forgot|forget\\w*|discard\\w*|cleared|\\breset\\b|wiped|not (carried|kept|saved|remembered|passed|pre.?filled)|(didn'?t|does not|doesn'?t|did not) (carry|keep|remember|pass|pre.?fill|use)|start(ed|s)? (over|blank|empty|from scratch)|from scratch|\\bblank\\b|re.?(enter|select|type)|(choose|pick|select) again|遺失|消失|清空|沒有(帶|保留|記住)|沒有顯示|沒顯示|重新|空白|又要|(choose|pick|select|enter)\\b.{0,30}\\bagain|(doesn'?t|does not|never|did not|didn'?t) (actually )?(check|show)\\w*|(just|only) (opens|takes|sends)|instead of (showing|checking|listing)"
+   ]
+  ]
+ },
+ {
+  "id": "P2",
+  "type": "promise",
+  "title": "The amenity filters highlight and relabel but the list of spaces never changes",
+  "route": "/locations.html",
+  "all_of": [
+   [
+    "filters?\\b|\\bchips?\\b|篩選|過濾|(clicking|selecting|choosing|picking) (on )?(showers|phone booths|bike storage|open weekends)"
+   ],
+   [
+    "phone booths?|showers?|\\bbike\\b|weekend|amenit\\w*|\\bspaces?\\b|\\bcards?\\b|locations?|\\blist\\b|results?|設施|空間|地點|列表|結果|淋浴"
+   ],
+   [
+    "(do|does|did) nothing|(don'?t|doesn'?t|didn'?t|does not|do not|did not|never) (\\w+ )?(do anything|work|change|filter|hide|narrow|update|affect)|nothing (changes?|changed|happens?|happened)|no (effect|change)|(still|always) (shows?|showed|lists?|listed|4|four|all)|same (list|four|4|results?)|even though|cosmetic|stay (on|in|listed|put)|broken|decorative|沒有作用|沒作用|沒反應|不會變|沒有變|沒變|仍然|還是|都一樣|無效|變色|留著|not (the )?(list|results|spaces)"
+   ]
+  ]
+ },
+ {
+  "id": "D1",
+  "type": "decoy",
+  "title": "A photo ID is checked once on the first visit (normal)",
+  "route": "/book.html",
+  "all_of": [
+   [
+    "photo.?id|(an|your|my) id\\b|(requir\\w*|ask\\w* for|show\\w*|bring\\w*|need\\w*|check\\w*) (an |a |your |my )?id\\b|\\bid (check|card|document|requirement)|identification|passport|driving licen[cs]e|driver'?s licen[cs]e|證件|身分證|身份證|護照|駕照"
+   ],
+   [
+    "excessive|friction|annoy\\w*|intrusive|invasive|unnecessary|overkill|too much|burden\\w*|hassle|inconvenien\\w*|why (do|does|would|should|is|are) .{0,40}(id\\b|identification|passport)|(revealed|mentioned|shown|stated|told|learn\\w*) only|only (revealed|mentioned|shown|stated|told|on the|at the|when)|last.?minute|too late|\\blate\\b|surpris\\w*|easy to miss|no (warning|notice)|(could|might|may|would) stop|put.{0,12}off|deter\\w*|麻煩|多餘|過度|沒必要|為什麼要|太晚|最後才|才(說|告訴|提到)"
+   ]
+  ]
+ },
+ {
+  "id": "D2",
+  "type": "decoy",
+  "title": "Free cancellation ends at 18:00 the day before (a stated, normal policy)",
+  "route": "/plans.html",
+  "all_of": [
+   [
+    "cancel\\w*|refund\\w*|取消|退款|退費"
+   ],
+   [
+    "18:00|6 ?pm|day before|24 hours?|cut.?off|deadline|non.?refundable|no refund|not refundable|cannot be refunded|same.?day|前一天|前一日|當天|截止|不退|無法退"
+   ],
+   [
+    "(can|could|may) only|only (cancel|until|up to|free until)|too (strict|short|early|harsh|soon|tight)|harsh|strict|unfair|inflexible|punish\\w*|penal\\w*|lose[s]? (my|the|your)|no refund (if|when|after|on)|(can'?t|cannot|couldn'?t) (cancel|get (a |my )?refund)|只能|太(嚴|早|短)|不公平|不能退|無法退|不退"
+   ]
+  ]
+ },
+ {
+  "id": "D3",
+  "type": "decoy",
+  "title": "The team enquiry form is long because a written quote needs those details",
+  "route": "/teams.html",
+  "all_of": [
+   [
+    "teams? (page|form|enquiry|inquiry|quote)|enquiry form|inquiry form|quote (form|request)|團隊.{0,6}(表單|詢價)|企業方案|詢價|報價|team quotes?"
+   ],
+   [
+    "\\blong\\b|lengthy|too many\\b|many fields|overkill|excessive|tedious|intimidat\\w*|overwhelm\\w*|冗長|太長|很多欄位|欄位太多|太多欄位|問題太多"
+   ]
+  ]
+ }
+]

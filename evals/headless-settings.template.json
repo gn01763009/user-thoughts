@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node {{SKILL_DIR}}/scripts/browser.mjs *)",
+      "Bash(node {{SKILL_DIR}}/scripts/merge-findings.mjs *)",
+      "Bash(node {{SKILL_DIR}}/scripts/build-report.mjs *)",
+      "Read(/{{SKILL_DIR}}/**)"
+    ]
+  }
+}

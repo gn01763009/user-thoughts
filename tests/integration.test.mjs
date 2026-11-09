@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const MERGE = fileURLToPath(new URL('../skills/persona-walkthrough/scripts/merge-findings.mjs', import.meta.url));
+const MERGE = fileURLToPath(new URL('../skills/launch/scripts/merge-findings.mjs', import.meta.url));
 const SCORE = fileURLToPath(new URL('../evals/score.mjs', import.meta.url));
 const TRUTH = fileURLToPath(new URL('../evals/ground-truth/planted.json', import.meta.url));
 const tempDirs = [];
@@ -20,6 +20,7 @@ const jsonl = (items) => items.map((item) => `${JSON.stringify(item)}\n`).join('
 const trace = (step) => ({
   step, route: '/', action: 'looked', expected: 'x', saw: 'y', screenshot: `screens/0${step}.png`,
   cw: { would_try: true, would_notice: true, would_understand: true, got_feedback: true },
+  thought: 'I wonder what this is.', feeling: 'fine',
   progress: true, leave_urge: 1,
 });
 
@@ -63,7 +64,11 @@ test('merge output feeds the scorer: a planted problem is matched', () => {
   const merged = node(MERGE, [runDir]);
   assert.equal(merged.status, 0, merged.stderr);
   const mergedPath = join(runDir, 'merged.json');
-  assert.equal(JSON.parse(readFileSync(mergedPath, 'utf8')).findings[0].sources[0].observed, FINDING.observed);
+  const parsed = JSON.parse(readFileSync(mergedPath, 'utf8'));
+  assert.equal(parsed.findings[0].sources[0].observed, FINDING.observed);
+  assert.equal(parsed.people[0].steps[0].thought, 'I wonder what this is.');
+  assert.equal(parsed.apple.asked, 0);
+  assert.match(merged.stdout, /Bad-idea check: 0\/0 said yes/);
 
   const scored = node(SCORE, ['--mode', 'planted', '--input', mergedPath, '--truth', TRUTH, '--json']);
   const result = JSON.parse(scored.stdout);

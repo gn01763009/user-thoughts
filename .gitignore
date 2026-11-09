@@ -14,3 +14,9 @@ node_modules/
 # Local eval output
 evals/cases/results/
 evals/cases/run*.json
+
+# Brainstorm mockups
+.superpowers/
+
+# Internal planning notes, not part of the published project
+docs/superpowers/

@@ -189,7 +189,9 @@ Thought checks: no tool narration in any person's thoughts (English text that ap
 
 #### Batch 1 trial
 
-One standard run on each of the clean and planted sites, on the skill with the sixth person (`low-stakes`), the real-checks, decided and test-limits fields, and the other batch 1 changes. Served locally, Sonnet, headless, English, standard depth, the setup answers given up front, one run at a time. Scores are the unedited output of `evals/score.mjs`. Nothing was tuned for them. The run folders are in `evals/results/batch-1/` (git-ignored). The heldout site was not run.
+One standard run on the clean site and two on the planted site (the second planted run, `planted-2`, was added with kept decisions seeded), on the skill with the sixth person (`low-stakes`), the real-checks, decided and test-limits fields, and the other batch 1 changes. Served locally, Sonnet, headless, English, standard depth, the setup answers given up front, one run at a time. Scores are the unedited output of `evals/score.mjs`. Nothing was tuned for them. The run folders are in `evals/results/batch-1/` (git-ignored). The heldout site was not run.
+
+The table below is the first planted run and the clean run. The second planted run follows it.
 
 | Check | Clean site | Planted site |
 |---|---|---|
@@ -202,11 +204,35 @@ One standard run on each of the clean and planted sites, on the skill with the s
 | Permission denials | 2, both denied `Write` calls | 1, a denied `Write` of `telephone.json` |
 | `test_limits` / `real_checks` / `decided` entries | 0 / 6 / 0 | 0 / 6 / 0 |
 
-Planted matched U1, U2, U4, U5, V1, V2, V4, V5 and missed U3, U6, V3. The promise problem P1 matched and P2 was missed. The 8/11 is as scored by script; I did not read the matches by hand. From the printed text, the V1 and V2 matches are one chunk, and the V5 match is a "would not notice" feature line, so the by-hand count may be lower. It misses the 9/11 bar and has 1 decoy, so it fails on both, as the earlier planted runs did. The single clean false alarm is a high finding about a "Start free" tap that did nothing, hedged by the person as possibly a tool effect.
+Planted matched U1, U2, U4, U5, V1, V2, V4, V5 and missed U3, U6, V3. The promise problem P1 matched and P2 was missed. The 8/11 is as scored by script. It misses the 9/11 bar and has 1 decoy, so it fails on both, as the earlier planted runs did. The single clean false alarm is a high finding about a "Start free" tap that did nothing, hedged by the person as possibly a tool effect.
 
-Next to the most recent earlier planted run, "Final check on the current skill" (8/11, value recall 0.80, promise recall 1.00, 1 decoy, missing U3, U5 and V3), the new planted recall is equal at 8/11, with the same value recall and the same 1 decoy. Promise recall fell from 1.00 to 0.50, because P2 was missed. The comparison is not like for like: 6 people against 5, and English against Traditional Chinese. For extra context, the older round scored 9/11 and 9/11 as scored by script, at most 8 and 7 when read by hand. The clean site had 0 false alarms in the latest earlier clean run, and 1 now. **One run per site cannot show improvement or regression.** The same skill text scored 0.91 and 0.64 on the same unseen site in an earlier round, so a difference of one or two matches is inside the spread between runs.
+**Second planted run (`planted-2`, with kept decisions).** Same site, same prompt, with `.user-thoughts/decisions.md` seeded with three kept decisions (card up front, newsletter popup, English only). It finished with a result event and a `report.html` containing `section-decided`. 6 people including `p6-low-stakes`. Script score: recall 8/11 (0.73), value recall 0.80, promise recall 0.50, 0 decoys; matched U1, U2, U4, U5, V1, V2, V4, V5, P1, missed U3, U6, V3, P2. It took 422 s and cost 3.19 USD. Two `Write` calls were denied (`telephone.json` and `judgements.json`, each a mistyped path outside the project) and both files exist after the retry. The low-stakes person took 2 steps, with name, `facts`, `about` and `cares` filled, and no `stopped_me` impact. `test_limits` was empty again.
 
-No `real_checks` ask is a "would you" question; all six on each site ask about the last time something happened. Neither run wrote a `test_limits` or `decided` entry. `decided` is empty because no `.user-thoughts/decisions.md` existed. `test_limits` was empty on both sites, so this trial gave no evidence on whether the coordinator fills it.
+**Read by hand.** Every printed match was read in full against `evals/ground-truth/planted.json`, with the other chunks that matched the same item, because the script prints only the first.
+
+| | First planted run | Second planted run (`planted-2`) |
+|---|---|---|
+| Script | 8/11, value 0.80, promise 0.50, 1 decoy | 8/11, value 0.80, promise 0.50, 0 decoys |
+| By hand | 7/11 (0.64), value 3/5 (0.60), promise 1/2 (0.50), 0 decoys | 7/11 (0.64), value 3/5 (0.60), promise 0/2 (0.00), 0 decoys |
+| True hits | U1, U2, U4, U5, V1, V2, V4, P1 | U1, U2, U4, U5, V1, V2, V4 |
+| False matches | V5, D3 | V5, P1 |
+
+- V5 is a false match in both runs. The only chunk is a feature line for the "Trusted by 10,000+ businesses" strip, where the person says "I would not notice". Nobody complained about unverifiable praise.
+- V1 and V2 share the same scored chunk (a newsletter popup and chat panel covering the headline), but both are true hits, because other chunks support each separately: the chat panel covering the form or the Search button and open on every page for V1, and the tiny close x for V2.
+- V4 is a true hit in both runs, although the scored chunk is not always the best one: the chunk that says the tour had no skip and had to be clicked through (all seven steps, or the page blocked until finished) is the one that counts.
+- P1 is a true hit in the first run (text typed into the header search landed in the Ask Wren chat) and a false match in the second (the chat panel covered the Search button, which is not the two-lookalike-search-boxes problem).
+- D3 in the first run is a false decoy hit. The chunk is about the preview not showing what the client sees, matched on "due date"; nobody called the form too long.
+- U1, U2, U4 and U5 are complaints in both runs.
+
+So by hand the two planted runs are equal at 7/11 on usability and value, and the by-hand count is below the script count in both. The script's 8/11 is overstated by V5. Both fail the 9/11 bar either way, and the by-hand decoy count is 0 in both.
+
+**Clean run, by hand.** The false alarm is p2's finding that tapping "Start free" under the demo form did nothing. The link in the message is a real anchor to `signup.html`, and the screenshot shows it intact. Re-testing the clean site in a phone-sized browser, the click went to `signup.html`. The page also has a second "Start free" in the top bar, as the person's own note allowed. The site did not misbehave; this is a false alarm from a missed tap, so by hand the clean site had 1 false alarm that was not the site's fault.
+
+**`decided` has now run live.** With the decisions file seeded, the coordinator copied it to the run folder unchanged and wrote two `decided` entries, the card-up-front and newsletter lines, each word for word. It did not cite the English-only line, and no person ran into a language problem, so nothing was over-matched. Every source of the findings and features about the card and the sign-up (the sign-up form, "See it in action", pricing "Start free", the card-required feature) is listed in the card entry's evidence. The newsletter entry lists every source of the close-button and popup findings, but two sources of the popup feature entries (p4 step 1 and p5 step 1) are not listed, so the evidence is nearly but not fully complete. The top finding (the seven-step tour) is not a decided item. No seeded decision text reached any `Agent` prompt or any person's files; it appears only in the coordinator's own read, copy and `judgements.json` write. One run shows `decided` working, not that it always does.
+
+Next to the most recent earlier planted run, "Final check on the current skill" (8/11, value recall 0.80, promise recall 1.00, 1 decoy, missing U3, U5 and V3), the new planted recall is equal at 8/11, with the same value recall and the same 1 decoy. Promise recall fell from 1.00 to 0.50, because P2 was missed. The comparison is not like for like: 6 people against 5, and English against Traditional Chinese. By hand, both batch 1 planted runs are 7/11, one below the script's count. For extra context, the older round scored 9/11 and 9/11 as scored by script, at most 8 and 7 when read by hand. The clean site had 0 false alarms in the latest earlier clean run, and 1 now. **One run per site cannot show improvement or regression.** The same skill text scored 0.91 and 0.64 on the same unseen site in an earlier round, so a difference of one or two matches is inside the spread between runs.
+
+No `real_checks` ask is a "would you" question; all six on each site ask about the last time something happened. The first planted run and the clean run wrote no `decided` entry, because no `.user-thoughts/decisions.md` existed; the second planted run, which had one, did (see above). `test_limits` was empty in all three runs, so this trial gave no evidence on whether the coordinator fills it.
 
 Notes on the runs: both streams contain several `"type":"result"` lines, because the coordinator was woken by each background person finishing; the last one is the final result, and the totals above come from it. Both runs had denied `Write` calls. Each denied path was a mistyped version of the test rig's very long project folder (a slash became a dash, or the folder name was mangled), so it fell outside the project and was refused. The coordinator then retried with the right path, and the files exist at the attempted size.
 

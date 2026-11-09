@@ -71,10 +71,10 @@ Five setup steps, all of which you can answer in your first message:
 | Depth | People | Adds | Time | Cost (USD) |
 |---|---|---|---|---|
 | quick | 3, about 8 steps each | nothing | 250 s, one run | 1.48, one run |
-| standard | 6 | word-of-mouth chain | 372 and 418 s (6 to 7 minutes), 2 runs | 2.96 and 3.42, 2 runs |
+| standard | 6 | word-of-mouth chain | 372 to 422 s (6 to 7 minutes), 3 runs | 2.96 to 3.42, 3 runs |
 | full | 9 | word-of-mouth chain and launch-day comments | not measured | not measured |
 
-Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard figures come from 2 runs of the current skill, one per test site; the earlier 5-person standard runs took 301 to 433 s and cost 2.10 to 2.75 USD. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
+Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard figures come from 3 runs of the current skill (the clean site once, the known site twice); the earlier 5-person standard runs took 301 to 433 s and cost 2.10 to 2.75 USD. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
 
 ## What the report looks like
 
@@ -116,7 +116,7 @@ Everything here ran on Sonnet, headless, on local test sites. Each test ran once
 - **The known site is not a clean measure.** The skill was tuned on it. A plain agent with no skill scored 8 of 11 on the same site, so this README does not claim the skill beats one there.
 - **The unseen site is the fairer test, and it is noisy.** The same skill text scored 0.91 and 0.64. That is two runs and one blind baseline, on Sonnet only.
 - **The bad-idea check tells you nothing yet.** The agreeable control did not say yes either, so the test could not tell a flattering batch from an honest one.
-- **Which version was tested.** The clean and known test sites were each run once on the skill as it now stands (clean: 1 false alarm; known: 8/11 recall, 1 decoy). The unseen and hostile sites were not rerun on it; their results come from earlier versions. The results table above comes from earlier versions, so its clean-site row shows 0 false alarms.
+- **Which version was tested.** The clean site was run once and the known site twice on the skill as it now stands (clean: 1 false alarm, which on a by-hand look was a missed tap and not a fault of the site; known: 8/11 recall by script in both runs, 7/11 read by hand in both, so the 9/11 bar was missed either way). The unseen and hostile sites were not rerun on it; their results come from earlier versions. The results table above comes from earlier versions, so its clean-site row shows 0 false alarms.
 - **Quick depth** scored 7/11 with no decoys, in one run on the known site, before the later changes.
 - **`--rerun`** has run end to end once: quick depth, one person, on localhost.
 

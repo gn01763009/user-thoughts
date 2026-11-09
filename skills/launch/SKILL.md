@@ -251,6 +251,7 @@ Write `<run dir>/judgements.json` in the format in `references/briefs.md`, citin
 - **Assumptions:** check every line of `builder-claims.md` against what actually happened.
 - **Conflicts:** only where at least two sides each cite their own steps. The `vision_note` weighs the sides against
   the builder's vision, not by counting heads.
+- **Test limits:** a step goes in `test_limits` only when you can name what in the test setup caused it and a real visitor in that person's situation would not have hit it (`references/briefs.md`). A confusing page is never a test limit. The finding and the person's story stay as they are.
 - **Not checked:** say honestly what this run did not cover: pages or tasks nobody reached, people who were blocked
   or incomplete, forms left unsent on production, what the chosen depth leaves out, and that demand cannot be judged
   by simulated people.
@@ -269,24 +270,14 @@ browser sessions as `references/browser.md` describes.
 
 ## Rerun one person
 
-`--rerun <person-id>` walks one person again after the builder has changed the product.
-
-1. Do Step 1. Read `.user-thoughts/last-setup.json`. If it is missing or has no card with that id, stop and list the
-   ids it has. If its `url` is not this URL, stop and say which URL it was saved for.
-2. Start a new run folder, named as Step 1 says. Write `run.json` with the saved `url`, `depth`, `language`, `vision` and `understanding`,
-   only this person in `personas` and `people` (the card as saved, with any `overlay`; an older card gets a `voice`, as briefs.md says), `rerun_of` set to `runs[<id>]` from
-   `last-setup.json`, and the other fields as in Step 7. Copy `builder-claims.md` from that earlier run if it exists.
-3. Write the exit interview with the same pitch, then do Steps 8, 9, 11 and 12 for this person in a new session.
-4. The person starts from the beginning with no memory. Never pass the earlier trace, outcome or findings into the
-   brief, so a change made before the point where they gave up is still walked through.
-5. Skip word of mouth. Afterwards set `runs[<id>]` in `last-setup.json` to the new folder. The report shows both
-   timelines side by side.
+`--rerun <person-id>` walks one person again after the builder has changed the product. Read `references/rerun.md` and follow it.
 
 ## Common mistakes
 
 | Mistake | What to do instead |
 |---|---|
 | Putting the vision or the assumption into a brief, or hinting at either | Keep both in the run files, out of every brief. |
+| Marking a confusing page as a test limit | Only what the test setup caused and a real visitor would not hit. |
 | An identity label in place of a situation, or as the source of a voice | Describe where they are, what they have and what is at stake. Voices come from that too. |
 | Naming a feature in an arrival | State the need. The site has to show it can meet it. |
 | Writing a verdict into a card, such as "will love it" | Let the situation lead wherever it leads. |

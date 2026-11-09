@@ -9,10 +9,13 @@ const MIN_THOUGHT_CHARS = 8;
 const isReal = (step) => typeof step.thought === 'string' && Array.from(step.thought.trim()).length >= MIN_THOUGHT_CHARS;
 
 // Among steps tied on feeling the later one wins, as it best explains how the visit ended, unless its thought
-// is filler: then the latest one with a real thought (8 characters or more) does.
+// is filler: then the latest one with a real thought (8 characters or more) does. A step the test setup
+// caused is passed over, unless every step is one.
 export function keyMoment(person) {
-  const steps = Array.isArray(person?.steps) ? person.steps : [];
-  if (steps.length === 0) return null;
+  const all = Array.isArray(person?.steps) ? person.steps : [];
+  if (all.length === 0) return null;
+  const real = all.filter((s) => !s.test_limit);
+  const steps = real.length > 0 ? real : all;
   const top = Math.max(...steps.map(strengthOf));
   const tied = steps.filter((step) => strengthOf(step) === top);
   return tied.findLast(isReal) ?? tied.at(-1);

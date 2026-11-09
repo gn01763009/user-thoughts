@@ -183,6 +183,7 @@ translating, shortening or merging. If a relay returns nothing, leave that chain
 {
   "assumptions": [{ "claim": "…", "happened": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "conflicts": [{ "question": "…", "sides": [{ "label": "…", "reasons": [{ "persona": "p2-explorer", "step": 4 }] }], "vision_note": "…" }],
+  "test_limits": [{ "limit": "location", "note": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "not_checked": ["…"]
 }
 ```
@@ -192,6 +193,7 @@ translating, shortening or merging. If a relay returns nothing, leave that chain
   met it, give an empty `evidence` list and the report marks it not encountered.
 - `conflicts`: only questions where at least two sides each cite their own steps. `label` names a side in a few
   words. `vision_note` says how the builder's vision bears on the two sides. It is never a head count.
+- `test_limits`: `limit` is `location` (the site needed this visitor's position and the test browser had none), `account` (it needed a real account, a login or a code a test visitor cannot get), `forms_off` (a form stayed unsent because this run is browse-only), `automation` (only an automated browser would meet this, such as being blocked as a bot) or `other`. `note` is one sentence in the run's language: what the test setup did and why a real visitor would not meet it. If a real visitor in the same situation would hit the same wall, it is a finding about the site and does not belong here.
 - `not_checked`: plain sentences.
 - A `{ "persona", "step" }` pair is a raw reference. The script drops it if that person kept no such step, and shows
   the person's own thought at that step in place of any wording of yours.

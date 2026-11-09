@@ -70,7 +70,7 @@ test('not_checked keeps only non-empty strings', () => {
 test('non-object input yields empty sections and one dropped entry', () => {
   for (const bad of ['x', null, undefined, [], 5]) {
     const out = gateJudgements(bad, people);
-    assert.deepEqual(out, { assumptions: [], conflicts: [], not_checked: [],
+    assert.deepEqual(out, { assumptions: [], conflicts: [], test_limits: [], not_checked: [],
       dropped: [{ persona: null, kind: 'judgements', step: null, reason: out.dropped[0].reason }] });
   }
   assert.equal(gateTelephone('x', people).dropped[0].kind, 'telephone');
@@ -110,4 +110,27 @@ test('a chain needs exactly two non-empty hops; hops[0] becomes the person’s t
   assert.deepEqual(out.chains[0], { from: 'p1', name: '小珍', hops: ['friend line', 'r1', 'r2'], comment: 'nice' });
   assert.equal(out.chains[1].comment, null);
   assert.equal(out.dropped.length, 3);
+});
+
+test('a test limit keeps its kind and note and shows the person\'s own step', () => {
+  const out = gateJudgements({ test_limits: [{ limit: 'location', note: '沒有位置', evidence: [ref('p1', 2, { says: 'invented' })] }] }, people);
+  assert.deepEqual(out.test_limits, [{ limit: 'location', note: '沒有位置', evidence: [
+    { persona: 'p1', name: '小珍', step: 2, thought: 'thought 2', feeling: 'fine', screenshot: 'p1/screens/02.png' },
+  ] }]);
+  assert.ok(!JSON.stringify(out).includes('invented'));
+});
+
+test('a test limit with an unknown kind, no note or no valid step is dropped', () => {
+  const out = gateJudgements({ test_limits: [
+    { limit: 'weather', note: 'n', evidence: [ref('p1', 1)] },
+    { limit: 'location', note: '', evidence: [ref('p1', 1)] },
+    { limit: 'location', note: 'n', evidence: [ref('p1', 9)] },
+  ] }, people);
+  assert.deepEqual(out.test_limits, []);
+  assert.equal(out.dropped.filter((d) => d.kind === 'test_limit').length, 3);
+});
+
+test('judgements without test_limits, or not an object, give an empty list', () => {
+  assert.deepEqual(gateJudgements({}, people).test_limits, []);
+  assert.deepEqual(gateJudgements(null, people).test_limits, []);
 });

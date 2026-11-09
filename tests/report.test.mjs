@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { labelsFor } from '../skills/launch/scripts/labels.mjs';
 import { buildReportModel, APPLE_STATUS } from '../skills/launch/scripts/report-model.mjs';
+import { keyMoment } from '../skills/launch/scripts/report-moment.mjs';
 import { renderSummary } from '../skills/launch/scripts/render-summary.mjs';
 
 const step = (n, extra = {}) => ({
@@ -488,4 +489,39 @@ test('summary.md shows a decoded left_at, not a percent-encoded one', () => {
   const text = lines.join('\n');
   assert.ok(text.includes('/zh-TW/clinics/cities/新北'), text);
   assert.doesNotMatch(text, /%E6/);
+});
+
+const limited = (note = '沒有位置') => ({ judgements: { test_limits: [{ limit: 'location', note, evidence: [{ persona: 'p2', step: 2 }] }] } });
+
+test('a step marked as a test limit stays in the story and is flagged', () => {
+  const p2 = build({}, {}, limited()).people.find((p) => p.id === 'p2');
+  assert.equal(p2.steps.length, 2);
+  assert.equal(p2.steps[1].test_limit, true);
+  assert.equal(p2.steps[0].test_limit, undefined);
+});
+
+test('the key moment avoids a test-limit step unless every step is one', () => {
+  const stuck = step(2, { feeling: 'stuck', thought: 'long enough thought', test_limit: true });
+  const calm = step(1, { feeling: 'fine', thought: 'a calm thought here' });
+  assert.equal(keyMoment({ steps: [calm, stuck] }).step, 1);
+  assert.equal(keyMoment({ steps: [stuck] }).step, 2);
+});
+
+test('the top finding skips a source at a test-limit step', () => {
+  const findings = [
+    { band: 'main', sources: [{ persona: 'p2', step: 2, observed: 'x' }] },
+    { band: 'main', sources: [{ persona: 'p1', step: 1, observed: 'y' }] },
+  ];
+  const top = build({}, { findings }, limited()).top_finding;
+  assert.match(top, /小美/);
+  assert.doesNotMatch(top, /阿哲/);
+});
+
+test('test limits render in plain words, after conflicts, and escape the note', () => {
+  const html = renderReport(build({}, {}, limited('<b>n</b>')), labelsFor('zh-TW'));
+  assert.ok(html.includes('id="section-test-limits"'));
+  assert.ok(html.includes('測試瀏覽器沒有真實位置'));
+  assert.ok(html.includes('&lt;b&gt;n'));
+  assert.ok(!html.includes('<b>n'));
+  assert.ok(html.indexOf('id="section-test-limits"') < html.indexOf('id="section-not-checked"') || !html.includes('id="section-not-checked"'));
 });

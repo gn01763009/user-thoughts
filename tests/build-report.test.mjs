@@ -61,8 +61,10 @@ test('a run without telephone.json or judgements.json builds with those sections
   const { dir } = runDir();
   assert.equal(main([dir], io().io, noopener().fn), 0);
   const html = readFileSync(join(dir, 'report.html'), 'utf8');
-  for (const id of ['telephone', 'assumptions', 'conflicts', 'not-checked', 'rerun']) assert.ok(!html.includes(`id="section-${id}"`));
+  for (const id of ['telephone', 'assumptions', 'conflicts', 'rerun']) assert.ok(!html.includes(`id="section-${id}"`));
   assert.ok(html.includes('id="section-overview"'));
+  // The only not-checked line is the missing content reader, which is no longer silent.
+  assert.ok(html.slice(html.indexOf('id="section-not-checked"')).includes('內容讀者這次沒有留下結果'));
 });
 
 test('malformed judgements.json and telephone.json warn, still build, and are listed under not checked', () => {
@@ -145,7 +147,7 @@ test('valid JSON with the wrong shape builds with those sections absent', () => 
   const { dir } = runDir({ 'judgements.json': { assumptions: [{}], conflicts: [{ sides: 5 }], not_checked: 'x' }, 'telephone.json': { chains: [{}, null] } });
   assert.equal(main([dir], io().io, noopener().fn), 0);
   const html = readFileSync(join(dir, 'report.html'), 'utf8');
-  for (const id of ['telephone', 'assumptions', 'conflicts', 'not-checked']) assert.ok(!html.includes(`id="section-${id}"`));
+  for (const id of ['telephone', 'assumptions', 'conflicts']) assert.ok(!html.includes(`id="section-${id}"`));
 });
 
 test('the absolute report path is printed whether or not --open is given', () => {

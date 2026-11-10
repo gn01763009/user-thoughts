@@ -19,12 +19,22 @@ function issueOf(raw) {
   return { kind: raw.kind, a, b, why: raw.why };
 }
 
+const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+// missing: no file. malformed: not an object, or no `issues` list. Either way the report says so.
+function stateOf(raw) {
+  if (raw === undefined) return 'missing';
+  return isPlainObject(raw) && Array.isArray(raw.issues) ? 'read' : 'malformed';
+}
+
 export function gateContent(raw) {
-  const source = raw !== null && typeof raw === 'object' ? raw : {};
+  const source = isPlainObject(raw) ? raw : {};
   const entries = listOf(source.issues);
   const complete = entries.map(issueOf).filter((issue) => issue !== null);
   return {
+    state: stateOf(raw),
     issues: complete.slice(0, MAX_CONTENT_ISSUES),
+    cut: Math.max(0, complete.length - MAX_CONTENT_ISSUES),
     pages: listOf(source.pages).filter((page) => typeof page === 'string'),
     injection_attempts: listOf(source.injection_attempts)
       .filter((a) => isText(a?.quote))

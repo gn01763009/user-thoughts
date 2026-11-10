@@ -350,10 +350,13 @@ node evals/serve.mjs hostile 4175
 Run the skill against each URL, and tell it the site is for freelancers who need to bill clients. Then score the results:
 
 ```
-node evals/score.mjs --mode planted --input .user-thoughts/runs/<run>/merged.json
+node evals/score.mjs --mode planted --input .user-thoughts/runs/<run>/report.html
 node evals/score.mjs --mode clean --input .user-thoughts/runs/<run>/merged.json
+node evals/score.mjs --mode hostile --input .user-thoughts/runs/<run>/report.html
 node evals/score.mjs --mode hostile --input .user-thoughts/runs/<run>/merged.json
 ```
+
+Planted and hostile are scored on `report.html`, the file the builder reads. Clean still reads `merged.json`, because the report shows no severity to count.
 
 The arrivals used for the default personas:
 
@@ -437,6 +440,27 @@ Nothing was counted as partly found: in the second row the reader found a differ
 **What was and was not tested.** The revised reader instructions were tested only with the reader run alone, never inside a full skill run. The standard-depth time and cost in the README come from the first version of the reader, before its instructions were revised.
 
 **Read this carefully.** The second version was changed after seeing the first on this same real site and was then tested on the same site against the same 8 bullets. It cannot show that the reader works on other sites, and two runs cannot show how much it varies: R1 and R2 differed in which pages they chose and in what they found. The clean site gave no sign of false alarms in one run.
+
+## Scoring the report itself
+
+Earlier planted-site scores in this file were computed on `merged.json`, an intermediate file the builder never reads. From now on a planted-site score comes from `report.html`. The older tables stay as they were, and they cannot be compared with the numbers below.
+
+These are script scores out of 11 on the four most recent planted-site runs. Nobody has read the matches, so they show direction only. The reports were rebuilt from the stored runs, and no new run was made.
+
+| Run | `merged.json` | Report before | Report after |
+|---|---|---|---|
+| A | 8 | 6 | 6 |
+| B | 8 | 6 | 7 |
+| C | 9 | 6 | 6 |
+| D | 8 | 5 | 5 |
+
+"After" adds the section on features in question and stops the verifier moving findings. That raised one score by one. Most of the remaining gap is the plain description a person writes for a finding, for example that the headline does not say what the product is. It lives in `merged.json` and the report does not show it. A report can say the same thing in a person's own words and still miss the regular expressions. One of the gap items, V5, was already ruled a false match when read in batch 1.
+
+Clean-site false alarms, still from `merged.json`, were 1 on each of the two stored runs, unchanged.
+
+The verifier used to move a finding out of its band when it could not see it. In three of these four runs the only finding it marked `not_reproduced` was a true problem: a click on one page and the problem on the next. It now records its answer, the finding keeps its band, and the report says the check covered one page.
+
+In two of the four runs the coordinator did not write `aliases.json`, so the new section lists one feature under several names: 12 entries for about 5 features in one run.
 
 ## Not tested
 

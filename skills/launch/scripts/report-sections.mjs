@@ -1,6 +1,6 @@
 // Every section of the report other than the top of the page, the overview and the people themselves.
 import {
-  e, feelingText, fill, outcomeText, routeText, screenshotLink, stopReasonText,
+  e, feelingText, fill, outcomeText, prettyRoute, routeText, screenshotLink, stopReasonText,
 } from './report-format.mjs';
 
 const section = (id, title, body) => `<section id="section-${id}" class="block"><h2>${e(title)}</h2>\n${body}</section>\n`;
@@ -62,7 +62,7 @@ export function commentsSection(model, labels) {
 }
 
 function assumptionBlock(a, labels) {
-  const what = a.status === 'seen' ? a.happened : labels.not_encountered;
+  const what = a.status === 'seen' ? a.happened : a.status === 'bad_evidence' ? labels.bad_evidence : labels.not_encountered;
   const happened = what ? `<p>${e(what)}</p>` : '';
   return `<div class="claim"><div><p class="eyebrow">${e(labels.claim)}</p><p class="claim-text">${e(a.claim)}</p></div>`
     + `<div><p class="eyebrow">${e(labels.happened)}</p>${happened}${refList(a.evidence, labels)}</div></div>`;
@@ -94,10 +94,43 @@ function contentBlock(issue, labels) {
     + `<div>${places}</div></div>`;
 }
 
+function contentStatusNote(status, labels) {
+  const pages = status.pages ?? [];
+  const html = pages.length === 0
+    ? e(labels.content_status_none)
+    : fill(labels.content_status, { pages: pages.length, routes: pages.map(prettyRoute).join(labels.sep_list), found: status.found });
+  return `<p class="note">${html}</p>`;
+}
+
+// With a status (the real model) the section also appears for a clean read; a hand-built model without one behaves as before.
 export function contentSection(model, labels) {
-  if (model.content_issues.length === 0) return '';
-  const note = `<p class="note">${e(labels.content_note)}</p>`;
-  return section('content', labels.content_title, note + model.content_issues.map((issue) => contentBlock(issue, labels)).join(''));
+  const status = model.content_status;
+  const issues = model.content_issues;
+  if (status ? status.state !== 'read' : issues.length === 0) return '';
+  const intro = status ? contentStatusNote(status, labels) : '';
+  const caveat = issues.length > 0 ? `<p class="note">${e(labels.content_note)}</p>` : '';
+  return section('content', labels.content_title, intro + caveat + issues.map((issue) => contentBlock(issue, labels)).join(''));
+}
+
+function voiceBlock(voice, labels) {
+  const who = `${e(voice.name)} · ${fill(labels.step_n, { n: voice.step })}`;
+  const shot = screenshotLink(voice.screenshot, `${voice.name} ${voice.step}`, 'thumb');
+  return `<div class="ref"><div><p class="ref-who">${who}</p><p>${e(labels.quote_open)}${e(voice.if_gone)}${e(labels.quote_close)}</p></div>${shot}</div>`;
+}
+
+function questionedBlock(f, labels) {
+  const routes = f.routes.map((r) => routeText(r, labels)).join(e(labels.sep_list));
+  const costs = f.costs.length > 0 ? `<p class="small">${f.costs.map((c) => e(labels[`cost_${c}`] ?? c)).join(e(labels.sep_list))}</p>` : '';
+  const unseen = f.not_reproduced ? `<p class="note">${e(labels.questioned_not_seen)}</p>` : '';
+  return `<div class="claim"><div><p class="eyebrow">${routes}</p><p class="claim-text">${e(f.feature)}</p>${costs}</div>`
+    + `<div><div class="refs">${f.voices.map((v) => voiceBlock(v, labels)).join('')}</div>${unseen}</div></div>`;
+}
+
+export function questionedSection(model, labels) {
+  const features = model.questioned_features ?? [];
+  if (features.length === 0) return '';
+  const note = `<p class="note">${e(labels.questioned_note)}</p>`;
+  return section('questioned', labels.questioned_title, note + features.map((f) => questionedBlock(f, labels)).join(''));
 }
 
 function realCheckBlock(c, labels) {

@@ -357,11 +357,11 @@ describe('features and the trace', () => {
 describe('feature verification', () => {
   const question = { novice: { features: [feature()] } };
 
-  test('not_reproduced turns a question_it feature into unclear and records the status', () => {
+  test('not_reproduced records the status and keeps a question_it feature as it was', () => {
     const verification = [{ fingerprint: 'feature:ask-wren-assistant', status: 'not_reproduced' }];
     const item = featureByKey(merge({ personas: question, verification }), 'ask-wren-assistant');
     assert.equal(item.verification, 'not_reproduced');
-    assert.equal(item.status, 'unclear');
+    assert.equal(item.status, 'question_it');
   });
 
   test('confirmed keeps the status and records it', () => {
@@ -652,14 +652,14 @@ describe('severity in merged output', () => {
 });
 
 describe('verification', () => {
-  test('not_reproduced moves a finding to appendix and keeps its confidence', () => {
+  test('not_reproduced is recorded and leaves the band and confidence alone', () => {
     const merged = merge({
       personas: { novice: { findings: [finding({ confidence: 9 })] } },
       verification: [{ fingerprint: SOLUTIONS_FINGERPRINT, status: 'not_reproduced', note: 'gone' }],
     });
     const [item] = merged.findings;
     assert.equal(item.verification, 'not_reproduced');
-    assert.equal(item.band, 'appendix');
+    assert.equal(item.band, 'main');
     assert.equal(item.confidence, 9);
   });
 

@@ -257,7 +257,7 @@ Replies are copied character for character. The script puts the person's own `te
 }
 ```
 
-A `{ "persona", "step" }` pair is a raw reference. The script drops it if that person kept no such step, and shows the person's own thought in its place, never the coordinator's wording. A conflict needs at least two sides that each keep a reference. An assumption with no surviving evidence is marked as not encountered.
+A `{ "persona", "step" }` pair is a raw reference. The script drops it if that person kept no such step, and shows the person's own thought in its place, never the coordinator's wording. A conflict needs at least two sides that each keep a reference. An assumption that cited no evidence is marked as not encountered; one whose cited steps all failed to resolve is marked as unconfirmable, because nobody can say it did not happen.
 
 ### `content.json`
 
@@ -271,7 +271,7 @@ Written by the content reader, which reads the site's page text and nothing else
 }
 ```
 
-`kind` is `contradiction`, `out_of_date` or `does_not_add_up`. `a` is required and needs a route and a quote. `b` is required for a contradiction and must differ from `a`; for the other kinds it is optional. The script drops any incomplete issue and says how many under "not checked", and keeps at most 8. Page text is data: text aimed at AI agents goes in `injection_attempts` and is shown with the others, never obeyed.
+`kind` is `contradiction`, `out_of_date` or `does_not_add_up`. `a` is required and needs a route and a quote. `b` is required for a contradiction and must differ from `a`; for the other kinds it is optional. The script drops any incomplete issue and says how many under "not checked", keeps at most 8 and says how many complete ones went past that limit. A missing file, or one without an `issues` list, is named under "not checked" too (except in a rerun, which skips the reader). Page text is data: text aimed at AI agents goes in `injection_attempts` and is shown with the others, never obeyed.
 
 ## Merge rules (`merge-findings.mjs`)
 
@@ -296,7 +296,7 @@ Input is a run directory. Output is `merged.json`.
 
 **Bands.** Confidence 7 or above is `main`. 5 or 6 is `tentative`. 4 or below is `appendix`.
 
-**Verification.** `not_reproduced` moves a finding to `appendix` with `verification: "not_reproduced"`. `confirmed` and `unable` are recorded and the band is unchanged. Feature checks use the fingerprint `feature:<key>`, and `not_reproduced` sets the feature's status to `unclear`.
+**Verification.** The verifier's answer (`confirmed`, `not_reproduced` or `unable`) is recorded as `verification` and never changes a finding's band or a feature's status. The verifier checks one page, so a problem that only appears after a click on another page fails it, and a demotion would hide true problems. The report lists a `not_reproduced` finding under "not checked" with that caveat. Feature checks use the fingerprint `feature:<key>`.
 
 **Ordering.** Severity, then confidence, then number of people, each descending.
 
@@ -354,11 +354,12 @@ Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.jso
 7. Launch-day comments, at full depth.
 8. The builder's assumptions against what happened.
 9. Conflicts, with each side's reasons and a note against the vision.
-10. Where the site's own content disagrees with itself, from `content.json`, marked as not yet checked by anyone.
-11. Real checks: who to ask and what to ask for the biggest findings, each with the steps behind it.
-12. What the builder already decided to keep, from `.user-thoughts/decisions.md`.
-13. What the test setup may have caused, with the steps behind it. Those steps stay in the person's story, flagged, and the key moment and top finding pass them over.
-14. What the run did not check, including people who did not finish and malformed records.
+10. Features in question: features nobody wanted, with each person's own words on what would change if it vanished and the costs they named. A feature the re-check did not see is flagged.
+11. Where the site's own content disagrees with itself, from `content.json`, marked as not yet checked by anyone. It opens with how many pages the reader read and how many notes it found, and appears even when it found none.
+12. Real checks: who to ask and what to ask for the biggest findings, each with the steps behind it.
+13. What the builder already decided to keep, from `.user-thoughts/decisions.md`.
+14. What the test setup may have caused, with the steps behind it. Those steps stay in the person's story, flagged, and the key moment and top finding pass them over.
+15. What the run did not check, including people who did not finish, malformed records, a content reader that left no result, a malformed `content.json` and notes past the limit.
 
 The **key moment** is chosen by script: the step with the strongest feeling, in the order stuck, annoyed, confused, delighted, unsure, fine, and on a tie the latest step whose thought has at least 8 characters, else the latest step. The section shows its whole thought. The **overview quote** is what the person would tell a friend, the one line written for a reader who has not seen the site; without last words the row shows the name alone. When a boundary (`unsafe_action`, `login_wall`, `bot_check`) ended the visit, the person's status line names it, so the builder can tell a stop imposed by the test from a choice. The **top finding** in `summary.md` is one line, the finding's person, step route and thought, or that person's line for a friend when the thought is under 8 characters. Both are the person's own words, never reworded.
 

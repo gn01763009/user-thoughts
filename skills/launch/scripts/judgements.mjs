@@ -41,11 +41,15 @@ function resolveRefs(list, people, dropKind) {
   };
 }
 
+// Evidence the coordinator cited but nothing resolved is not the same as nobody meeting the claim.
+const citedEvidence = (evidence) => (Array.isArray(evidence) ? evidence.length > 0 : evidence != null);
+
 function gateAssumption(raw, people) {
   if (!isObject(raw) || !isText(raw.claim)) return { dropped: [drop('judgements', null, null, 'assumption without a claim')] };
   const { refs, dropped } = resolveRefs(raw.evidence, people, 'evidence');
   if (refs.length === 0) {
-    return { item: { claim: raw.claim, status: 'not_encountered', happened: null, evidence: [] }, dropped };
+    const status = citedEvidence(raw.evidence) ? 'bad_evidence' : 'not_encountered';
+    return { item: { claim: raw.claim, status, happened: null, evidence: [] }, dropped };
   }
   if (typeof raw.happened !== 'string') {
     return { dropped: [...dropped, drop('judgements', null, null, `assumption "${raw.claim}" has no happened text`)] };
@@ -53,21 +57,36 @@ function gateAssumption(raw, people) {
   return { item: { claim: raw.claim, status: 'seen', happened: raw.happened, evidence: refs }, dropped };
 }
 
+const refKey = (ref) => stepKey(ref.persona, ref.step);
+
+// A step cited by more than one side supports neither. Repeats inside one side are not shared.
+function withoutSharedSteps(sides) {
+  const cited = sides.flatMap((side) => [...new Set(side.reasons.map(refKey))]);
+  const shared = new Set(cited.filter((key, i) => cited.indexOf(key) !== i));
+  const dropped = [...shared].map((key) => {
+    const ref = sides.flatMap((side) => side.reasons).find((r) => refKey(r) === key);
+    return drop('reason', ref.persona, ref.step, 'step cited on more than one side');
+  });
+  const kept = sides
+    .map((side) => ({ ...side, reasons: side.reasons.filter((r) => !shared.has(refKey(r))) }))
+    .filter((side) => side.reasons.length > 0);
+  return { sides: kept, dropped };
+}
+
 function gateConflict(raw, people) {
   const question = isObject(raw) && isText(raw.question) ? raw.question : '';
   const rawSides = isObject(raw) && Array.isArray(raw.sides) ? raw.sides : [];
-  const dropped = [];
-  const sides = [];
-  for (const side of rawSides) {
-    const res = resolveRefs(isObject(side) ? side.reasons : null, people, 'reason');
-    dropped.push(...res.dropped);
-    if (res.refs.length > 0) sides.push({ label: typeof side.label === 'string' ? side.label : '', reasons: res.refs });
-  }
-  if (question === '' || sides.length < 2) {
+  const resolved = rawSides.map((side) => ({ side, ...resolveRefs(isObject(side) ? side.reasons : null, people, 'reason') }));
+  const resolvedSides = resolved
+    .filter((r) => r.refs.length > 0)
+    .map((r) => ({ label: typeof r.side.label === 'string' ? r.side.label : '', reasons: r.refs }));
+  const shared = withoutSharedSteps(resolvedSides);
+  const dropped = [...resolved.flatMap((r) => r.dropped), ...shared.dropped];
+  if (question === '' || shared.sides.length < 2) {
     return { dropped: [...dropped, drop('conflict', null, null, question === '' ? 'conflict without a question' : 'fewer than two sides with valid reasons')] };
   }
   const vision_note = typeof raw.vision_note === 'string' ? raw.vision_note : '';
-  return { item: { question, sides, vision_note }, dropped };
+  return { item: { question, sides: shared.sides, vision_note }, dropped };
 }
 
 function gateTestLimit(raw, people) {
@@ -81,14 +100,24 @@ function gateTestLimit(raw, people) {
   return { item: { limit, note, evidence: refs }, dropped };
 }
 
+// Stated-intent questions ("would you use", "how likely") are opinions, not past behaviour.
+export const INTENT_QUESTION = /\bwould you\b|\bdo you like\b|\bhow likely\b|你會(不會)?(想|用|買|付|願意|喜歡)|會不會(想|用|買|付|願意)|願不願意|喜不喜歡|想不想|有多(大的)?可能/i;
+
+function realCheckFault(who, ask, refs, people) {
+  if (who === '') return 'real check without who';
+  if (ask === '') return 'real check without a question';
+  if (refs.length === 0) return 'real check without a valid step';
+  if (INTENT_QUESTION.test(ask)) return 'real check asks about intent, not past behaviour';
+  if (people.some((p) => isText(p.name) && who.includes(p.name))) return 'real check names a simulated person';
+  return null;
+}
+
 function gateRealCheck(raw, people) {
   const who = isObject(raw) && isText(raw.who) ? raw.who : '';
   const ask = isObject(raw) && isText(raw.ask) ? raw.ask : '';
   const { refs, dropped } = resolveRefs(isObject(raw) ? raw.evidence : null, people, 'evidence');
-  if (who === '' || ask === '' || refs.length === 0) {
-    const why = who === '' ? 'real check without who' : ask === '' ? 'real check without a question' : 'real check without a valid step';
-    return { dropped: [...dropped, drop('real_check', null, null, why)] };
-  }
+  const fault = realCheckFault(who, ask, refs, people);
+  if (fault !== null) return { dropped: [...dropped, drop('real_check', null, null, fault)] };
   return { item: { who, ask, evidence: refs }, dropped };
 }
 

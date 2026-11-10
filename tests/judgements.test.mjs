@@ -47,6 +47,20 @@ test('a side with no reasons left is removed; a conflict with fewer than two sid
   assert.equal(d[0].step, null);
 });
 
+test('an assumption whose cited steps all failed to resolve is bad_evidence, not not_encountered', () => {
+  const out = gateJudgements({ assumptions: [
+    { claim: 'c1', happened: 'it happened', evidence: [ref('p1', 5), ref('nobody', 1)] },
+    { claim: 'c2', evidence: [] },
+    { claim: 'c3' },
+    { claim: 'c4', evidence: ref('p1', 5) },
+    { claim: 'c5', evidence: 'p1#1' },
+  ] }, people);
+  assert.deepEqual(out.assumptions.map((a) => [a.claim, a.status, a.happened, a.evidence]),
+    [['c1', 'bad_evidence', null, []], ['c2', 'not_encountered', null, []], ['c3', 'not_encountered', null, []],
+      ['c4', 'bad_evidence', null, []], ['c5', 'bad_evidence', null, []]]);
+  assert.equal(out.dropped.filter((d) => d.kind === 'evidence').length, 2);
+});
+
 test('an assumption with no valid evidence becomes not_encountered and loses its happened text', () => {
   const out = gateJudgements({ assumptions: [
     { claim: 'c1', happened: 'it happened', evidence: [ref('p1', 5)] },
@@ -56,7 +70,7 @@ test('an assumption with no valid evidence becomes not_encountered and loses its
     { claim: 'c5', happened: 42, evidence: [ref('p1', 1)] },
   ] }, people);
   assert.deepEqual(out.assumptions.map((a) => [a.claim, a.status, a.happened]),
-    [['c1', 'not_encountered', null], ['c2', 'not_encountered', null], ['c3', 'seen', 'yes']]);
+    [['c1', 'bad_evidence', null], ['c2', 'not_encountered', null], ['c3', 'seen', 'yes']]);
   assert.equal(out.assumptions[2].evidence[0].thought, 'thought 1');
   assert.equal(out.dropped.filter((d) => d.kind === 'evidence').length, 1);
   assert.equal(out.dropped.filter((d) => d.kind === 'judgements').length, 2);
@@ -171,4 +185,49 @@ test('a decided entry must be a line of decisions.md, word for word, and cite a 
   ] }, people, ['首頁不放價格']);
   assert.deepEqual(out.decided.map((d) => d.decision), ['首頁不放價格']);
   assert.equal(out.dropped.filter((d) => d.kind === 'decided').length, 2);
+});
+
+const realCheck = (extra = {}) => ({ who: 'A freelancer who invoiced last month', ask: 'The last time a client chased you, what did you do first?', evidence: [ref('p1', 1)], ...extra });
+
+test('a real check that asks about intent is dropped', () => {
+  const asks = ['Would you use this?', 'Do you like it', 'How likely are you to pay', '你會想用嗎', '你會不會付錢', '會不會買', '願不願意付費', '喜不喜歡', '想不想用', '有多大的可能'];
+  const out = gateJudgements({ real_checks: asks.map((ask) => realCheck({ ask })) }, people);
+  assert.deepEqual(out.real_checks, []);
+  assert.equal(out.dropped.filter((d) => d.kind === 'real_check' && d.reason === 'real check asks about intent, not past behaviour').length, asks.length);
+});
+
+test('a real check that names a simulated person is dropped; a role is kept', () => {
+  const out = gateJudgements({ real_checks: [realCheck({ who: '像小珍的人' }), realCheck({ who: 'Someone like 阿明' }), realCheck()] }, people);
+  assert.equal(out.real_checks.length, 1);
+  const named = out.dropped.filter((d) => d.reason === 'real check names a simulated person');
+  assert.equal(named.length, 2);
+  assert.ok(named.every((d) => d.kind === 'real_check'));
+});
+
+test('an empty person name never matches a real check', () => {
+  const nameless = [{ ...p1, name: '' }];
+  assert.equal(gateJudgements({ real_checks: [realCheck()] }, nameless).real_checks.length, 1);
+});
+
+test('a step cited by more than one side supports neither and is dropped once per step', () => {
+  const out = gateJudgements({ conflicts: [{ question: 'q', sides: [
+    { label: 'a', reasons: [ref('p1', 1), ref('p1', 2), ref('p1', 2)] },
+    { label: 'b', reasons: [ref('p1', 1), ref('p2', 3)] },
+    { label: 'c', reasons: [ref('p1', 1)] },
+  ] }] }, people);
+  assert.deepEqual(out.conflicts[0].sides.map((s) => [s.label, s.reasons.map((r) => `${r.persona}#${r.step}`)]),
+    [['a', ['p1#2', 'p1#2']], ['b', ['p2#3']]]);
+  const shared = out.dropped.filter((d) => d.reason === 'step cited on more than one side');
+  assert.equal(shared.length, 1);
+  assert.deepEqual([shared[0].kind, shared[0].persona, shared[0].step], ['reason', 'p1', 1]);
+});
+
+test('a conflict whose sides share every step is dropped for lack of two sides', () => {
+  const out = gateJudgements({ conflicts: [{ question: 'q', sides: [
+    { label: 'a', reasons: [ref('p1', 1)] },
+    { label: 'b', reasons: [ref('p1', 1)] },
+  ] }] }, people);
+  assert.deepEqual(out.conflicts, []);
+  assert.ok(out.dropped.some((d) => d.kind === 'conflict'));
+  assert.ok(out.dropped.some((d) => d.reason === 'step cited on more than one side'));
 });

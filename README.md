@@ -70,15 +70,15 @@ Five setup steps, all of which you can answer in your first message:
 
 | Depth | People | Adds | Time | Cost (USD) |
 |---|---|---|---|---|
-| quick | 3, about 8 steps each | nothing | 250 s, one run | 1.48, one run |
-| standard | 6 | word-of-mouth chain | 372 to 422 s (6 to 7 minutes), 3 runs | 2.96 to 3.42, 3 runs |
-| full | 9 | word-of-mouth chain and launch-day comments | not measured | not measured |
+| quick | 3, about 8 steps each | content reader | 250 s, one run, measured before the reader was added | 1.48, one run, measured before the reader was added |
+| standard | 6 | content reader, word-of-mouth chain | 315 to 370 s (5 to 6 minutes), 3 runs | 3.31 to 3.65, 3 runs |
+| full | 9 | content reader, word-of-mouth chain and launch-day comments | not measured | not measured |
 
-Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard figures come from 3 runs of the current skill (the clean site once, the known site twice); the earlier 5-person standard runs took 301 to 433 s and cost 2.10 to 2.75 USD. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
+Measured on Sonnet, on small local test sites, in headless runs with the setup answers given up front. A bigger site or another model will differ. The standard figures come from 3 runs with the content reader (the clean site once, the known site twice). Before the reader was added, 6-person standard runs took 372 to 422 s and cost 2.96 to 3.42 USD, and the earlier 5-person ones took 301 to 433 s and cost 2.10 to 2.75 USD. A few runs cannot separate the reader's cost from the spread between runs. For scale, one plain agent with no skill reviewing the known test site in [Results](#results) took 77 s and 0.26 USD.
 
 ## What the report looks like
 
-The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
+The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and one problem from this run.
 
 <p>
   <img src="docs/assets/report-overview.png" alt="The top of a report: the headline, then one row per person with what they would tell a friend, who they are, why they came and how their visit ended" width="49%">
@@ -96,6 +96,7 @@ After the people's stories, the report lists who to ask and what to ask for the 
 - **One-visit people.** Each person gets a concrete situation and their own browser. They start as a fresh agent and are told to ignore project notes, so they do not get your code or your vision. A project's `CLAUDE.md` may still be visible to them, so don't put your vision there. They do the task with real clicks and leave when their patience runs out, which counts as a result. Afterwards they answer an exit interview: did I get it done, would I come back, and how would I describe this to a friend. They are built from ten persona files with written limits. Standard and full always include an explorer, who opens every menu item.
 - **Evidence rule.** Apart from the answer to the bad-idea question, which is about a plan and not a step, a voice counts only if it traces to a step the person really took. A script drops a thought with no screenshot, last words that cite no real step, a finding from a step the person did not take, and any judgement that points at a step nobody took. Praise and criticism follow the same rule. Severity is computed from what happened to people, not from a model's opinion, and a separate agent re-checks serious items knowing only where to look.
 - **Bad-idea check (experimental).** In the exit interview, each person hears about a planned feature that works against what they came for, phrased as a real plan. If more than half say yes, the report warns that this batch may be flattering you. It is experimental because it [could not be validated](#results), and the report labels it the same way.
+- **A content reader.** One more agent, who plays nobody, reads up to 8 pages and lists where the site's own content disagrees with itself: contradictions, stale dates and sums that do not add up. It quotes the pages, and nobody has checked those quotes, so compare them with the site.
 - **Word-of-mouth chain.** Standard and full. What each person would tell a friend goes to a fresh agent, who passes it to another fresh agent who has never seen the product. Each one receives only the sentence before it. The last line, what kind of site this seems to be and who it is for, is set beside your vision.
 - **Launch-day comments.** Full only. Comments under a pretend launch post, from people who visited, citing their own steps, and from bystanders who only heard the word-of-mouth line.
 - **Re-run after a fix.** `--rerun <person-id>` sends the same person through your changed product from the start, with no memory of last time. The report shows both timelines side by side.

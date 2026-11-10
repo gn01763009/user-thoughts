@@ -283,16 +283,12 @@ export function mergeFindings(records) {
   return [...groups].map(([key, group]) => mergeGroup(key, group));
 }
 
-// verifications: { [fingerprint]: status }. not_reproduced moves the finding to appendix.
+// verifications: { [fingerprint]: status }. The status is only recorded: the verifier checks one page, so
+// "click on page A, problem on page B" fails it, and a failed check must not move a finding out of its band.
 export function applyVerification(findings, verifications) {
   return findings.map((finding) => {
     const status = Object.hasOwn(verifications, finding.fingerprint) ? verifications[finding.fingerprint] : null;
-    if (status === null) return finding;
-    return {
-      ...finding,
-      verification: status,
-      band: status === 'not_reproduced' ? 'appendix' : finding.band,
-    };
+    return status === null ? finding : { ...finding, verification: status };
   });
 }
 
@@ -302,11 +298,7 @@ export function applyVerification(findings, verifications) {
 function applyFeatureVerification(feature, verifications) {
   const id = `${FEATURE_VERIFICATION_PREFIX}${feature.key}`;
   const status = Object.hasOwn(verifications, id) ? verifications[id] : null;
-  return {
-    ...feature,
-    verification: status,
-    status: status === 'not_reproduced' ? 'unclear' : feature.status,
-  };
+  return { ...feature, verification: status };
 }
 
 export function featureKeyOf(record, aliases) {

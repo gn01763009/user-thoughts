@@ -4,6 +4,7 @@ import { gateJudgements, gateTelephone, stepKey } from './judgements.mjs';
 import { overviewQuote } from './report-moment.mjs';
 import { prettyRoute } from './report-format.mjs';
 import { cardProfile } from './stories.mjs';
+import { gateContent } from './content-issues.mjs';
 
 export const APPLE_STATUS = 'experimental';
 
@@ -77,7 +78,7 @@ function topFinding(merged, people, labels, skip) {
   const friend = isText(person?.last_words?.tell_a_friend) ? oneLine(person.last_words.tell_a_friend) : '';
   const words = charCount(thought) >= MIN_FINDING_CHARS ? thought : friend;
   if (words !== '') {
-    const route = prettyRoute(step.route);
+    const route = prettyRoute(step?.route);
     const where = route === '' ? '' : `${labels.sep_comma}${route}`;
     return `${person.name}${where}${labels.sep_colon}${labels.quote_open}${words}${labels.quote_close}`;
   }
@@ -105,21 +106,57 @@ function injectionAttempts(merged, people) {
   }));
 }
 
+function voiceOf(source, people) {
+  const step = people.find((p) => p.id === source.persona)?.steps.find((s) => s.step === source.step);
+  return {
+    persona: source.persona, name: nameOf(people, source.persona), step: source.step, if_gone: source.if_gone,
+    ...(step?.screenshot === undefined ? {} : { screenshot: step.screenshot }),
+  };
+}
+
+// What the people who did not want a feature said would change if it vanished. Same skipped steps as the top finding.
+function questionedFeatures(merged, people, skip) {
+  return asArray(merged.features)
+    .filter((feature) => feature?.status === 'question_it')
+    .map((feature) => ({
+      feature: feature.feature,
+      routes: asArray(feature.routes),
+      costs: asArray(feature.costs),
+      not_reproduced: feature.verification === 'not_reproduced',
+      voices: asArray(feature.sources)
+        .filter((s) => s?.verdict === 'dont_want' && isText(s.if_gone) && s.if_gone.trim() !== '' && !skip.has(stepKey(s.persona, s.step)))
+        .map((s) => voiceOf(s, people)),
+    }))
+    .filter((feature) => feature.voices.length > 0);
+}
+
 function notReproducedLines(merged, labels) {
   return asArray(merged.findings)
     .filter((finding) => finding.verification === 'not_reproduced')
     .map((finding) => fillText(labels.not_reproduced, { route: prettyRoute(finding.route), name: finding.element?.name ?? '' }));
 }
 
+// A rerun skips the reader on purpose, and an unreadable content.json is already named as such.
+function contentLinesOf(content, labels, unreadable, rerun) {
+  const missingIsNews = content.state === 'missing' && !rerun && !asArray(unreadable).includes('content.json');
+  return [
+    ...(content.dropped > 0 ? [fillText(labels.content_dropped, { n: content.dropped })] : []),
+    ...(missingIsNews ? [labels.content_missing] : []),
+    ...(content.state === 'malformed' ? [labels.content_malformed] : []),
+    ...(content.cut > 0 ? [fillText(labels.content_cut, { n: content.cut })] : []),
+  ];
+}
+
 // What this run could not cover: the coordinator's list, then people who did not finish, malformed records,
 // findings the verifier could not reproduce and unreadable files.
-function notChecked({ judged, merged, people, labels, unreadable }) {
+function notChecked({ judged, merged, people, labels, unreadable, content, rerun }) {
   const incomplete = asArray(merged.incomplete).map((entry) =>
     fillText(labels.incomplete_person, { name: nameOf(people, entry?.persona ?? ''), reason: entry?.reason ?? '' }));
   const parseErrors = asArray(merged.parse_errors).length;
   const parseLine = parseErrors > 0 ? [fillText(labels.parse_errors_note, { n: parseErrors })] : [];
   const unreadableLines = asArray(unreadable).map((file) => fillText(labels.unreadable_file, { file }));
-  return [...asArray(judged?.not_checked), ...incomplete, ...parseLine, ...notReproducedLines(merged, labels), ...unreadableLines];
+  const contentLines = contentLinesOf(content, labels, unreadable, rerun);
+  return [...asArray(judged?.not_checked), ...incomplete, ...parseLine, ...notReproducedLines(merged, labels), ...contentLines, ...unreadableLines];
 }
 
 function overviewOf(person) {
@@ -131,7 +168,7 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [] }, labels = labelsFor(run.language)) {
+export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
   const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
   const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
   const testLimits = asArray(gatedJudgements?.test_limits);
@@ -139,6 +176,8 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
   const people = markTestLimits(profiled, testLimits);
   const gatedTelephone = telephone === undefined ? null : gateTelephone(telephone, people);
   const chains = asArray(gatedTelephone?.chains);
+  const gatedContent = gateContent(content);
+  const readerAttempts = gatedContent.injection_attempts.map((a) => ({ ...a, persona: null, person: labels.content_reader }));
   const droppedCount = asArray(merged.dropped_voices).length
     + asArray(gatedJudgements?.dropped).length + asArray(gatedTelephone?.dropped).length;
   return {
@@ -150,17 +189,20 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
     vision: run.vision,
     understanding: run.understanding,
     apple: { ...merged.apple, status: APPLE_STATUS },
-    injection_attempts: injectionAttempts(merged, people),
+    injection_attempts: [...injectionAttempts(merged, people), ...readerAttempts],
     overview: people.map(overviewOf),
     people,
     telephone: chains,
     comments: buildComments(run, people, chains, labels),
     assumptions: asArray(gatedJudgements?.assumptions),
     conflicts: asArray(gatedJudgements?.conflicts),
+    content_issues: gatedContent.issues,
+    content_status: { state: gatedContent.state, pages: gatedContent.pages, found: gatedContent.issues.length, cut: gatedContent.cut },
+    questioned_features: questionedFeatures(merged, people, skippedSteps(testLimits, decided)),
     real_checks: asArray(gatedJudgements?.real_checks),
     test_limits: testLimits,
     decided,
-    not_checked: notChecked({ judged: gatedJudgements, merged, people, labels, unreadable }),
+    not_checked: notChecked({ judged: gatedJudgements, merged, people, labels, unreadable, content: gatedContent, rerun: isText(run.rerun_of) }),
     top_finding: topFinding(merged, people, labels, skippedSteps(testLimits, decided)),
     rerun: buildRerun(run, merged, previous, labels),
     dropped_count: droppedCount,

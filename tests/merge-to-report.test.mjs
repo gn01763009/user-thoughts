@@ -126,7 +126,7 @@ test('a real verification file marking a finding not reproduced reaches not chec
   const [{ fingerprint }] = JSON.parse(readFileSync(join(runDir, 'merged.json'), 'utf8')).findings;
   writeFileSync(join(runDir, 'verification.jsonl'), jsonl([{ fingerprint, status: 'not_reproduced', note: 'gone' }]));
   const { html } = mergeAndBuild(runDir);
-  assert.ok(between(html, 'not-checked').includes('Could not be reproduced on re-check: /signup.html Continue'));
+  assert.ok(between(html, 'not-checked').includes('Not seen when this page was re-checked. It may only appear after a click: /signup.html Continue'));
 });
 
 test('merge and build still run when reached through a symlink', () => {

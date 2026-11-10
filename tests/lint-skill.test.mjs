@@ -365,6 +365,18 @@ describe('checkBriefLeak', () => {
     assert.deepEqual(checkBriefLeak(text), []);
   });
 
+  test('checkBriefLeak also checks the reader brief', () => {
+    const text = `${personBrief(['Site: {{url}}'])}\n## Reader brief\n${FENCE}text\nVision: {{vision}}\n${FENCE}\n`;
+    assert.equal(checkBriefLeak(text).length, 1);
+  });
+
+  test('the shipped reader brief exists and every depth runs the reader', () => {
+    const read = (rel) => readFileSync(new URL(`../skills/launch/${rel}`, import.meta.url), 'utf8');
+    assert.match(read('references/briefs.md'), /^## Reader brief$/m);
+    assert.match(read('SKILL.md'), /\| quick \| 3 \| 8 \| content reader \|/);
+    assert.match(read('SKILL.md'), /`references\/content-reader\.md`/);
+  });
+
   test('a missing person brief section is an error', () => {
     const errors = checkBriefLeak('# Briefs\n## Verifier brief\n```text\nSite: {{url}}\n```\n');
     assert.equal(errors.length, 1);

@@ -10,5 +10,5 @@
 3. Write the exit interview with the same pitch, then do Steps 8, 9, 11 and 12 of `SKILL.md` for this person in a new session.
 4. The person starts from the beginning with no memory. Never pass the earlier trace, outcome or findings into the
    brief, so a change made before the point where they gave up is still walked through.
-5. Skip word of mouth. Afterwards set `runs[<id>]` in `last-setup.json` to the new folder. The report shows both
+5. Skip word of mouth. Skip the content reader too. Afterwards set `runs[<id>]` in `last-setup.json` to the new folder. The report shows both
    timelines side by side.

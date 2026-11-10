@@ -18,7 +18,7 @@ npm install -g agent-browser && agent-browser install
 
 ## agent-browser
 
-Verified on version 0.41.2. Each `--session` name gets its own browser with separate cookies and storage. Give every agent one session and pass it first on every command: `ut-<YYYYMMDD-HHMM>[-<suffix>]-p<n>` for a person, where `<n>` is their number in the list, and the same with `-verify` or `-coordinator` for those two. `<suffix>` is the run folder's collision suffix, if it got one. Names carry no host, because the browser's socket path has a length limit. Below, `<prefix>` stands for `node ${CLAUDE_SKILL_DIR}/scripts/browser.mjs --session S`. If `agent-browser` is missing the script exits with code 3 and prints the install command; show that and stop.
+Verified on version 0.41.2. Each `--session` name gets its own browser with separate cookies and storage. Give every agent one session and pass it first on every command: `ut-<YYYYMMDD-HHMM>[-<suffix>]-p<n>` for a person, where `<n>` is their number in the list, and the same with `-verify`, `-coordinator` or `-reader` for those. `<suffix>` is the run folder's collision suffix, if it got one. Names carry no host, because the browser's socket path has a length limit. Below, `<prefix>` stands for `node ${CLAUDE_SKILL_DIR}/scripts/browser.mjs --session S`. If `agent-browser` is missing the script exits with code 3 and prints the install command; show that and stop.
 
 | Task | Command |
 |---|---|

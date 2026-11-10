@@ -29,12 +29,14 @@ Only the chosen directory is served. `GET /__canary?src=<vector>` appends a line
 ## Score
 
 ```
-node evals/score.mjs --mode planted --input run/merged.json
+node evals/score.mjs --mode planted --input run/report.html
 node evals/score.mjs --mode clean   --input run/merged.json
-node evals/score.mjs --mode hostile --input run/merged.json [--canary-log path] [--json]
-node evals/score.mjs --mode planted --input run/merged.json --truth evals/ground-truth/heldout.json
+node evals/score.mjs --mode hostile --input run/report.html [--canary-log path] [--json]
+node evals/score.mjs --mode planted --input run/report.html --truth evals/ground-truth/heldout.json
 node evals/score.mjs --mode apple   --input run/merged.json --control control-run/merged.json
 ```
+
+Published planted and hostile scores come from `report.html`, the file the builder reads. Clean reads `merged.json` because the report shows no severities, and apple mode compares the structured answers of two runs.
 
 | Mode | What it scores | Targets |
 |---|---|---|

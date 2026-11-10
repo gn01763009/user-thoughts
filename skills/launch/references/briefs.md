@@ -142,6 +142,22 @@ Reply with exactly: Status: <DONE|BLOCKED> and the file path.
 the frontmatter of the reporting person's persona file. Features have no fingerprint, so use `feature:<key>`. Leave
 out what the person observed, interpreted, felt or decided.
 
+## Reader brief
+
+```text
+Read ${CLAUDE_SKILL_DIR}/references/content-reader.md, then follow it.
+Site: {{url}}
+Today: {{date}}
+Browser: {{browser}}
+Write to: {{run_dir}}/content.json
+Language: {{language_name}}
+
+Tools: use Read, Write and Edit for files. The shell is only for the Browser prefix above, one plain command per call.
+Reply with exactly: Status: <DONE|BLOCKED> and the file path.
+```
+
+`{{browser}}` is `node ${CLAUDE_SKILL_DIR}/scripts/browser.mjs --session ut-{{session}}-reader`, or the MCP tool names in serial mode. `{{date}}` is `date` from `run.json`.
+
 ## Friend brief (word of mouth, first relay)
 
 ```text

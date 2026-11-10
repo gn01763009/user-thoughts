@@ -19,7 +19,8 @@ export function masthead(model, labels) {
   const dropped = model.dropped_count > 0 ? ` ${fill(labels.dropped_note, { n: model.dropped_count })}` : '';
   return `<header class="top"><h1>${used}</h1><p class="lead">${statusLine(started, labels)}</p>`
     + `<p class="vision">${e(labels.vision_label)}${e(labels.sep_colon)}${e(model.vision)}</p>`
-    + `<p class="meta">${dotted([prettyDate(model.date), e(depth), `${e(labels.simulated_note)}${dropped}`])}</p></header>\n`;
+    + `<p class="meta">${dotted([prettyDate(model.date), e(depth), `${e(labels.simulated_note)}${dropped}`])}</p>`
+    + `<p class="meta">${e(labels.single_run_note)}</p></header>\n`;
 }
 
 const optionalSpan = (className, text) => (text ? `<span class="${className}">${e(text)}</span>` : '');

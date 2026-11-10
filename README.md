@@ -78,7 +78,7 @@ Measured on Sonnet, on small local test sites, in headless runs with the setup a
 
 ## What the report looks like
 
-The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and the top finding.
+The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and one problem from this run.
 
 <p>
   <img src="docs/assets/report-overview.png" alt="The top of a report: the headline, then one row per person with what they would tell a friend, who they are, why they came and how their visit ended" width="49%">

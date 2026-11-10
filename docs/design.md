@@ -343,7 +343,7 @@ There is no overall score. One number would imply a precision this method does n
 
 ## Report (`build-report.mjs`)
 
-Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.json`, `decisions.md` and `content.json` (optional). Writes `report.html` and `summary.md` and prints the summary. A person's words go into the report unchanged. `report.html` is one static file with inline CSS, no scripts and no external resources, and every piece of text is escaped. A content security policy in the page allows no script at all. Each person's section opens with who they are, their key moment (one screenshot and the thought behind it), what they would tell a friend and their bad-idea reaction; only the full walk, every step with its thumbnail, sits one tap away in a native `<details>`. It opens with how many people came, how many finished and the builder's vision. Its sections, in order, each appearing only when it has content:
+Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.json`, `decisions.md` and `content.json` (optional). Writes `report.html` and `summary.md` and prints the summary. A person's words go into the report unchanged. `report.html` is one static file with inline CSS, no scripts and no external resources, and every piece of text is escaped. A content security policy in the page allows no script at all. Each person's section opens with who they are, their key moment (one screenshot and the thought behind it), what they would tell a friend and their bad-idea reaction; only the full walk, every step with its thumbnail, sits one tap away in a native `<details>`. It opens with how many people came, how many finished, the builder's vision and a line saying this is one run, a sample and not a ranking of the most important problems. Its sections, in order, each appearing only when it has content:
 
 1. A flattery warning, when the bad-idea check's `warn` is true.
 2. Page content aimed at AI agents, recorded and not obeyed.
@@ -363,7 +363,7 @@ Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.jso
 
 The **key moment** is chosen by script: the step with the strongest feeling, in the order stuck, annoyed, confused, delighted, unsure, fine, and on a tie the latest step whose thought has at least 8 characters, else the latest step. The section shows its whole thought. The **overview quote** is what the person would tell a friend, the one line written for a reader who has not seen the site; without last words the row shows the name alone. When a boundary (`unsafe_action`, `login_wall`, `bot_check`) ended the visit, the person's status line names it, so the builder can tell a stop imposed by the test from a choice. The **top finding** in `summary.md` is one line, the finding's person, step route and thought, or that person's line for a friend when the thought is under 8 characters. Both are the person's own words, never reworded.
 
-`summary.md` is 6 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, the top finding, how to keep something as it is, and the report path.
+`summary.md` is 6 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, one problem from this run, how to keep something as it is, and the report path.
 
 Verification never stops a report. If the verifier is blocked or does not return, the run carries on and the reason goes under "not checked".
 

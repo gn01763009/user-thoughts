@@ -134,6 +134,22 @@ test('buildReportModel does not mutate its inputs', () => {
   assert.equal(JSON.stringify(merged), snapshot);
 });
 
+test('the top of the report says this is one run: a sample, not a ranking', () => {
+  for (const language of ['en', 'zh-TW']) {
+    const labels = labelsFor(language);
+    const html = renderReport(build({ language }), labels);
+    const at = html.indexOf(labels.single_run_note);
+    assert.ok(at !== -1, language);
+    assert.ok(at < html.indexOf('id="section-overview"'), language);
+  }
+  assert.ok(labelsFor('zh-TW').single_run_note.includes('不是最重要問題的排名'));
+});
+
+test('the summary does not call one run\'s finding the most important', () => {
+  assert.doesNotMatch(labelsFor('zh-TW').top_finding, /最主要/);
+  assert.doesNotMatch(labelsFor('en').top_finding, /top/i);
+});
+
 test('summary.md has 5 to 8 lines and names who gave up and where', () => {
   const lines = renderSummary(build(), labelsFor('zh-TW')).trimEnd().split('\n');
   assert.ok(lines.length >= 5 && lines.length <= 8);

@@ -1,7 +1,14 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-11-10)
 
+- Opens the report with a line saying it is one run, a sample and not a ranking of the most important problems. On one real site, most of a run's top findings did not come back in other runs. The summary now says "one problem from this run" instead of "top finding".
+- Shows features in question in the report, with each person's own words on what would change if the feature went away.
+- The verifier now only adds a note. It no longer moves a finding or changes a feature's status, because it checks one page and demoted true problems that appear after a click.
+- The content reader's section always says how many pages were read and what was found. A missing, malformed or over-limit result is listed under "not checked".
+- Stricter checks on the coordinator's judgements: cited steps that do not exist show as "could not be confirmed", real checks refuse intent questions and simulated names, and one step cannot support both sides of a conflict.
+- Fixes a crash in the report builder when a finding's step had been dropped.
+- Planted and hostile scores are now computed on `report.html`, the file the builder reads. Earlier tables used `merged.json` and are not comparable.
 - Marks what the test setup may have caused (`test_limits`), so the report separates those steps from real findings.
 - Says who to ask and what to ask for the biggest findings (`real_checks`), as questions about past behaviour.
 - Remembers what the builder decided to keep (`decided`), so the report shows it in its own section and it no longer competes for the top finding.

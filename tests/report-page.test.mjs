@@ -554,3 +554,47 @@ test('a quote mark in a person id cannot break out of the id or href attribute',
   assert.ok(html.includes('href="#person-a&quot;b"'));
   assert.ok(!html.includes('person-a"b'));
 });
+
+// ---- running out of test steps is not giving up ----
+
+const cutShort = (id, name, extra = {}) => person(id, name, { outcome: 'abandoned', stop_reason: 'step_limit', left_at: '/clinic', ...extra });
+const gaveUp = (id, name, extra = {}) => person(id, name, { outcome: 'abandoned', stop_reason: 'leave_urge', left_at: '/signup', ...extra });
+
+test('someone who ran out of test steps is labelled so, in the row and the header, never as not finished', () => {
+  const html = htmlWith([cutShort('p1', '子晴'), gaveUp('p2', '阿哲')]);
+  const rows = overviewOf(html);
+  assert.ok(rows.includes(`>${zh.outcome_step_limit}<`));
+  assert.equal(rows.split(`>${zh.outcome_abandoned}<`).length - 1, 1, 'only the person who gave up is not finished');
+  const head = personOf(html, 'p1');
+  assert.ok(head.slice(0, head.indexOf('<figure')).includes(zh.outcome_step_limit));
+  assert.ok(!head.slice(0, head.indexOf('<figure')).includes(zh.outcome_abandoned));
+});
+
+test('the status line says how many of the unfinished ran out of test steps, and only when some did', () => {
+  const top = (html) => html.slice(html.indexOf('<h1'), html.indexOf('id="section-overview"'));
+  const mixed = top(htmlWith([person('p0', '小美'), cutShort('p1', '子晴'), cutShort('p3', '家豪'), gaveUp('p2', '阿哲')]));
+  assert.ok(mixed.includes('1 個人完成來做的事，3 個人沒有。'));
+  assert.ok(mixed.includes(zh.status_cut.replace('{n}', '2')));
+  const none = top(htmlWith([person('p0', '小美'), gaveUp('p2', '阿哲')]));
+  assert.ok(!none.includes(zh.status_cut.split('{n}')[0]));
+  const en = labelsFor('en');
+  const english = top(htmlWith([person('p0', 'Mina'), cutShort('p1', 'Omar')], { language: 'en' }));
+  assert.ok(english.includes(en.status_cut.replace('{n}', '1')));
+});
+
+test('summary.md lists people who ran out of steps apart from people who gave up', () => {
+  const model = modelWith([person('p0', '小美'), cutShort('p1', '子晴'), gaveUp('p2', '阿哲')]);
+  const line = renderSummary(model, zh).split('\n')[1];
+  assert.ok(line.includes(`${zh.summary_completed} 1/3`));
+  assert.ok(line.includes(`${zh.gave_up_at}${zh.sep_colon}阿哲 @ /signup`));
+  assert.ok(line.includes(`${zh.ran_out_at}${zh.sep_colon}子晴 @ /clinic`));
+  const calm = renderSummary(modelWith([person('p0', '小美'), gaveUp('p2', '阿哲')]), zh);
+  assert.ok(!calm.includes(zh.ran_out_at));
+});
+
+test('the brief asks for the feature name and if_gone in the run language, because the report prints both', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const briefs = await readFile(new URL('../skills/launch/references/briefs.md', import.meta.url), 'utf8');
+  const line = briefs.split('\n').find((l) => l.startsWith('Language: {{language}}'));
+  assert.match(line, /`feature` name and `if_gone` in \{\{language_name\}\}/);
+});

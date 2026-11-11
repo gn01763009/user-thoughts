@@ -251,7 +251,8 @@ questions in `references/feature-questions.md`.
 | `verdict` | `want`, `neutral`, `dont_want`, judged by your goal in this visit |
 | `my_job` | What you came to do that this helps with, or `none` |
 | `costs` | Any of `covers_content`, `interrupts`, `adds_step`, `asks_data_before_value`, `duplicates_path`, `unverifiable_claim`. Empty if none |
-| `if_gone` | What would change for you if it vanished |
+| `feature` | A short name for it in your brief's language. Keep the site's own label inside it exactly as the page writes it |
+| `if_gone` | What would change for you if it vanished, in your brief's language. The builder reads this sentence as yours |
 | `step` | The trace step where you met it |
 
 ## Summary record

@@ -1,14 +1,15 @@
 // The top of the page and the overview: one row per person, each linking to that person's section.
-import { dotted, e, fill, hasStarted, outcomeText, prettyDate } from './report-format.mjs';
+import { dotted, e, fill, hasStarted, personOutcomeText, prettyDate, ranOutOfSteps } from './report-format.mjs';
 
 const FINISHED = 'completed';
 
 // Someone who never started did not use the site, so they are left out of the count and the status.
 function statusLine(people, labels) {
   const done = people.filter((p) => p.outcome === FINISHED).length;
-  if (done === 0) return e(labels.status_none);
-  if (done === people.length) return e(labels.status_all);
-  return fill(labels.status_some, { done, rest: people.length - done });
+  if (done === people.length && done > 0) return e(labels.status_all);
+  const cut = people.filter(ranOutOfSteps).length;
+  const finished = done === 0 ? e(labels.status_none) : fill(labels.status_some, { done, rest: people.length - done });
+  return cut === 0 ? finished : `${finished}${e(labels.sep_space)}${fill(labels.status_cut, { n: cut })}`;
 }
 
 export function masthead(model, labels) {
@@ -32,7 +33,7 @@ function quoted(person, labels) {
 
 function row(person, labels) {
   const facts = person.facts.length > 0 ? `<span class="row-facts">${dotted(person.facts.map(e))}</span>` : '';
-  const outcome = `<span class="row-out">${outcomeText(person.outcome, labels)}</span>`;
+  const outcome = `<span class="row-out">${personOutcomeText(person, labels)}</span>`;
   return `<li><a class="row" href="#person-${e(person.id)}"><span class="row-title"><span class="row-name">${e(person.name)}</span>${quoted(person, labels)}</span>`
     + `${outcome}<span class="chev" aria-hidden="true">›</span>${facts}${optionalSpan('row-sub', person.came_for)}</a></li>`;
 }

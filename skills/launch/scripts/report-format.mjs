@@ -15,6 +15,10 @@ export const shown = (value, labels) => (value === null || value === undefined |
 export const hasStarted = (person) => person.outcome !== null && person.outcome !== undefined && person.outcome !== '';
 export const outcomeText = (outcome, labels) => (
   outcome === null || outcome === undefined || outcome === '' ? e(labels.outcome_not_started) : e(labels[`outcome_${outcome}`] ?? outcome));
+// The step limit belongs to the test. Someone it stopped did not choose to leave, so the report never calls it giving up.
+export const ranOutOfSteps = (person) => person.outcome === 'abandoned' && person.stop_reason === 'step_limit';
+export const personOutcomeText = (person, labels) => (
+  ranOutOfSteps(person) ? e(labels.outcome_step_limit) : outcomeText(person.outcome, labels));
 export const stopReasonText = (reason, labels) => shown(labels[`stop_reason_${reason}`] ?? reason, labels);
 export const feelingText = (feeling, labels) => e(labels[`feeling_${feeling}`] ?? feeling);
 

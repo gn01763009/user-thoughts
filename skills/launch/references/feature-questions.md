@@ -31,7 +31,7 @@ Mark only what actually happened at that step:
 
 ## 4. What would change if it vanished?
 
-Write `if_gone` in your own words. "I would not notice" is a strong answer. "I could not finish" is too. If the feature does something for you, say what.
+Write `if_gone` in your own words, in the language your brief names. "I would not notice" is a strong answer. "I could not finish" is too. If the feature does something for you, say what.
 
 ## 5. Can I tell what it is for?
 

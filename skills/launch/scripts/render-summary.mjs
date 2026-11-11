@@ -1,5 +1,5 @@
 // summary.md: 6 to 8 plain lines. No score. Pure function.
-import { hasStarted, prettyRoute } from './report-format.mjs';
+import { hasStarted, prettyRoute, ranOutOfSteps } from './report-format.mjs';
 
 const MAX_CHARS = 120;
 const REPORT_PATH = 'report.html';
@@ -20,11 +20,13 @@ function titleLine(model, labels) {
 
 function peopleLine(model, labels) {
   const done = model.overview.filter((p) => p.outcome === 'completed');
-  const gaveUp = model.overview.filter((p) => p.outcome === 'abandoned');
+  const ranOut = model.overview.filter(ranOutOfSteps);
+  const gaveUp = model.overview.filter((p) => p.outcome === 'abandoned' && !ranOutOfSteps(p));
   const blocked = model.overview.filter((p) => p.outcome === 'blocked');
   const where = (p) => `${p.name} @ ${prettyRoute(p.left_at) || labels.placeholder}`;
   const parts = [`${labels.summary_completed} ${done.length}/${model.overview.filter(hasStarted).length}`];
   if (gaveUp.length) parts.push(`${labels.gave_up_at}${labels.sep_colon}${gaveUp.map(where).join(labels.sep_list)}`);
+  if (ranOut.length) parts.push(`${labels.ran_out_at}${labels.sep_colon}${ranOut.map(where).join(labels.sep_list)}`);
   if (blocked.length) parts.push(`${labels.blocked}${labels.sep_colon}${blocked.map(where).join(labels.sep_list)}`);
   return parts.join(labels.sep_clause);
 }

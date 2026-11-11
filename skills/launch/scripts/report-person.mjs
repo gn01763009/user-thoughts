@@ -1,6 +1,6 @@
 // One person's section: who they are, the moment that mattered most, and every other step one tap away.
 import {
-  dotted, e, feelingText, fill, outcomeText, routeText, screenshotLink, stopReasonText,
+  dotted, e, feelingText, fill, personOutcomeText, routeText, screenshotLink, stopReasonText,
 } from './report-format.mjs';
 import { keyMoment } from './report-moment.mjs';
 
@@ -13,7 +13,7 @@ const BOUNDARY_STOPS = new Set(['unsafe_action', 'login_wall', 'bot_check']);
 
 function statusOf(person, labels) {
   const boundary = BOUNDARY_STOPS.has(person.stop_reason) ? stopReasonText(person.stop_reason, labels) : '';
-  return dotted([outcomeText(person.outcome, labels), boundary, wouldReturn(person.last_words, labels)]);
+  return dotted([personOutcomeText(person, labels), boundary, wouldReturn(person.last_words, labels)]);
 }
 
 function introduction(person, labels) {

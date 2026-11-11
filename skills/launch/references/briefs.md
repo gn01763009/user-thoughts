@@ -33,7 +33,7 @@ Your directory: {{person_dir}}
 Exit interview: {{person_dir}}/exit-interview.md (read it only after you have written trace.jsonl, findings.jsonl and features.jsonl)
 Step limit: {{step_limit}}
 forms_allowed: {{forms_allowed}}
-Language: {{language}} (write thoughts, `action`, `came_for` and last words in {{language_name}}; quotes stay in the page's language)
+Language: {{language}} (write thoughts, `action`, `came_for`, last words and each feature's `feature` name and `if_gone` in {{language_name}}; quotes stay in the page's language)
 Write everything else in English.
 
 Tools: use Read, Write and Edit for files. The shell is only for the Browser prefix above, one plain command per call.

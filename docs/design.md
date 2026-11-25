@@ -6,7 +6,7 @@ This file is the single source of truth for the data formats. `SKILL.md`, the sc
 
 ## Principles
 
-1. **Black box.** A person never reads source code, docs or the builder's vision or assumption. They see what a visitor sees.
+1. **Black box.** A person never reads source code, docs or the builder's vision or question. They see what a visitor sees.
 2. **Situations, not labels.** A person is a concrete circumstance and behaviour: where they are, what device, what is at stake. Nobody is assigned a verdict.
 3. **Observation before interpretation.** Every finding records what was seen, separately from what it might mean.
 4. **Every voice traces to a step.** A thought, last words or judgement that cannot be connected to a step the person really took is dropped by a script. Praise and complaint follow the same rule.
@@ -29,10 +29,10 @@ Agents do not read each other's output. Each person gets a fresh context and the
 ## Setup
 
 1. Read the product and state an understanding in one sentence, which the builder corrects.
-2. Ask the vision and the hidden assumption ("What do you think users will like most?"). Neither reaches a person, a relay, the verifier or the content reader.
+2. Ask the vision and the question: "What did you just change, and what do you hope is true now?" The builder may skip the question, in which case a default is written from the product's main task ("Can someone arriving for the first time <main task>?") and marked `question_default`. Neither reaches a person, a relay, the verifier or the content reader. New runs no longer ask the hidden assumption.
 3. Choose the depth.
-4. Recommend people, which the builder can delete, swap or describe in a sentence.
-5. Write the setup to `.user-thoughts/last-setup.json`, so the next run can ask whether to reuse it.
+4. Recommend people, which the builder can delete, swap or describe in a sentence. Say which of them have a need that would pass through what changed.
+5. Write the setup to `.user-thoughts/last-setup.json`, so the next run can ask whether to reuse it. On reuse the question is asked again, with the saved one as the default, because a new change means a new question.
 
 | Depth | People | Steps per person | Adds |
 |---|---|---|---|
@@ -50,7 +50,7 @@ Each person is built on one of ten persona files in `skills/launch/assets/person
   decisions.md            what the builder chose to keep as it is
   runs/<YYYYMMDD-HHMM>-<host>/
     run.json
-    builder-claims.md     the hidden assumption; never shown to a person, relay or verifier
+    builder-claims.md     older runs only: the hidden assumption; never shown to a person, relay or verifier
     decisions.md          copy of the builder's kept decisions; never shown to a person, relay or verifier
     aliases.json          optional; {"variant-key": "canonical-key"} for feature keys
     <person-id>/          for example p2-on-the-go
@@ -83,6 +83,8 @@ Paths such as `screenshot` are relative to the person's directory. In every reco
   "depth": "standard",
   "language": "zh-TW",
   "vision": "<the builder's sentence, word for word>",
+  "question": "<the builder's words, or the default question>",
+  "question_default": false,
   "understanding": "<the corrected one-sentence understanding>",
   "personas": ["p1-goal-first-timer", "p2-on-the-go"],
   "people": [
@@ -106,6 +108,8 @@ Paths such as `screenshot` are relative to the person's directory. In every reco
 - A card may carry `overlay`, one overlay's text. It is part of the card, so a reused setup and a rerun keep it.
 - A card may carry `voice`: how this person talks, then one short sample line. It is part of the card too, so a reused setup and a rerun keep it. It goes to the person in their brief and is never printed in the report.
 - A card may carry `facts` (3 to 5 very short strings: age, what they do, where, device, how much time), `about` (2 or 3 plain sentences about their life with this problem) and `cares` (up to 3 short strings: what decides whether they stay or leave). They help the reader picture the person and go in the person brief too. They never stand in for the situation, never come from the vision or the assumption and never state a gender.
+- `question` is the builder's answer to "What did you just change, and what do you hope is true now?", word for word, or the default question with `question_default` `true`. It stays out of every brief. A run without a `question` keeps the old report layout.
+- `arrival` on a card says how the link reached the person. It is a need, never a feature.
 - `browser_mode` is `parallel` or `serial`.
 - `max_steps` is `8` at quick depth, otherwise the highest step limit among the people.
 - `rerun_of`, only in a rerun, is the folder name of the earlier run that held this person.
@@ -119,6 +123,8 @@ Paths such as `screenshot` are relative to the person's directory. In every reco
   "language": "zh-TW",
   "understanding": "…",
   "vision": "…",
+  "question": "…",
+  "question_default": false,
   "people": ["<the full cards, as in run.json>"],
   "last_run": "20261108-1430-localhost",
   "runs": { "p1-goal-first-timer": "20261108-1430-localhost" }
@@ -144,6 +150,7 @@ Paths such as `screenshot` are relative to the person's directory. In every reco
 ```
 
 - `thought` is the person's words at that moment, any length, in the run's language: it can be two characters or break off halfway. It must not be empty.
+- `expected` and `saw` are optional: what the person expected to find at that step and what they saw. Each is trimmed, and a missing or empty one is left out without dropping the step. The report shows them beside the break, so they stay in the person's words.
 - `feeling`: `delighted`, `fine`, `unsure`, `confused`, `annoyed`, `stuck`.
 - `cw` holds the four cognitive walkthrough answers for this step.
 - `progress`: did this step move the person closer to their goal? Clearing something that was covering the page counts as `true`.
@@ -248,6 +255,13 @@ Replies are copied character for character. The script puts the person's own `te
 
 ```json
 {
+  "question": {
+    "answer": "holds | partly | does_not_hold | not_reached",
+    "happened": "…",
+    "breaks": [{ "persona": "p2-on-the-go", "step": 1 }],
+    "evidence": [{ "persona": "p1-goal-first-timer", "step": 3 }]
+  },
+  "changes": [{ "change": "…", "finding": "<fingerprint from merged.json>", "evidence": [{ "persona": "p2-on-the-go", "step": 1 }] }],
   "assumptions": [{ "claim": "…", "happened": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "conflicts": [{ "question": "…", "sides": [{ "label": "…", "reasons": [{ "persona": "p2-explorer", "step": 4 }] }], "vision_note": "…" }],
   "test_limits": [{ "limit": "location", "note": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
@@ -257,7 +271,19 @@ Replies are copied character for character. The script puts the person's own `te
 }
 ```
 
-A `{ "persona", "step" }` pair is a raw reference. The script drops it if that person kept no such step, and shows the person's own thought in its place, never the coordinator's wording. A conflict needs at least two sides that each keep a reference. An assumption that cited no evidence is marked as not encountered; one whose cited steps all failed to resolve is marked as unconfirmable, because nobody can say it did not happen.
+A `{ "persona", "step" }` pair is a raw reference. The script drops it if that person kept no such step, and shows the person's own thought in its place, never the coordinator's wording. A conflict needs at least two sides that each keep a reference. An assumption that cited no evidence is marked as not encountered; one whose cited steps all failed to resolve is marked as unconfirmable, because nobody can say it did not happen. `assumptions` is written only for older runs that have a `builder-claims.md`.
+
+- **`question`** answers the builder's question. The report prints the question from `run.json`, so `question` does not repeat it. `answer` is one of:
+
+  | answer | Needs | Otherwise |
+  |---|---|---|
+  | `holds` | at least one resolved `evidence` step | shown as bad evidence, with no answer |
+  | `partly` | at least one resolved `breaks` step | shown as bad evidence |
+  | `does_not_hold` | at least one resolved `breaks` step | shown as bad evidence |
+  | `not_reached` | nothing; nobody reached what changed | any cited steps are dropped with a reason |
+
+  A missing or unknown answer is shown as unanswered. `breaks` are the steps where it did not hold and `evidence` the steps where it did. `happened` is one or two sentences in the run's language, naming people, with no percentage and no "most". Steps cited for a `not_reached` answer never back anything.
+- **`changes`** holds at most 3 entries, the ones that caused the `breaks` first. `change` is one sentence. The script keeps a change only when its `finding` fingerprint exists in `merged.json`, that finding's `verification` is `confirmed`, and at least one cited step resolves. A feeling-based item goes in `real_checks`, never here. Each kept change shows its steps beside it.
 
 ### `content.json`
 
@@ -317,7 +343,7 @@ A feature record whose `step` is not in that person's trace is kept but not coun
 
 **Incomplete people.** Anyone in `run.json` with no `summary.json`, a status other than `DONE`, or a missing record file is listed under `incomplete`. A missing person is never treated as clean.
 
-**People and the evidence rule.** Each person in `people` keeps the card fields (`facts`, `about`, `cares`, `voice` and `why_chosen` are normalised: anything that is not a list or a string becomes empty, and empty strings are dropped), `came_for`, `outcome`, `stop_reason`, `left_at`, `steps`, `last_words`, `apple` and `launch_comment`. A step is dropped if its screenshot is missing or unsafe. A trace line with an empty thought never gets this far: it fails validation and is listed in `parse_errors`. `last_words` and `launch_comment` keep only cited steps that survived, and are dropped if none did. Everything dropped is listed in `dropped_voices` with a reason.
+**People and the evidence rule.** Each person in `people` keeps the card fields (`facts`, `about`, `cares`, `voice`, `arrival` and `why_chosen` are normalised: anything that is not a list or a string becomes empty, and empty strings are dropped), `came_for`, `outcome`, `stop_reason`, `left_at`, `steps` (with `expected` and `saw` where the trace had them), `last_words`, `apple` and `launch_comment`. A step is dropped if its screenshot is missing or unsafe. A trace line with an empty thought never gets this far: it fails validation and is listed in `parse_errors`. `last_words` and `launch_comment` keep only cited steps that survived, and are dropped if none did. Everything dropped is listed in `dropped_voices` with a reason.
 
 **Bad-idea tally.** `apple` counts `asked`, `yes`, `no` and `unsure`. `warn` is true when `yes` is more than half of `asked`.
 
@@ -343,7 +369,7 @@ There is no overall score. One number would imply a precision this method does n
 
 ## Report (`build-report.mjs`)
 
-Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.json`, `decisions.md` and `content.json` (optional). Writes `report.html` and `summary.md` and prints the summary. A person's words go into the report unchanged. `report.html` is one static file with inline CSS, no scripts and no external resources, and every piece of text is escaped. A content security policy in the page allows no script at all. Each person's section opens with who they are, their key moment (one screenshot and the thought behind it), what they would tell a friend and their bad-idea reaction; only the full walk, every step with its thumbnail, sits one tap away in a native `<details>`. It opens with how many people came, how many finished, the builder's vision and a line saying this is one run, a sample and not a ranking of the most important problems. Its sections, in order, each appearing only when it has content:
+Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.json`, `decisions.md` and `content.json` (optional). Writes `report.html` and `summary.md` and prints the summary. A person's words go into the report unchanged. `report.html` is one static file with inline CSS, no scripts and no external resources, and every piece of text is escaped. A content security policy in the page allows no script at all. Each person's section opens with who they are, their key moment (one screenshot and the thought behind it), what they would tell a friend and their bad-idea reaction; only the full walk, every step with its thumbnail, sits one tap away in a native `<details>`. It opens with how many people came, how many finished, the builder's vision and a line saying this is one run, a sample and not a ranking of the most important problems. Without a question (every run made before the question existed, and any run where the builder gave none), its sections, in order, each appearing only when it has content:
 
 1. A flattery warning, when the bad-idea check's `warn` is true.
 2. Page content aimed at AI agents, recorded and not obeyed.
@@ -361,9 +387,17 @@ Reads `run.json` and `merged.json` (required), `judgements.json`, `telephone.jso
 14. What the test setup may have caused, with the steps behind it. Those steps stay in the person's story, flagged, and the key moment and top finding pass them over.
 15. What the run did not check, including people who did not finish, malformed records, a content reader that left no result, a malformed `content.json` and notes past the limit.
 
+With a question, the page has two layers. The visible part, in order, is: the flattery warning, page content aimed at AI agents, the rerun timeline, then:
+
+1. **The question**, printed from `run.json` (with a "default question" tag when `question_default` is true), the answer word, `happened`, the people who broke it and the people who got through, named. In a rerun, a "last time" and "this time" comparison for the same person. Then each break: the person, the step, the route, the screenshot at full width, the person's thought and, where recorded, what they expected and what they saw. A status with no answer says so plainly: nobody reached what changed, the cited steps do not match, or the coordinator gave no answer.
+2. **What to change first**: at most 3 numbered changes, each with its steps and screenshots. When none is confirmed, one line says so. Then the real checks (who to ask and what to ask for), and an offer to make the changes and check them with `--rerun <person-id>` for the people in `breaks`.
+3. **Who the people are**: one row per person with their situation, arrival and why they were chosen, then a fixed paragraph on how the test works.
+
+Everything else is folded into its own `<details>`, under its title, in the order of the list above: the overview, the people's stories, the telephone chain (the word-of-mouth result beside the vision), launch-day comments, assumptions, conflicts, features in question, content, decided, test limits and what was not checked. A break's screenshot takes the full text width and keeps its shape.
+
 The **key moment** is chosen by script: the step with the strongest feeling, in the order stuck, annoyed, confused, delighted, unsure, fine, and on a tie the latest step whose thought has at least 8 characters, else the latest step. The section shows its whole thought. The **overview quote** is what the person would tell a friend, the one line written for a reader who has not seen the site; without last words the row shows the name alone. When a boundary (`unsafe_action`, `login_wall`, `bot_check`) ended the visit, the person's status line names it, so the builder can tell a stop imposed by the test from a choice. The **top finding** in `summary.md` is one line, the finding's person, step route and thought, or that person's line for a friend when the thought is under 8 characters. Both are the person's own words, never reworded.
 
-`summary.md` is 6 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, one problem from this run, how to keep something as it is, and the report path.
+`summary.md` is 6 to 8 lines: how many finished, where people gave up or were blocked, the bad-idea result, the last word-of-mouth line, one problem from this run, how to keep something as it is, and the report path. With a question it is at most 8 lines instead: the title, the question with the answer (the question gives way to the answer when the line runs long), up to 3 numbered changes, the bad-idea line only when it warns, the injection line when there is one, and the report path.
 
 Verification never stops a report. If the verifier is blocked or does not return, the run carries on and the reason goes under "not checked".
 

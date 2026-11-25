@@ -11,6 +11,12 @@ The aim is to help you make decisions that fit your own vision. It is not a vote
 
 > **Where it stands.** On its test sites, v1 did not meet its own bar for finding known problems. Read [Results](#results) before you rely on it.
 
+## When to use it
+
+Use it right after you change something, with one question you want answered. For example: "I moved the price table to the top of the pricing page. Can a first-time visitor find out what it costs?" The skill asks for that question during setup, and the report opens by answering it.
+
+It does not say whether a change is good, and it does not say how many people want it. It shows what happened to the simulated people who walked your site after the change, where it broke for them, and what to check with real people.
+
 ## Try it
 
 You need Claude Code, Node 20 or later, and [agent-browser](https://github.com/vercel-labs/agent-browser), which downloads Chrome (about 190 MB).
@@ -61,10 +67,10 @@ Pick one method per agent, because installing two gives you the skill twice.
 Five setup steps, all of which you can answer in your first message:
 
 1. **It reads your product.** It opens your site, and your source if it is in the working folder, then says in one sentence what it thinks the product is. You correct it.
-2. **It asks your vision and a hidden assumption.** One sentence on what you want this to become, and "what do you think users will like most?" Neither one is ever shown to the people who visit. The vision is what conflicts are weighed against. The assumption is only compared with what happened.
+2. **It asks your vision and your question.** One sentence on what you want this to become, and "What did you just change, and what do you hope is true now?" Neither one is ever shown to the people who visit. The vision is what conflicts are weighed against. If you skip the question, it writes a default from your product's main task, such as "Can someone arriving for the first time <main task>?" New runs no longer ask for a hidden assumption, but older reports still show theirs.
 3. **You choose the depth.** See below. It suggests standard.
 4. **It recommends people.** A table of name, situation and why each was chosen. Delete or swap anyone, or describe someone in a sentence ("a junior high student") and it turns that into a concrete situation: where they are, what device, what is at stake. Never an identity label, and never an assigned verdict.
-5. **It remembers the setup** in `.user-thoughts/`, so next time it asks "Run with the same setup as last time?"
+5. **It remembers the setup** in `.user-thoughts/`, so next time it asks "Run with the same setup as last time?" It asks the question again even then, with your last one as the default, because a new change means a new question.
 
 ## Depth
 
@@ -78,7 +84,9 @@ Measured on Sonnet, on small local test sites, in headless runs with the setup a
 
 ## What the report looks like
 
-The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a 6 to 8 line `summary.md` is also printed in your terminal: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and one problem from this run.
+The main output is `report.html`, one static file that opens by itself when the run ends. It is built by a script from the run's data, so an agent does not write the layout. Alongside it, a short `summary.md` is also printed in your terminal. Without a question it is 6 to 8 lines: how many finished, where people gave up, the bad-idea result, the last word-of-mouth line and one problem from this run. With a question it opens with the question and its answer, then up to three changes.
+
+When you give a question, the top of the report answers it. First comes the question, then the answer: holds, partly holds, does not hold, or nobody reached what changed. Under the answer is where it broke: the screenshot, what the person was thinking, and what they expected and saw. Next are at most three changes to make first. Each one is a problem the verifier confirmed on the page, with the steps behind it. Then come the questions to ask real people, an offer to make the changes and check them with `--rerun`, and who the people were. Everything else is folded below, each section under its own title. A run with no question keeps the layout described next.
 
 <p>
   <img src="docs/assets/report-overview.png" alt="The top of a report: the headline, then one row per person with what they would tell a friend, who they are, why they came and how their visit ended" width="49%">
@@ -87,7 +95,7 @@ The main output is `report.html`, one static file that opens by itself when the 
 
 These images are from a run on Tallywren, a fictional product in this repository's test sites. People write in the language you use, and the report's labels come in English or Traditional Chinese. This run was in Traditional Chinese.
 
-The report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
+Without a question, the report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
 
 After the people's stories, the report lists who to ask and what to ask for the biggest findings, what you already decided to keep, and what may only be an effect of the test setup.
 
@@ -129,6 +137,7 @@ Everything here ran on Sonnet, headless, on local test sites. Each test ran once
 - Any real site in this evaluation. Only local test sites were used.
 - The interactive app and a real plugin install. Every run was headless.
 - Serial browser mode (a browser MCP instead of agent-browser) and the saved-setup question.
+- The question and the top of the report, on any site. They have not been run on a real site, and the runs on test sites planned for them are not in the results above.
 - Word of mouth outside standard-depth runs. It was skipped in the control.
 - A control where the agreeable instruction really flips the answers, which the bad-idea check needs before it can be judged.
 - Whether simulated people's reactions match what real users do. This is the question that matters most, and it is still open.
@@ -224,6 +233,7 @@ That run included the `Edit(...)` rule, and I did not test without it. With acce
 - **It does not predict demand.** It can show that a feature covered the page or asked for data too early. It cannot tell you how many people would use it.
 - **It does not replace research with real people.** [Kuric et al. (2026)](https://arxiv.org/abs/2605.18302) found GPT's results differed significantly from real participants on 53% of first-click tasks, and tuning personas did not make them more realistic. [Nielsen Norman Group (2024)](https://www.nngroup.com/articles/synthetic-users/) concluded that synthetic users suit desk research and hypotheses, not final decisions.
 - **It gives no overall score.** One number would suggest a precision this method does not have.
+- **"Holds" is about the simulated people.** When the report says a change holds, it means the simulated people met the change and it worked for them. It does not say real visitors will.
 - **It does not review visual design, audit accessibility or review code.** UI counts only when it gets in someone's way.
 - **Windows is not supported.** `scripts/browser.mjs` starts `agent-browser` with no shell, and `.cmd` shims do not run that way, so it reports the tool as missing.
 

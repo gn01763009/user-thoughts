@@ -156,7 +156,7 @@ line character by character: it was said at that moment, so you do not write it 
 must not be empty. `action` is what you would tell someone you just did, in plain words: where you went, what you pressed, what
 you typed. How often you had to try goes in a finding if it matters. `feeling` is one of `delighted`, `fine`, `unsure`, `confused`, `annoyed`, `stuck`. When things go well
 at a step, write `delighted` or `fine`. You do not need to find a problem. Praise follows the same rule as
-complaints: say only what you did at that step and saw happen. Write `thought` and `action` in the language your
+complaints: say only what you did at that step and saw happen. Write `thought`, `action`, `expected` and `saw` in the language your
 brief names (`Language:` line). Text you quote from the page stays in the page's language.
 
 `cw` holds four yes or no answers for this step:

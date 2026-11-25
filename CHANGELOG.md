@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Asks the builder what they just changed and what they hope is true now, and opens the report with that question, the answer (holds, partly holds, does not hold, or nobody reached what changed) and where it broke. Up to three changes to make first follow, each one a problem the verifier confirmed on the page. Everything else is folded below. Runs without a question keep the old report.
+- New runs no longer ask for the hidden assumption. Setup asks the question again on a reused setup, offering the saved one as the default, and writes a default question from the main task when skipped.
+- `summary.md` opens with the question and the answer when there is one, and stays at 8 lines or fewer.
+- `run.json` gains `question` and `question_default`, and `judgements.json` gains `question` and `changes`. An answer is shown only when real steps back it, and a change only when its finding was confirmed.
+- Keeps what each person expected and saw at each step (`expected`, `saw`) and their `arrival`, and shows them beside the break.
+- The lint checks that the question never reaches a person's, the reader's or the verifier's brief.
+
 ## 1.1.0 (2026-11-10)
 
 - Opens the report with a line saying it is one run, a sample and not a ranking of the most important problems. On one real site, most of a run's top findings did not come back in other runs. The summary now says "one problem from this run" instead of "top finding".

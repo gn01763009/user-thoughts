@@ -1,5 +1,6 @@
 // summary.md: 6 to 8 plain lines. No score. Pure function.
 import { hasStarted, prettyRoute, ranOutOfSteps } from './report-format.mjs';
+import { answerWord } from './report-answer.mjs';
 
 const MAX_CHARS = 120;
 const REPORT_PATH = 'report.html';
@@ -51,7 +52,37 @@ function injectionLine(model, labels) {
   return n > 0 ? [fill(labels.injection_summary, { n })] : [];
 }
 
+function cutTo(text, limit) {
+  const chars = Array.from(oneLine(text));
+  return chars.length > limit ? `${chars.slice(0, Math.max(limit - 1, 0)).join('')}…` : chars.join('');
+}
+
+// The answer is the point of the line, so the question gives way to it when the line runs long.
+function questionLine(model, labels) {
+  const q = model.question;
+  const head = `${labels.q_title}${labels.sep_colon}`;
+  const tail = `${labels.sep_clause}${answerWord(q, labels)}`;
+  const room = MAX_CHARS - Array.from(head).length - Array.from(tail).length;
+  return `${head}${cutTo(q.text, room)}${tail}`;
+}
+
+function changeLines(model) {
+  return model.changes.map((c, i) => truncate(`${i + 1}. ${c.change}`));
+}
+
+function questionSummary(model, labels) {
+  return [
+    titleLine(model, labels),
+    questionLine(model, labels),
+    ...changeLines(model),
+    ...(model.apple.warn ? [appleLine(model, labels)] : []),
+    ...injectionLine(model, labels),
+    `${labels.report_link}${labels.sep_colon}${REPORT_PATH}`,
+  ];
+}
+
 export function renderSummary(model, labels) {
+  if (model.question) return `${questionSummary(model, labels).map(oneLine).join('\n')}\n`;
   const lines = [
     titleLine(model, labels),
     peopleLine(model, labels),

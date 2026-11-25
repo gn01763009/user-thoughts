@@ -5,9 +5,9 @@ with the shell. Before sending a brief, replace `${CLAUDE_SKILL_DIR}` with the a
 this skill's folder and every `{{…}}` with its value. Agents receive no variables and no file contents, only these
 lines.
 
-No brief may name, quote or paraphrase the builder's vision, the hidden assumption in `builder-claims.md`, anything in `decisions.md`, a card's
+No brief may name, quote or paraphrase the builder's vision, the builder's question, the hidden assumption in `builder-claims.md`, anything in `decisions.md`, a card's
 `why_chosen` or `apple_pitch`, or your own opinion of the site. `npm run lint` checks the person brief template for
-the vision, the assumption and `decisions.md`. It cannot see the values you put into the card fields, which you write after hearing
+the vision, the question, the assumption and `decisions.md`. It cannot see the values you put into the card fields, which you write after hearing
 the vision, so keeping those clear of it is your responsibility.
 
 ## Person brief
@@ -71,7 +71,7 @@ they say.
   how they sound when it goes right. If you could swap two people's lines and not notice, rewrite one.
 - The sample shows a manner of talking, not a phrase to copy. The person's thoughts must not open with the same word
   or phrase line after line, and the sample's own opening word is not theirs to repeat.
-- Keep the vision, the hidden assumption, your view of the site and every word you read on it out of it, as with the
+- Keep the vision, the question, the hidden assumption, your view of the site and every word you read on it out of it, as with the
   rest of the brief.
 
 For example, someone assembling a wardrobe alone, with the instructions upside down on the floor: "Talks in short
@@ -94,13 +94,13 @@ reading what happened. They go in the Person brief too, so the person who walks 
 
 Every card field (`situation`, `why_chosen`, `facts`, `about`, `cares`, `voice`) is written in the run's language.
 The card fields are written after you have heard the vision, and lint cannot read them, so none of them may name,
-quote or paraphrase the vision, the hidden assumption or your opinion of the site.
+quote or paraphrase the vision, the question, the hidden assumption or your opinion of the site.
 `about`, `facts` and `situation` use no gendered pronouns and no gendered role words (not 她 or 他, not 家庭主婦 or
 its like): name the person, or say what they do.
 
 Behaviour and needs still come from the situation. Facts help the reader picture someone and must not stand in for
 the situation: nothing this person does on the site follows from their age or job, because that is how a stereotype
-gets in. Never derive any of the three from the vision or the hidden assumption. Do not state a person's gender.
+gets in. Never derive any of the three from the vision, the question or the hidden assumption. Do not state a person's gender.
 
 A `low-stakes` card always has `facts`, `about` and `cares`, and a name like anyone else. Its `arrival` says how the link reached them and that nothing depends on it, for example "Someone dropped this link in a group chat while you were waiting for the bus."
 
@@ -199,6 +199,13 @@ translating, shortening or merging. If a relay returns nothing, leave that chain
 
 ```json
 {
+  "question": {
+    "answer": "holds | partly | does_not_hold | not_reached",
+    "happened": "…",
+    "breaks": [{ "persona": "p2-on-the-go", "step": 1 }],
+    "evidence": [{ "persona": "p1-goal-first-timer", "step": 3 }]
+  },
+  "changes": [{ "change": "…", "finding": "<fingerprint from merged.json>", "evidence": [{ "persona": "p2-on-the-go", "step": 1 }] }],
   "assumptions": [{ "claim": "…", "happened": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
   "conflicts": [{ "question": "…", "sides": [{ "label": "…", "reasons": [{ "persona": "p2-explorer", "step": 4 }] }], "vision_note": "…" }],
   "test_limits": [{ "limit": "location", "note": "…", "evidence": [{ "persona": "p1-on-the-go", "step": 3 }] }],
@@ -208,7 +215,9 @@ translating, shortening or merging. If a relay returns nothing, leave that chain
 }
 ```
 
-- `assumptions`: one entry per line of `builder-claims.md`, with `claim` copied word for word. `happened` says, in
+- `question`: the answer to `run.json` `question`; the report prints that text, so do not copy it here. `answer` is `holds` (needs a resolving `evidence` step), `partly` or `does_not_hold` (each needs a resolving `breaks` step) or `not_reached` (nobody reached what changed; never guess). `breaks` are steps where it did not hold, `evidence` steps where it did. `happened` is one or two sentences in the run's language, naming people, with no percentage and no "most". An answer with no resolving step is shown as bad evidence, not as an answer. See `references/question.md`.
+- `changes`: at most 3, the ones that caused the `breaks` first. `change` is one sentence in the run's language. `finding` is a fingerprint from `merged.json` `findings`. The script keeps a change only if that finding has `verification: "confirmed"` and a cited step resolves, and keeps only the first change per finding. Feeling-based items go in `real_checks`.
+- `assumptions`: only when `builder-claims.md` exists (older runs); one entry per line of `builder-claims.md`, with `claim` copied word for word. `happened` says, in
   the run's language, what the people did. `evidence` points at steps in `merged.json` `people[].steps`. When no one
   met it, give an empty `evidence` list and the report marks it not encountered.
 - `conflicts`: only questions where at least two sides each cite their own steps. `label` names a side in a few
@@ -231,6 +240,8 @@ Written to `.user-thoughts/runs/{{run}}/run.json` in the user's project. `person
   "depth": "quick",
   "language": "en",
   "vision": "<the builder's sentence, word for word>",
+  "question": "<the builder's words, or the default question>",
+  "question_default": false,
   "understanding": "<the corrected one-sentence understanding>",
   "personas": ["p1-goal-first-timer", "p2-on-the-go", "p3-committed-user"],
   "people": [
@@ -257,6 +268,7 @@ Written to `.user-thoughts/runs/{{run}}/run.json` in the user's project. `person
 
 - `overlay` is optional. It is part of the card, so a reused setup and a rerun keep it. So is `voice`.
 - `facts`, `about` and `cares` are optional and stay on the card in `run.json` and `last-setup.json`, so a rerun keeps them.
+- `question` is the builder's answer to Step 4 word for word, or the default (`references/question.md`) with `question_default` `true`. It stays out of every brief.
 - `max_steps`: `8` at quick depth, otherwise the highest step limit among the people.
 - `persona_limits`: per person id, `no_progress_limit` from the persona file and the `max_steps` their brief gave.
 - `rerun_of`: only in a rerun, the folder name of the earlier run that held this person. The report script resolves it
@@ -273,11 +285,13 @@ Written to `.user-thoughts/last-setup.json` after every setup and updated after 
   "language": "zh-TW",
   "understanding": "…",
   "vision": "…",
+  "question": "…",
+  "question_default": false,
   "people": ["<the full cards, as in run.json>"],
   "last_run": "<YYYYMMDD-HHMM>-<host>",
   "runs": { "p1-goal-first-timer": "<YYYYMMDD-HHMM>-<host>" }
 }
 ```
 
-`last_run` is the folder whose `builder-claims.md` a reused setup copies. `runs` maps each person id to the latest run
+`last_run` is the folder whose `builder-claims.md`, if it has one, a reused setup copies. `runs` maps each person id to the latest run
 folder that held them.

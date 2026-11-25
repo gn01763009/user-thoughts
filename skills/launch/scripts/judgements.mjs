@@ -20,7 +20,7 @@ const drop = (kind, persona, step, reason) => ({ persona, kind, step, reason });
 const asPersona = (v) => (typeof v === 'string' ? v : null);
 const asStep = (v) => (typeof v === 'number' ? v : null);
 
-function resolveRef(raw, people, dropKind) {
+export function resolveRef(raw, people, dropKind) {
   const persona = isObject(raw) ? asPersona(raw.persona) : null;
   const step = isObject(raw) ? asStep(raw.step) : null;
   const fail = (why) => ({ ref: null, dropped: drop(dropKind, persona, step, why) });
@@ -33,7 +33,7 @@ function resolveRef(raw, people, dropKind) {
   return { ref: { persona: person.id, name: person.name, step: found.step, thought, feeling, screenshot }, dropped: null };
 }
 
-function resolveRefs(list, people, dropKind) {
+export function resolveRefs(list, people, dropKind) {
   const results = (Array.isArray(list) ? list : []).map((r) => resolveRef(r, people, dropKind));
   return {
     refs: results.filter((r) => r.ref).map((r) => r.ref),

@@ -53,11 +53,21 @@ function realFolder(path) {
 }
 
 // A run is never its own previous run: comparing it with itself would claim that nothing changed.
-function readPrevious(dir, run) {
+function previousFolder(dir, run) {
   if (typeof run.rerun_of !== 'string' || run.rerun_of === '') return null;
   const base = isAbsolute(run.rerun_of) ? run.rerun_of : resolve(dirname(dir), run.rerun_of);
-  if (realFolder(base) === realFolder(dir)) return null;
-  return readOptional(join(base, 'merged.json')) ?? null;
+  return realFolder(base) === realFolder(dir) ? null : base;
+}
+
+function readPrevious(dir, run) {
+  const base = previousFolder(dir, run);
+  return base === null ? null : (readOptional(join(base, 'merged.json')) ?? null);
+}
+
+// Optional: the previous answer to the question, or the previous run.json. Any failure means there is nothing to compare.
+function readPreviousFile(dir, run, file) {
+  const base = previousFolder(dir, run);
+  return base === null ? undefined : readOptional(join(base, file));
 }
 
 export function defaultOpener(path) {
@@ -106,6 +116,8 @@ export function main(argv, io = { out: process.stdout, err: process.stderr }, op
     judgements: judgements.value,
     telephone: telephone.value,
     previous: readPrevious(dir, run.value),
+    previousJudgements: readPreviousFile(dir, run.value, 'judgements.json'),
+    previousRun: readPreviousFile(dir, run.value, 'run.json'),
     decisions: decisions.value ?? [],
     content: content.value,
     unreadable: [...judgements.unreadable, ...telephone.unreadable, ...decisions.unreadable, ...content.unreadable],

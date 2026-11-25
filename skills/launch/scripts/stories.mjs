@@ -30,9 +30,27 @@ function screenshotProblem(runDir, id, screenshot) {
   return isFile(join(runDir, id, screenshot)) ? null : 'screenshot missing';
 }
 
+const cleanText = (value) => (typeof value === 'string' ? value.trim() : '');
+
+// Keeps an optional trace field only when it is text with something in it, trimmed.
+function optionalText(key, value) {
+  const text = cleanText(value);
+  return text === '' ? {} : { [key]: text };
+}
+
 function toStep(id, record) {
   const { step, route, action, thought, feeling, screenshot, progress } = record;
-  return { step, route, action, thought, feeling, screenshot: `${id}/${screenshot}`, progress };
+  return {
+    step,
+    route,
+    action,
+    thought,
+    feeling,
+    screenshot: `${id}/${screenshot}`,
+    progress,
+    ...optionalText('expected', record.expected),
+    ...optionalText('saw', record.saw),
+  };
 }
 
 function buildSteps(id, trace, runDir) {
@@ -53,7 +71,6 @@ function citeKept(block, kind, id, keptSteps) {
   return { value: null, dropped: [{ persona: id, kind, step: null, reason: 'no traced step' }] };
 }
 
-const cleanText = (value) => (typeof value === 'string' ? value.trim() : '');
 const cleanList = (value) => (Array.isArray(value) ? value.map(cleanText).filter(Boolean) : []);
 
 // What a card says about the person beyond the situation. Normalised here, and again for merged.json files from older runs.
@@ -63,6 +80,7 @@ export function cardProfile(card) {
     about: cleanText(card?.about),
     cares: cleanList(card?.cares),
     voice: cleanText(card?.voice),
+    arrival: cleanText(card?.arrival),
     why_chosen: cleanText(card?.why_chosen),
   };
 }

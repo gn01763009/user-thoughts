@@ -362,12 +362,58 @@ describe('checkBriefLeak', () => {
 
   test('a block after the next section heading is not part of the person brief', () => {
     const text = `${personBrief(['Site: {{url}}'])}## Verifier brief\n${FENCE}text\nvision\n${FENCE}\n`;
-    assert.deepEqual(checkBriefLeak(text), []);
+    const errors = checkBriefLeak(text);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /^Verifier brief line/);
   });
 
   test('checkBriefLeak also checks the reader brief', () => {
     const text = `${personBrief(['Site: {{url}}'])}\n## Reader brief\n${FENCE}text\nVision: {{vision}}\n${FENCE}\n`;
     assert.equal(checkBriefLeak(text).length, 1);
+  });
+
+  test('a person brief that contains the word question fails, in any case', () => {
+    for (const line of ['Question: {{question}}', 'QUESTION: what changed', 'the question is {{q}}']) {
+      const errors = checkBriefLeak(personBrief(['Site: {{url}}', line]));
+      assert.equal(errors.length, 1, `expected one error for ${line}`);
+      assert.match(errors[0], /question/i);
+    }
+  });
+
+  test('a person brief that contains 問題 fails', () => {
+    const errors = checkBriefLeak(personBrief(['Site: {{url}}', '問題：{{q}}']));
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /問題/);
+  });
+
+  test('a clean person brief that contains questionnaire passes, because the match is whole word', () => {
+    assert.deepEqual(checkBriefLeak(personBrief(['Site: {{url}}', 'Questionnaire: {{form}}'])), []);
+  });
+
+  test('a reader brief that contains the word question fails', () => {
+    const text = `${personBrief(['Site: {{url}}'])}\n## Reader brief\n${FENCE}text\nWhat changed: {{question}}\n${FENCE}\n`;
+    assert.equal(checkBriefLeak(text).length, 1);
+  });
+
+  test('a reader brief that contains 問題 fails', () => {
+    const text = `${personBrief(['Site: {{url}}'])}\n## Reader brief\n${FENCE}text\n問題：{{q}}\n${FENCE}\n`;
+    assert.equal(checkBriefLeak(text).length, 1);
+  });
+
+  test('a verifier brief that mentions the vision fails, because it is checked too', () => {
+    const text = `${personBrief(['Site: {{url}}'])}\n## Verifier brief\n${FENCE}text\nVision: {{vision}}\n${FENCE}\n`;
+    const errors = checkBriefLeak(text);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /Verifier brief/);
+  });
+
+  test('a verifier brief that contains the word question fails', () => {
+    const text = `${personBrief(['Site: {{url}}'])}\n## Verifier brief\n${FENCE}text\nquestion: {{q}}\n${FENCE}\n`;
+    assert.equal(checkBriefLeak(text).length, 1);
+  });
+
+  test('a missing verifier brief is allowed', () => {
+    assert.deepEqual(checkBriefLeak(personBrief(['Site: {{url}}'])), []);
   });
 
   test('the shipped reader brief exists and every depth runs the reader', () => {

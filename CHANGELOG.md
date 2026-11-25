@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The person protocol now names the browser commands a simulated person needs and says never to run `--help`. In a run from the installed 1.2.0, one person's first command was `--help`; it was refused and the person carried on only because the refusal listed the allowed commands. A test runs every listed command through the browser script, for both the person and the verifier protocols.
+
 ## 1.2.0 (2026-11-26)
 
 - Asks the builder what they just changed and what they hope is true now, and opens the report with that question, the answer (holds, partly holds, does not hold, or nobody reached what changed) and where it broke. Up to three changes to make first follow, each one a problem the verifier confirmed on the page. Everything else is folded below. Runs without a question keep the old report.

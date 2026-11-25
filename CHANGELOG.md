@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 (2026-11-26)
 
 - Asks the builder what they just changed and what they hope is true now, and opens the report with that question, the answer (holds, partly holds, does not hold, or nobody reached what changed) and where it broke. Up to three changes to make first follow, each one a problem the verifier confirmed on the page. Everything else is folded below. Runs without a question keep the old report.
 - New runs no longer ask for the hidden assumption. Setup asks the question again on a reused setup, offering the saved one as the default, and writes a default question from the main task when skipped.

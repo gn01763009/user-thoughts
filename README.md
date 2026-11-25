@@ -8,7 +8,7 @@
 When you build a product, you can only see it from your own side. This agent skill sends simulated people in different situations through your live site, one visit each: someone on a train with only a phone, someone who has never done this before, someone whose boss says they have to use it. They really click through it, and you read what each of them thought at each step, with a screenshot of what they saw.
 
 <p align="center">
-  <img src="docs/assets/person-walk.gif" alt="One simulated person's visit, step by step: on a train with only a phone, they find no word about invoices on the home page, get a newsletter pop-up and a chat box over the page, then a sign-up page that asks for a card, and leave. Each step shows the real screenshot beside what they said, what they expected and what they saw." width="720">
+  <img src="docs/assets/person-walk-en.gif" alt="One simulated person's visit, step by step: on a bus with only a phone, they meet a newsletter pop-up and a chat box, find no word about invoices on the home page, then reach a sign-up page that asks for a card, and leave. Each step shows the real screenshot beside what they said, what they expected and what they saw." width="720">
   <br><sub>One simulated person's visit, one step per frame. The screenshots are real, from a run on the fictional test site; the person is simulated.</sub>
 </p>
 
@@ -94,14 +94,14 @@ The main output is `report.html`, one static file that opens by itself when the 
 When you give a question, the top of the report answers it. First comes the question, then the answer: holds, partly holds, does not hold, or nobody reached what changed. Under the answer is where it broke: the screenshot, what the person was thinking, and what they expected and saw. Next are at most three changes to make first. Each one is a problem the verifier confirmed on the page, with the steps behind it. Then come the questions to ask real people, an offer to make the changes and check them with `--rerun`, and who the people were. Everything else is folded below, each section under its own title. A run with no question keeps the layout described next.
 
 <p align="center">
-  <img src="docs/assets/report-scroll.gif" alt="Scrolling through a report: the question, the answer 'does not hold', where it broke with the person's screenshot and words, then the changes to make first" width="720">
+  <img src="docs/assets/report-scroll-en.gif" alt="Scrolling through a report: the question, the answer 'does not hold', where it broke with the person's screenshot and words, then the changes to make first" width="720">
 </p>
 <p>
-  <img src="docs/assets/report-question.png" alt="The top of a report with a question: the question, the answer 'does not hold', who got stuck, and the first break with its screenshot" width="49%">
-  <img src="docs/assets/report-changes.png" alt="Change these first: three changes, each with the steps and screenshots behind it, then the questions to ask real people" width="49%">
+  <img src="docs/assets/report-question-en.png" alt="The top of a report with a question: the question, the answer 'does not hold', who got stuck, and the first break with its screenshot" width="49%">
+  <img src="docs/assets/report-changes-en.png" alt="Change these first: three changes, each with the steps and screenshots behind it, then the questions to ask real people" width="49%">
 </p>
 
-These images are from one run of 1.2.0 on Tallywren, a fictional product in this repository's test sites, with the question "After the change, do first-time visitors know how to start the free trial?". People write in the language you use, and the report's labels come in English or Traditional Chinese. This run was in Traditional Chinese.
+These images are from one run of 1.2.1 on Tallywren, a fictional product in this repository's test sites, with the question "After the change, do first-time visitors know how to start the free trial?". People write in the language you use, and the report's labels come in English or Traditional Chinese. This run was in English; the [Traditional Chinese README](README.zh-TW.md) shows a run in Traditional Chinese.
 
 Without a question, the report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
 

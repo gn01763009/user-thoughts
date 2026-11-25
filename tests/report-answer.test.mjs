@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { labelsFor } from '../skills/launch/scripts/labels.mjs';
 import { buildReportModel } from '../skills/launch/scripts/report-model.mjs';
 import { renderReport } from '../skills/launch/scripts/render-html.mjs';
+import { renderSummary } from '../skills/launch/scripts/render-summary.mjs';
 import { main } from '../skills/launch/scripts/build-report.mjs';
 
 const XSS = '<script>alert(1)</script> javascript:alert(1)';
@@ -231,4 +232,43 @@ test('build-report: reads the previous judgements, and ignores a broken file', (
   const bad = twoRuns('{ not json');
   assert.equal(main([bad], sink()), 0);
   assert.ok(!readFileSync(join(bad, 'report.html'), 'utf8').includes(en.q_last_time));
+});
+
+// ---- summary.md in question mode ----
+
+const summaryOf = (model) => renderSummary(model, labelsFor(model.language)).trimEnd().split('\n');
+const threeChanges = () => {
+  const findings = ['a', 'b', 'c', 'd'].map((k) => finding(k, 'confirmed'));
+  const changes = findings.map((f, i) => ({ change: `change ${i}`, finding: f.fingerprint, evidence: [{ persona: 'p1', step: 1 }] }));
+  return { findings, changes };
+};
+
+test('summary: title, question and answer first, three changes, apple, injection and link in at most 8 lines', () => {
+  const { findings, changes } = threeChanges();
+  const merged = { ...mergedOf(), findings, apple: { asked: 3, yes: 3, no: 0, unsure: 0, warn: true }, injection_attempts: [{ persona: 'p1', route: '/x', quote: 'q' }] };
+  const model = buildReportModel({ run: runOf(), merged, judgements: { ...JUDGED(), changes }, telephone: undefined, previous: null });
+  const lines = summaryOf(model);
+  assert.equal(lines.length, 8);
+  assert.ok(lines[0].startsWith('# '));
+  assert.ok(lines[1].includes('Is the new home page clear?') && lines[1].includes(en.q_partly));
+  assert.deepEqual(lines.slice(2, 5).map((l) => /change (\d)/.exec(l)[1]), ['0', '1', '2']);
+  assert.ok(lines[5].includes(en.apple_warning) && lines[6].includes('1') && lines[7].includes('report.html'));
+  assert.ok(lines.every((l) => Array.from(l).length <= 120));
+});
+
+test('summary: apple line only when it warns, no change lines when none were confirmed', () => {
+  const lines = summaryOf(build({ ...JUDGED(), changes: [] }));
+  assert.deepEqual(lines.length, 3);
+  assert.ok(!lines.some((l) => l.includes(en.apple_title)));
+});
+
+test('summary: a long question is cut but the answer stays', () => {
+  const lines = summaryOf(build(JUDGED(), runOf({ question: 'Q'.repeat(300) })));
+  assert.ok(Array.from(lines[1]).length <= 120);
+  assert.ok(lines[1].includes(en.q_partly));
+});
+
+test('summary: an answer that cannot be shown says so', () => {
+  const lines = summaryOf(build({ question: { answer: 'does_not_hold', breaks: [{ persona: 'p9', step: 1 }] } }));
+  assert.ok(lines[1].includes(en.q_bad_evidence));
 });

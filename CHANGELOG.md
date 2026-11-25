@@ -8,6 +8,7 @@
 - `run.json` gains `question` and `question_default`, and `judgements.json` gains `question` and `changes`. An answer is shown only when real steps back it, and a change only when its finding was confirmed.
 - Keeps what each person expected and saw at each step (`expected`, `saw`) and their `arrival`, and shows them beside the break.
 - The lint checks that the question never reaches a person's, the reader's or the verifier's brief.
+- Runs the question bars on the local test sites, not a real site, and summarises the results in the README's Results section.
 
 ## 1.1.0 (2026-11-10)
 

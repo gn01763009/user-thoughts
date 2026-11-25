@@ -137,10 +137,24 @@ Everything here ran on Sonnet, headless, on local test sites. Each test ran once
 - Any real site in this evaluation. Only local test sites were used.
 - The interactive app and a real plugin install. Every run was headless.
 - Serial browser mode (a browser MCP instead of agent-browser) and the saved-setup question.
-- The question and the top of the report, on any site. They have not been run on a real site, and the runs on test sites planned for them are not in the results above.
+- The question and the top of the report, on a real site. They were run only on local test sites, see [Answering the builder's question](#answering-the-builders-question).
 - Word of mouth outside standard-depth runs. It was skipped in the control.
 - A control where the agreeable instruction really flips the answers, which the bad-idea check needs before it can be judged.
 - Whether simulated people's reactions match what real users do. This is the question that matters most, and it is still open.
+
+### Answering the builder's question
+
+These ran only on the local test sites, not on a real site. Each arm ran once, on Sonnet, quick depth, unattended. Answers and changes were scored against the bars written before the runs: [bar 1](evals/question-bar.md) and [bar 2](evals/question-bar-2.md).
+
+| Bar | Answers | Verifier and changes | Result |
+|---|---|---|---|
+| 1: Q1 "what does the home page sell?", Q2 "where is the price?" | 4 of 4 met the bar | The verifier stopped at its first command in every run (it asked the browser script for `--help`, which is refused), so nothing was confirmed and no changes were listed. The change rule failed on both planted runs | Not passed |
+| 2: Q3 "do pop-ups block the home page?", Q4 "can phone visitors find the menu?" | 4 of 4 met the bar | The verifier ran in 4 of 4 runs, and 10 of 10 items were confirmed on both planted runs. The change rule met 3 of 4. The miss: Q4's change asked for a visible menu entry at phone width, which by reading is the planted problem, but it does not match that problem's regex | Not passed |
+
+- Bar 1's verifier problem was fixed before bar 2: the verifier protocol now names its commands. A rerun of one stuck person, after serving the clean site in place of the planted one, showed "last time stuck" beside "this time got through".
+- Neither bar is called passed. The Q4 change is a miss by the regex only.
+- Cost: 17.60 USD for all nine runs, 1.63 to 2.46 USD each, and 0.86 USD for the rerun.
+- Not done: a person reading a report and stating the question, the answer and the first change, and any real site.
 
 ## Inspirations
 

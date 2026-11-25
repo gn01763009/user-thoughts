@@ -282,8 +282,8 @@ A `{ "persona", "step" }` pair is a raw reference. The script drops it if that p
   | `does_not_hold` | at least one resolved `breaks` step | shown as bad evidence |
   | `not_reached` | nothing; nobody reached what changed | any cited steps are dropped with a reason |
 
-  A missing or unknown answer is shown as unanswered. `breaks` are the steps where it did not hold and `evidence` the steps where it did. `happened` is one or two sentences in the run's language, naming people, with no percentage and no "most". Steps cited for a `not_reached` answer never back anything.
-- **`changes`** holds at most 3 entries, the ones that caused the `breaks` first. `change` is one sentence. The script keeps a change only when its `finding` fingerprint exists in `merged.json`, that finding's `verification` is `confirmed`, and at least one cited step resolves. A feeling-based item goes in `real_checks`, never here. Each kept change shows its steps beside it.
+  A missing or unknown answer is shown as unanswered. `breaks` are the steps where it did not hold and `evidence` the steps where it did. `happened` is one or two sentences in the run's language, naming people, with no percentage and no "most". Steps cited for a `not_reached` answer never back anything. A `holds` answer shows no `breaks`: any it cites are dropped. A step cited twice counts once.
+- **`changes`** holds at most 3 entries, the ones that caused the `breaks` first. `change` is one sentence. The script keeps a change only when its `finding` fingerprint exists in `merged.json`, that finding's `verification` is `confirmed`, and at least one cited step resolves. Only the first change per finding is kept, so one problem never takes two places. A feeling-based item goes in `real_checks`, never here. Each kept change shows its steps beside it.
 
 ### `content.json`
 

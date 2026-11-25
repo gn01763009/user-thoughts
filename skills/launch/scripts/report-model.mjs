@@ -169,7 +169,7 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, previousJudgements, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
+export function buildReportModel({ run, merged, judgements, telephone, previous, previousJudgements, previousRun, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
   const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
   const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
   const testLimits = asArray(gatedJudgements?.test_limits);
@@ -179,7 +179,7 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
   const chains = asArray(gatedTelephone?.chains);
   const gatedContent = gateContent(content);
   const readerAttempts = gatedContent.injection_attempts.map((a) => ({ ...a, persona: null, person: labels.content_reader }));
-  const asked = buildQuestionParts({ run, merged, judgements, previous, previousJudgements, people });
+  const asked = buildQuestionParts({ run, merged, judgements, previous, previousJudgements, previousRun, people });
   const droppedCount = asArray(merged.dropped_voices).length
     + asArray(gatedJudgements?.dropped).length + asArray(gatedTelephone?.dropped).length + asked.dropped;
   return {

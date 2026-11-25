@@ -1,6 +1,6 @@
 // The top of a report that has a question: the question and its answer, where it broke,
 // what to change first and who the people were. Every text goes through e().
-import { e, fill, hasStarted, prettyRoute, screenshotLink } from './report-format.mjs';
+import { e, fill, prettyRoute, screenshotLink } from './report-format.mjs';
 import { realChecksSection } from './report-sections.mjs';
 
 const MAX_SHOT_ALT = 80;
@@ -14,10 +14,11 @@ export function answerWord(q, labels) {
 
 const answerClass = (q) => (q.status === 'answered' ? 'q-answer' : 'q-answer q-quiet');
 
-function whoLine(q, model, labels) {
+// Only people the evidence cites got through: someone who never reached what changed is not named.
+function whoLine(q, labels) {
   if (q.status !== 'answered') return '';
   const stuck = names(q.breaks);
-  const rest = model.overview.filter(hasStarted).map((p) => p.name).filter((n) => !stuck.includes(n));
+  const rest = names(q.evidence).filter((n) => !stuck.includes(n));
   const part = (label, list) => (list.length > 0 ? `${e(label)}${e(labels.sep_colon)}${list.map(e).join(e(labels.sep_list))}` : '');
   const parts = [part(labels.q_stuck, stuck), part(labels.q_not_stuck, rest)].filter((p) => p !== '');
   return parts.length > 0 ? `<p class="q-who">${parts.join(e(labels.sep_clause))}</p>` : '';
@@ -41,9 +42,16 @@ function breaksBlock(q, labels) {
   return `<h3>${e(labels.q_breaks_title)}</h3>${q.breaks.map((r) => breakBlock(r, labels)).join('')}`;
 }
 
+// A rerun is about one person, so each side says what happened to that person, not to the whole batch.
+function personOutcome(q, labels) {
+  if (q.status !== 'answered') return answerWord(q, labels);
+  if (q.breaks.length > 0) return labels.q_person_stuck;
+  return q.evidence.length > 0 ? labels.q_person_through : labels.q_person_not_met;
+}
+
 function compareCell(label, q, labels) {
   const quotes = q.breaks.map((r) => `<p class="small">${e(stepWord(r.step, labels))}${e(labels.sep_colon)}${e(labels.quote_open)}${e(r.thought)}${e(labels.quote_close)}</p>`).join('');
-  return `<div><p class="eyebrow">${e(label)}</p><p class="claim-text">${e(answerWord(q, labels))}</p>${quotes}</div>`;
+  return `<div><p class="eyebrow">${e(label)}</p><p class="claim-text">${e(personOutcome(q, labels))}</p>${quotes}</div>`;
 }
 
 function compareBlock(q, labels) {
@@ -58,8 +66,8 @@ export function questionSection(model, labels) {
   const happened = q.happened === '' ? '' : `<p class="q-happened">${e(q.happened)}</p>`;
   return `<section id="section-question" class="q"><p class="q-label">${e(labels.q_title)}${tag}</p>`
     + `<h2 class="q-text">${e(labels.quote_open)}${e(q.text)}${e(labels.quote_close)}</h2>`
-    + `<p class="${answerClass(q)}">${e(answerWord(q, labels))}</p>${happened}${whoLine(q, model, labels)}`
-    + `<p class="note">${e(labels.single_run_note)}</p>${compareBlock(q, labels)}${breaksBlock(q, labels)}</section>\n`;
+    + `<p class="${answerClass(q)}">${e(answerWord(q, labels))}</p>${happened}${whoLine(q, labels)}`
+    + `${compareBlock(q, labels)}${breaksBlock(q, labels)}</section>\n`;
 }
 
 function basisItem(ref, labels) {

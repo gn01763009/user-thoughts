@@ -64,10 +64,10 @@ function readPrevious(dir, run) {
   return base === null ? null : (readOptional(join(base, 'merged.json')) ?? null);
 }
 
-// Optional: the previous answer to the question. Any failure means there is nothing to compare.
-function readPreviousJudgements(dir, run) {
+// Optional: the previous answer to the question, or the previous run.json. Any failure means there is nothing to compare.
+function readPreviousFile(dir, run, file) {
   const base = previousFolder(dir, run);
-  return base === null ? undefined : readOptional(join(base, 'judgements.json'));
+  return base === null ? undefined : readOptional(join(base, file));
 }
 
 export function defaultOpener(path) {
@@ -116,7 +116,8 @@ export function main(argv, io = { out: process.stdout, err: process.stderr }, op
     judgements: judgements.value,
     telephone: telephone.value,
     previous: readPrevious(dir, run.value),
-    previousJudgements: readPreviousJudgements(dir, run.value),
+    previousJudgements: readPreviousFile(dir, run.value, 'judgements.json'),
+    previousRun: readPreviousFile(dir, run.value, 'run.json'),
     decisions: decisions.value ?? [],
     content: content.value,
     unreadable: [...judgements.unreadable, ...telephone.unreadable, ...decisions.unreadable, ...content.unreadable],

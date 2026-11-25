@@ -84,7 +84,7 @@ test('page: question, answer, breaks with expected and saw and a large screensho
   assert.ok(page.includes('class="break-shot" href="s1.png"'));
   assert.ok(page.indexOf('Dana · Step 1') < page.indexOf('Kai · Step 1'));
   assert.ok(page.includes(en.single_run_note));
-  assert.match(page, /\.break-shot\{[^}]*max-width:760px/);
+  assert.match(page, /\.break-shot img\{[^}]*max-width:min\(100%,760px\)/);
   assert.ok(!page.includes(en.q_default));
 });
 
@@ -189,13 +189,55 @@ test('rerun: earlier answer shows beside this one for that person only', () => {
   const previous = mergedOf();
   const previousJudgements = { question: { answer: 'does_not_hold', happened: 'x', breaks: [{ persona: 'p1', step: 1 }, { persona: 'p2', step: 1 }] } };
   const judgements = { question: { answer: 'holds', happened: 'fixed', evidence: [{ persona: 'p1', step: 1 }] } };
-  const m = buildReportModel({ run: runOf({ rerun_of: 'run-1', personas: ['p1'] }), merged: mergedOf(), judgements, telephone: undefined, previous, previousJudgements });
+  const previousRun = runOf();
+  const m = buildReportModel({ run: runOf({ rerun_of: 'run-1', personas: ['p1'] }), merged: mergedOf(), judgements, telephone: undefined, previous, previousJudgements, previousRun });
   assert.equal(m.question.earlier.answer, 'does_not_hold');
   assert.deepEqual(m.question.earlier.breaks.map((r) => r.persona), ['p1']);
   const page = html(m);
   assert.ok(page.includes(en.q_last_time) && page.includes(en.q_this_time));
   assert.ok(page.indexOf(en.q_last_time) < page.indexOf(en.q_this_time));
-  assert.ok(page.includes(en.q_does_not_hold));
+  const compare = page.slice(page.indexOf('class="q-compare"'), page.indexOf('class="q-compare"') + 2000);
+  assert.ok(compare.indexOf(en.q_person_stuck) < compare.indexOf(en.q_person_through), 'last time stuck, this time through');
+  assert.ok(compare.includes(en.q_person_stuck) && compare.includes(en.q_person_through));
+});
+
+test('rerun: a previous run that asked a different question is not compared', () => {
+  const previousJudgements = { question: { answer: 'does_not_hold', happened: 'x', breaks: [{ persona: 'p1', step: 1 }] } };
+  const args = { run: runOf({ rerun_of: 'run-1', personas: ['p1'] }), merged: mergedOf(), judgements: JUDGED(), telephone: undefined, previous: mergedOf(), previousJudgements };
+  assert.equal(buildReportModel({ ...args, previousRun: runOf({ question: 'Can people find the price?' }) }).question.earlier, null);
+  assert.equal(buildReportModel({ ...args, previousRun: runOf({ question: undefined }) }).question.earlier, null);
+  assert.equal(buildReportModel({ ...args }).question.earlier, null);
+});
+
+test('rerun: last time names what happened to this person, including not reaching it', () => {
+  const previousJudgements = { question: { answer: 'partly', happened: 'x', breaks: [{ persona: 'p2', step: 1 }], evidence: [{ persona: 'p3', step: 2 }] } };
+  const m = buildReportModel({ run: runOf({ rerun_of: 'run-1', personas: ['p1'] }), merged: mergedOf(), judgements: JUDGED(), telephone: undefined, previous: mergedOf(), previousJudgements, previousRun: runOf() });
+  const page = html(m);
+  const compare = page.slice(page.indexOf('class="q-compare"'), page.indexOf('class="q-compare"') + 2000);
+  assert.ok(compare.includes(en.q_person_not_met));
+});
+
+test('who line names as getting through only the people the evidence cites', () => {
+  const judgements = { question: { answer: 'does_not_hold', happened: 'h', breaks: [{ persona: 'p1', step: 1 }] } };
+  const page = html(build(judgements));
+  const who = page.slice(page.indexOf('class="q-who"'), page.indexOf('</p>', page.indexOf('class="q-who"')));
+  assert.ok(who.includes('Dana'));
+  assert.ok(!who.includes('Mei') && !who.includes('Kai'), who);
+  const both = html(build());
+  const whoBoth = both.slice(both.indexOf('class="q-who"'), both.indexOf('</p>', both.indexOf('class="q-who"')));
+  assert.ok(whoBoth.includes(en.q_not_stuck) && whoBoth.includes('Mei'));
+});
+
+test('the single-run note appears once in question mode', () => {
+  const page = html(build());
+  assert.equal(page.split(en.single_run_note).length - 1, 1);
+});
+
+test('break screenshots are capped in height and never scaled up', async () => {
+  const { ANSWER_CSS } = await import('../skills/launch/scripts/report-answer-theme.mjs');
+  const rule = ANSWER_CSS.split('\n').find((l) => l.startsWith('.break-shot img'));
+  assert.match(rule, /max-height:/);
+  assert.match(rule, /width:auto/);
 });
 
 test('rerun: no previous judgements shows only the current answer', () => {

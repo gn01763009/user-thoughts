@@ -10,8 +10,10 @@ const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v)
 export const hasQuestion = (run) => typeof run?.question === 'string' && run.question.trim() !== '';
 
 // The same person's answer in the previous run, or null when it cannot be told.
-function earlierAnswer(run, previous, previousJudgements) {
+// Answers to two different questions are never set side by side.
+function earlierAnswer(run, previous, previousJudgements, previousRun) {
   if (typeof run.rerun_of !== 'string' || run.rerun_of === '') return null;
+  if (!isObject(previousRun) || previousRun.question !== run.question) return null;
   if (!isObject(previous) || !isObject(previousJudgements) || !isObject(previousJudgements.question)) return null;
   const id = asArray(run.personas)[0];
   const people = asArray(previous.people).map((p) => ({ ...p, ...cardProfile(p) }));
@@ -26,13 +28,13 @@ function introOf(person) {
 }
 
 // With no question every field is empty and the rest of the model is untouched.
-export function buildQuestionParts({ run, merged, judgements, previous, previousJudgements, people }) {
+export function buildQuestionParts({ run, merged, judgements, previous, previousJudgements, previousRun, people }) {
   if (!hasQuestion(run)) return { question: null, changes: [], people_intro: [], dropped: 0 };
   const answer = gateQuestion(judgements?.question, people);
   const changes = gateChanges(judgements?.changes, people, asArray(merged.findings));
   const { dropped, ...gated } = answer;
   return {
-    question: { text: run.question, is_default: run.question_default === true, ...gated, earlier: earlierAnswer(run, previous, previousJudgements) },
+    question: { text: run.question, is_default: run.question_default === true, ...gated, earlier: earlierAnswer(run, previous, previousJudgements, previousRun) },
     changes: changes.changes,
     people_intro: people.map(introOf),
     dropped: dropped.length + changes.dropped.length,

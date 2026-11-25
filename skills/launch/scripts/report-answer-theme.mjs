@@ -14,8 +14,8 @@ export const ANSWER_CSS = `
 .q h3,.changes h3{margin-top:40px;margin-bottom:12px;font-size:1.25rem;font-weight:600}
 .break{margin-top:28px}
 .break-who{font-size:.9375rem;color:var(--secondary)}
-.break-shot{display:block;width:100%;max-width:760px;margin-top:10px}
-.break-shot img{width:100%;max-width:760px;height:auto;border:1px solid var(--separator);border-radius:12px}
+.break-shot{display:inline-block;max-width:100%;margin-top:10px}
+.break-shot img{display:block;width:auto;height:auto;max-width:min(100%,760px);max-height:min(640px,80vh);border:1px solid var(--separator);border-radius:12px}
 .break-thought{margin-top:12px;max-width:44em;font-size:1.25rem;font-weight:500;line-height:1.4}
 .fold>section>h2,.fold>div>h2.sr{display:none}
 .changes ol{padding-left:1.6em;list-style:decimal}

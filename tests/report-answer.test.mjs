@@ -152,11 +152,12 @@ test('page: hostile text is escaped everywhere it appears', () => {
 test('page: other sections fold in order, in details, with their text intact', () => {
   const m = { ...build(), not_checked: ['nothing about mobile'], real_checks: [{ who: 'a shop owner', ask: 'Ask this', evidence: [] }] };
   const page = html(m);
-  const titles = [en.overview_title, en.stories_title, en.not_checked_title].map((t) => t.replace("'", '&#39;'));
+  const titles = [en.stories_title, en.not_checked_title].map((t) => t.replace("'", '&#39;'));
   const at = titles.map((t) => page.indexOf(`<details class="fold"><summary>${t}</summary>`));
   assert.ok(at.every((i) => i > -1), String(at));
   assert.deepEqual([...at].sort((a, b) => a - b), at);
   assert.ok(page.includes('nothing about mobile') && page.includes('thought 2'));
+  assert.ok(page.includes(`<h2 class="list-title">${en.overview_title}</h2>`), 'the overview is still there, inside the stories fold');
   assert.ok(page.indexOf('a shop owner') < at[0], 'real checks stay visible above the folds');
   assert.ok(page.indexOf('id="section-question"') < page.indexOf('id="section-changes"'));
   assert.ok(page.indexOf('id="section-changes"') < page.indexOf('id="section-intro"'));
@@ -322,4 +323,12 @@ test('with no break shown, the empty-changes note does not point at where it bro
   assert.ok(!page.includes(en.changes_empty));
   const broke = html(build({ question: JUDGED().question }));
   assert.ok(broke.includes(en.changes_empty));
+});
+
+test('the overview and the people fold together, so a row link lands in an open section in any browser', () => {
+  const page = html(build());
+  const folds = page.split('<details class="fold">').slice(1).map((chunk) => chunk.slice(0, chunk.indexOf('</details>\n')));
+  const withRows = folds.filter((f) => f.includes('href="#person-'));
+  assert.equal(withRows.length, 1);
+  for (const id of ['p1', 'p2', 'p3']) assert.ok(withRows[0].includes(`id="person-${id}"`), id);
 });

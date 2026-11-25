@@ -169,7 +169,11 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, previousJudgements, previousRun, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
+// Only objects are findings. A hand-edited or older merged.json may hold null or other values; they are skipped.
+const withFindingsOnly = (merged) => ({ ...merged, findings: asArray(merged.findings).filter((f) => f !== null && typeof f === 'object' && !Array.isArray(f)) });
+
+export function buildReportModel({ run, merged: rawMerged, judgements, telephone, previous, previousJudgements, previousRun, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
+  const merged = withFindingsOnly(rawMerged);
   const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
   const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
   const testLimits = asArray(gatedJudgements?.test_limits);

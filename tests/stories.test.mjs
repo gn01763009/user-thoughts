@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { buildPeople, tallyApple, isSafeRelativePath, peopleProblem } from '../skills/launch/scripts/stories.mjs';
+import { buildPeople, cardProfile, tallyApple, isSafeRelativePath, peopleProblem } from '../skills/launch/scripts/stories.mjs';
 
 const tempDirs = [];
 after(() => {
@@ -155,4 +155,59 @@ test('a screenshot path must be a .png and may not hide dots or slashes behind p
   const { people, dropped } = buildPeople([CARD], [{ id: 'p1-on-the-go', summary: null, trace: [step(1, 'screens/x.html')] }], runDir);
   assert.equal(people[0].steps.length, 0);
   assert.match(dropped[0].reason, /unsafe/);
+});
+
+const stepWith = (extra) => ({ ...step(1), ...extra });
+const firstStep = (record) => {
+  const runDir = makeRun('p1-on-the-go', ['screens/01.png']);
+  return buildPeople([CARD], [{ id: 'p1-on-the-go', summary: null, trace: [record] }], runDir).people[0].steps[0];
+};
+
+test('expected and saw are kept from the trace and trimmed', () => {
+  const kept = firstStep(stepWith({ expected: '  看到價格  ', saw: '\n看到按鈕\t' }));
+  assert.equal(kept.expected, '看到價格');
+  assert.equal(kept.saw, '看到按鈕');
+});
+
+test('a non-string or blank expected omits only expected and keeps the step', () => {
+  for (const bad of [123, null, undefined, '   ', ['x'], { a: 1 }]) {
+    const kept = firstStep(stepWith({ expected: bad, saw: 'y' }));
+    assert.equal('expected' in kept, false, String(bad));
+    assert.equal(kept.saw, 'y');
+    assert.equal(kept.thought, 'thought 1');
+    assert.equal(kept.screenshot, 'p1-on-the-go/screens/01.png');
+  }
+});
+
+test('a non-string or blank saw omits only saw and keeps the step', () => {
+  const kept = firstStep(stepWith({ expected: 'x', saw: '' }));
+  assert.equal('saw' in kept, false);
+  assert.equal(kept.expected, 'x');
+  assert.equal(kept.thought, 'thought 1');
+});
+
+test('a step with neither expected nor saw keeps every other field', () => {
+  const record = stepWith({ expected: undefined, saw: undefined });
+  const kept = firstStep(record);
+  assert.equal('expected' in kept, false);
+  assert.equal('saw' in kept, false);
+  assert.deepEqual(
+    Object.keys(kept).sort(),
+    ['action', 'feeling', 'progress', 'route', 'screenshot', 'step', 'thought'],
+  );
+});
+
+test('cardProfile returns arrival trimmed', () => {
+  assert.equal(cardProfile({ arrival: '  剛到，想找價格  ' }).arrival, '剛到，想找價格');
+});
+
+test('cardProfile gives an empty arrival when the card has none or it is not text', () => {
+  assert.equal(cardProfile({}).arrival, '');
+  assert.equal(cardProfile(undefined).arrival, '');
+  assert.equal(cardProfile({ arrival: 7 }).arrival, '');
+});
+
+test('a person from a card without arrival gets an empty arrival', () => {
+  const person = buildPeople([{ id: 'p1-on-the-go' }], ONE, makeRun('p1-on-the-go', [])).people[0];
+  assert.equal(person.arrival, '');
 });

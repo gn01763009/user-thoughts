@@ -29,7 +29,10 @@ const BOM = /^﻿/;
 const BRIEFS_FILE = 'references/briefs.md';
 const SECTION_HEADING = /^#{1,2}\s/;
 const CODE_FENCE = /^\s*(```|~~~)/;
-const BRIEF_LEAK = /vision|願景|builder-claims|assumption|假設|decisions\.md/i;
+// \bquestion\b is whole word only, so "questionnaire" passes. 問題 has no word boundaries in Chinese, so it matches as a substring.
+const BRIEF_LEAK = /vision|願景|builder-claims|assumption|假設|decisions\.md|\bquestion\b|問題/i;
+// Optional briefs are checked only when present in briefs.md.
+const OPTIONAL_LEAK_BRIEFS = ['Reader brief', 'Verifier brief'];
 
 // ---------- frontmatter ----------
 
@@ -199,14 +202,14 @@ function leakErrors(fenced, label) {
   });
 }
 
-// The person and reader briefs go to agents that must never see the builder's vision or hidden assumption.
-// The reader brief is optional here: only a present one is checked.
+// The briefs go to agents that must never see the builder's vision, hidden assumption or question.
+// The person brief is required. The reader and verifier briefs are checked only when present.
 export function checkBriefLeak(briefsText) {
   const person = briefBlockLines(briefsText, 'Person brief');
   if (person === null) return ['has no "## Person brief" section to check'];
   if (person.length === 0) return ['the "## Person brief" section has no fenced code block to check'];
-  const reader = briefBlockLines(briefsText, 'Reader brief') ?? [];
-  return [...leakErrors(person, 'Person brief'), ...leakErrors(reader, 'Reader brief')];
+  const optional = OPTIONAL_LEAK_BRIEFS.flatMap((heading) => leakErrors(briefBlockLines(briefsText, heading) ?? [], heading));
+  return [...leakErrors(person, 'Person brief'), ...optional];
 }
 
 // ---------- plugin manifests ----------

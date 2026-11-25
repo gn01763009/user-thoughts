@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 (2026-11-26)
 
 - Asks the builder what they just changed and what they hope is true now, and opens the report with that question, the answer (holds, partly holds, does not hold, or nobody reached what changed) and where it broke. Up to three changes to make first follow, each one a problem the verifier confirmed on the page. Everything else is folded below. Runs without a question keep the old report.
 - New runs no longer ask for the hidden assumption. Setup asks the question again on a reused setup, offering the saved one as the default, and writes a default question from the main task when skipped.
@@ -8,6 +8,11 @@
 - `run.json` gains `question` and `question_default`, and `judgements.json` gains `question` and `changes`. An answer is shown only when real steps back it, and a change only when its finding was confirmed.
 - Keeps what each person expected and saw at each step (`expected`, `saw`) and their `arrival`, and shows them beside the break.
 - The lint checks that the question never reaches a person's, the reader's or the verifier's brief.
+- Runs the question bars on the local test sites, not a real site, and summarises the results in the README's Results section.
+- Fixes the verifier stopping before it checked anything: its protocol never named the browser commands, so it asked for `--help`, which is refused, and a refusal ends its check. The protocol now lists its commands, and a test runs each through the browser script.
+- People write `expected` and `saw` in the run's language.
+- Fixes a crash when `merged.json` holds an entry in `findings` that is not an object, such as `null`.
+- In the question layout, the overview folds together with each person's section, so its row links work in any browser.
 
 ## 1.1.0 (2026-11-10)
 

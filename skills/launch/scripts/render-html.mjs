@@ -22,8 +22,12 @@ const SECTIONS = [
 
 // Question mode: what answers the question stays open, every other section folds under its own title.
 const VISIBLE = [warningSection, injectionSection, rerunSection, questionSection, changesSection, peopleIntroSection];
+// The overview's rows link to each person's section. Folding both together means opening the overview also opens
+// the sections it links to, so a row link works in any browser, whether or not it opens a closed <details> by itself.
+const storiesFold = (model, labels) => `${overviewSection(model, labels)}${peopleSection(model, labels)}`;
+
 const FOLDED = [
-  [overviewSection, 'overview_title'], [peopleSection, 'stories_title'], [telephoneSection, 'telephone_title'], [commentsSection, 'comments_title'],
+  [storiesFold, 'stories_title'], [telephoneSection, 'telephone_title'], [commentsSection, 'comments_title'],
   [assumptionsSection, 'assumptions_title'], [conflictsSection, 'conflicts_title'], [questionedSection, 'questioned_title'], [contentSection, 'content_title'],
   [decidedSection, 'decided_title'], [testLimitsSection, 'test_limits_title'], [notCheckedSection, 'not_checked_title'],
 ];

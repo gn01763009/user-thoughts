@@ -120,8 +120,9 @@ test('every change drop reason', () => {
 });
 
 test('only the first 3 valid changes are kept; extras are dropped', () => {
-  const raw = [ch('f1'), ch('nope'), ch('f1'), ch('f2'), ch('f1'), ch('f2')];
-  const out = gateChanges(raw, people, findings);
+  const many = ['g1', 'g2', 'g3', 'g4', 'g5'].map((fingerprint) => ({ fingerprint, route: '/', verification: 'confirmed' }));
+  const raw = [ch('g1'), ch('nope'), ch('g2'), ch('g3'), ch('g4'), ch('g5')];
+  const out = gateChanges(raw, people, many);
   assert.equal(out.changes.length, MAX_CHANGES);
   const extra = out.dropped.filter((d) => d.reason === 'more than 3 changes');
   assert.equal(extra.length, 2);
@@ -132,4 +133,38 @@ test('changes undefined is nothing; not an array is one drop', () => {
   const out = gateChanges({ a: 1 }, people, findings);
   assert.deepEqual(out.changes, []);
   assert.equal(out.dropped.length, 1);
+});
+
+test('holds shows no breaks: cited breaks are dropped with a reason', () => {
+  const out = gateQuestion(deepFreeze(q('holds', { breaks: [ref('p2', 1)], evidence: [ref('p1', 2)] })), people);
+  assert.equal(out.status, 'answered');
+  assert.deepEqual(out.breaks, []);
+  assert.deepEqual(out.dropped, [{ persona: 'p2', kind: 'breaks', step: 1, reason: 'breaks not used when the answer holds' }]);
+});
+
+test('the same step cited twice is kept once', () => {
+  const out = gateQuestion(q('partly', { breaks: [ref('p1', 1), ref('p1', 1)], evidence: [ref('p2', 1), ref('p2', 1)] }), people);
+  assert.deepEqual(out.breaks.map((r) => `${r.persona}#${r.step}`), ['p1#1']);
+  assert.deepEqual(out.evidence.map((r) => `${r.persona}#${r.step}`), ['p2#1']);
+  const { changes } = gateChanges([{ change: 'c', finding: 'f1', evidence: [ref('p1', 1), ref('p1', 1)] }], people, [{ fingerprint: 'f1', verification: 'confirmed', route: '/', element: { name: 'x' } }]);
+  assert.equal(changes[0].evidence.length, 1);
+});
+
+test('two changes on one finding keep the first, so one problem cannot take two of the three places', () => {
+  const findings = [{ fingerprint: 'f1', verification: 'confirmed', route: '/', element: { name: 'x' } }];
+  const out = gateChanges(deepFreeze([
+    { change: 'first', finding: 'f1', evidence: [ref('p1', 1)] },
+    { change: 'second', finding: 'f1', evidence: [ref('p1', 2)] },
+  ]), people, findings);
+  assert.deepEqual(out.changes.map((c) => c.change), ['first']);
+  assert.deepEqual(out.dropped, [{ persona: null, kind: 'change', step: null, reason: 'finding already has a change' }]);
+});
+
+test('judgements of the wrong type never throw', () => {
+  for (const raw of ['text', 7, null, [], { answer: 'holds', breaks: 'x', evidence: {} }]) {
+    assert.doesNotThrow(() => gateQuestion(raw, people));
+  }
+  for (const raw of ['text', 7, null, {}, [null, 'x', { change: 'c', finding: 5, evidence: 'no' }]]) {
+    assert.doesNotThrow(() => gateChanges(raw, people, []));
+  }
 });

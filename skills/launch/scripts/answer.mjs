@@ -23,9 +23,12 @@ function withStepFields(ref, people) {
 
 const personIndex = (ref, people) => people.findIndex((p) => p.id === ref.persona);
 
+const refKey = (r) => `${r.persona}#${r.step}`;
+const firstOfEach = (refs) => refs.filter((r, i) => refs.findIndex((o) => refKey(o) === refKey(r)) === i);
+
 function resolveSorted(list, people, kind) {
   const { refs, dropped } = resolveRefs(list, people, kind);
-  const sorted = refs
+  const sorted = firstOfEach(refs)
     .map((r) => withStepFields(r, people))
     .sort((a, b) => a.step - b.step || personIndex(a, people) - personIndex(b, people));
   return { refs: sorted, dropped };
@@ -50,12 +53,15 @@ export function gateQuestion(rawQuestion, people) {
     const dropped = [...droppedAsNotReached(rawQuestion.breaks, 'breaks'), ...droppedAsNotReached(rawQuestion.evidence, 'evidence')];
     return { ...emptyResult('not_reached', happened, dropped), answer };
   }
-  const breaks = resolveSorted(rawQuestion.breaks, people, 'breaks');
+  const resolved = resolveSorted(rawQuestion.breaks, people, 'breaks');
   const evidence = resolveSorted(rawQuestion.evidence, people, 'evidence');
-  const dropped = [...breaks.dropped, ...evidence.dropped];
-  const needed = answer === 'holds' ? evidence.refs : breaks.refs;
+  // A question that holds did not break anywhere, so the report never shows "where it broke" under it.
+  const unused = answer === 'holds' ? resolved.refs.map((r) => drop('breaks', r.persona, r.step, 'breaks not used when the answer holds')) : [];
+  const breaks = answer === 'holds' ? [] : resolved.refs;
+  const dropped = [...resolved.dropped, ...unused, ...evidence.dropped];
+  const needed = answer === 'holds' ? evidence.refs : breaks;
   if (needed.length === 0) return emptyResult('bad_evidence', happened, dropped);
-  return { status: 'answered', answer, happened, breaks: breaks.refs, evidence: evidence.refs, dropped };
+  return { status: 'answered', answer, happened, breaks, evidence: evidence.refs, dropped };
 }
 
 function changeFault(raw, findings) {
@@ -80,7 +86,10 @@ export function gateChanges(rawChanges, people, findings) {
   if (rawChanges === undefined) return { changes: [], dropped: [] };
   if (!Array.isArray(rawChanges)) return { changes: [], dropped: [drop('change', null, null, 'changes is not an array')] };
   const results = rawChanges.map((raw) => gateChange(raw, people, findings));
-  const valid = results.filter((r) => r.item).map((r) => r.item);
+  const gated = results.filter((r) => r.item).map((r) => r.item);
+  // One problem takes one of the places, however many changes cite it.
+  const valid = gated.filter((c, i) => gated.findIndex((o) => o.finding.fingerprint === c.finding.fingerprint) === i);
+  const repeats = Array.from({ length: gated.length - valid.length }, () => drop('change', null, null, 'finding already has a change'));
   const tooMany = valid.slice(MAX_CHANGES).map(() => drop('change', null, null, `more than ${MAX_CHANGES} changes`));
-  return { changes: valid.slice(0, MAX_CHANGES), dropped: [...results.flatMap((r) => r.dropped), ...tooMany] };
+  return { changes: valid.slice(0, MAX_CHANGES), dropped: [...results.flatMap((r) => r.dropped), ...repeats, ...tooMany] };
 }

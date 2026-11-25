@@ -44,14 +44,16 @@ from `run.json`, so do not copy it.
 | `does_not_hold` | it did not hold where people met it | at least one `breaks` step |
 | `not_reached` | nobody reached what changed | nothing |
 
-- `breaks` are the steps where it did not hold. `evidence` are the steps where it did. Cite only steps in
+- `breaks` are the steps where it did not hold. `evidence` are the steps where it did. A `holds` answer has no
+  `breaks`; the script drops any it is given. Cite only steps in
   `merged.json` `people[].steps`. An answer with no step that resolves is not shown as an answer.
 - `happened` is one or two sentences in the run's language. Name the people. Never give a percentage or write "most".
 - When nobody reached what changed, answer `not_reached`. Never guess an answer from people who did not get there.
 - `changes` holds at most 3 entries, each with one sentence saying what to change, the `finding` fingerprint copied from
   `merged.json`, and the steps. Include a change only for a problem that is a fact on the page and whose finding has
   `verification: "confirmed"`. Put a feeling-based item (taste, trust, willingness) into `real_checks` instead.
-- Order `changes` with the ones that caused the `breaks` first, then the other confirmed problems.
+- Order `changes` with the ones that caused the `breaks` first, then the other confirmed problems. One change per
+  finding: a second change citing the same finding is dropped.
 
 ## The offer (Step 12)
 

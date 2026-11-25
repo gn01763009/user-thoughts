@@ -216,7 +216,7 @@ translating, shortening or merging. If a relay returns nothing, leave that chain
 ```
 
 - `question`: the answer to `run.json` `question`; the report prints that text, so do not copy it here. `answer` is `holds` (needs a resolving `evidence` step), `partly` or `does_not_hold` (each needs a resolving `breaks` step) or `not_reached` (nobody reached what changed; never guess). `breaks` are steps where it did not hold, `evidence` steps where it did. `happened` is one or two sentences in the run's language, naming people, with no percentage and no "most". An answer with no resolving step is shown as bad evidence, not as an answer. See `references/question.md`.
-- `changes`: at most 3, the ones that caused the `breaks` first. `change` is one sentence in the run's language. `finding` is a fingerprint from `merged.json` `findings`. The script keeps a change only if that finding has `verification: "confirmed"` and a cited step resolves. Feeling-based items go in `real_checks`.
+- `changes`: at most 3, the ones that caused the `breaks` first. `change` is one sentence in the run's language. `finding` is a fingerprint from `merged.json` `findings`. The script keeps a change only if that finding has `verification: "confirmed"` and a cited step resolves, and keeps only the first change per finding. Feeling-based items go in `real_checks`.
 - `assumptions`: only when `builder-claims.md` exists (older runs); one entry per line of `builder-claims.md`, with `claim` copied word for word. `happened` says, in
   the run's language, what the people did. `evidence` points at steps in `merged.json` `people[].steps`. When no one
   met it, give an empty `evidence` list and the report marks it not encountered.

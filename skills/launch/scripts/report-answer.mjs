@@ -89,8 +89,10 @@ function offerLine(model, labels) {
 
 export function changesSection(model, labels) {
   if (!model.question) return '';
+  const q = model.question;
+  const empty = q.status === 'answered' && q.breaks.length > 0 ? labels.changes_empty : labels.changes_empty_no_breaks;
   const list = model.changes.length === 0
-    ? `<p class="note">${e(labels.changes_empty)}</p>`
+    ? `<p class="note">${e(empty)}</p>`
     : `<ol>${model.changes.map((c) => changeItem(c, labels)).join('')}</ol>`;
   return `<section id="section-changes" class="changes block"><h2>${e(labels.changes_title)}</h2>${list}</section>\n`
     + `${realChecksSection(model, labels)}${offerLine(model, labels)}`;

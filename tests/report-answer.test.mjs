@@ -314,3 +314,12 @@ test('summary: an answer that cannot be shown says so', () => {
   const lines = summaryOf(build({ question: { answer: 'does_not_hold', breaks: [{ persona: 'p9', step: 1 }] } }));
   assert.ok(lines[1].includes(en.q_bad_evidence));
 });
+
+test('with no break shown, the empty-changes note does not point at where it broke', () => {
+  const holds = { question: { answer: 'holds', happened: 'h', evidence: [{ persona: 'p3', step: 2 }] } };
+  const page = html(build(holds));
+  assert.ok(page.includes(en.changes_empty_no_breaks));
+  assert.ok(!page.includes(en.changes_empty));
+  const broke = html(build({ question: JUDGED().question }));
+  assert.ok(broke.includes(en.changes_empty));
+});

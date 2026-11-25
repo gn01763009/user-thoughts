@@ -21,6 +21,28 @@ exactly with the prefix you were given. Permission rules match the start of a co
 `head`, `mkdir`, `cd`, `node -e`, heredocs, variables, `&&`, `;` and pipes get it refused. Do not try another way round a
 refusal.
 
+These are the browser commands you need. `<browser>` is the whole Browser line from your brief, written out in full each
+time. `<ref>` is a ref such as `@e3` from your latest snapshot; take a new snapshot after the page changes. `<screenshot>`
+is the absolute path of `$DIR/screens/NN.png`. Put `<text>` in double quotes when it has spaces.
+
+```text
+<browser> set viewport <width> <height>
+<browser> open <url>
+<browser> screenshot <screenshot>
+<browser> snapshot -i
+<browser> click <ref>
+<browser> fill <ref> <text>
+<browser> press <key>
+<browser> scroll down 600
+<browser> get text body
+<browser> get url
+<browser> back
+<browser> close
+```
+
+Never run `--help` or any other option to find commands: the script refuses it. In serial mode your brief names browser
+tools instead; use those.
+
 Before your first step, write an empty file at `$DIR/screens/.keep`, because the browser cannot create folders.
 
 Keep your records as you go, and write them when your visit ends, one JSON object per line, in `trace.jsonl`,

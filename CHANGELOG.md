@@ -9,6 +9,10 @@
 - Keeps what each person expected and saw at each step (`expected`, `saw`) and their `arrival`, and shows them beside the break.
 - The lint checks that the question never reaches a person's, the reader's or the verifier's brief.
 - Runs the question bars on the local test sites, not a real site, and summarises the results in the README's Results section.
+- Fixes the verifier stopping before it checked anything: its protocol never named the browser commands, so it asked for `--help`, which is refused, and a refusal ends its check. The protocol now lists its commands, and a test runs each through the browser script.
+- People write `expected` and `saw` in the run's language.
+- Fixes a crash when `merged.json` holds an entry in `findings` that is not an object, such as `null`.
+- In the question layout, the overview folds together with each person's section, so its row links work in any browser.
 
 ## 1.1.0 (2026-11-10)
 

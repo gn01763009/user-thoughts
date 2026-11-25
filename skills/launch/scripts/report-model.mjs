@@ -5,6 +5,7 @@ import { overviewQuote } from './report-moment.mjs';
 import { prettyRoute } from './report-format.mjs';
 import { cardProfile } from './stories.mjs';
 import { gateContent } from './content-issues.mjs';
+import { buildQuestionParts } from './report-question-model.mjs';
 
 export const APPLE_STATUS = 'experimental';
 
@@ -168,7 +169,7 @@ function overviewOf(person) {
   };
 }
 
-export function buildReportModel({ run, merged, judgements, telephone, previous, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
+export function buildReportModel({ run, merged, judgements, telephone, previous, previousJudgements, unreadable, decisions = [], content }, labels = labelsFor(run.language)) {
   const profiled = asArray(merged.people).map((person) => ({ ...person, ...cardProfile(person) }));
   const gatedJudgements = judgements === undefined ? null : gateJudgements(judgements, profiled, decisions);
   const testLimits = asArray(gatedJudgements?.test_limits);
@@ -178,8 +179,9 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
   const chains = asArray(gatedTelephone?.chains);
   const gatedContent = gateContent(content);
   const readerAttempts = gatedContent.injection_attempts.map((a) => ({ ...a, persona: null, person: labels.content_reader }));
+  const asked = buildQuestionParts({ run, merged, judgements, previous, previousJudgements, people });
   const droppedCount = asArray(merged.dropped_voices).length
-    + asArray(gatedJudgements?.dropped).length + asArray(gatedTelephone?.dropped).length;
+    + asArray(gatedJudgements?.dropped).length + asArray(gatedTelephone?.dropped).length + asked.dropped;
   return {
     language: run.language,
     url: run.url,
@@ -206,5 +208,8 @@ export function buildReportModel({ run, merged, judgements, telephone, previous,
     top_finding: topFinding(merged, people, labels, skippedSteps(testLimits, decided)),
     rerun: buildRerun(run, merged, previous, labels),
     dropped_count: droppedCount,
+    question: asked.question,
+    changes: asked.changes,
+    people_intro: asked.people_intro,
   };
 }

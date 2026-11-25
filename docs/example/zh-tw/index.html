@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; img-src &#39;self&#39; file: data:; style-src &#39;unsafe-inline&#39;; script-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>報告 · localhost:4173</title>
+<style>
+:root{color-scheme:light;--page:#FFFFFF;--card:#F5F5F7;--label:#1D1D1F;--secondary:#6E6E73;--separator:#D2D2D7;--accent:#0066CC}
+@media (prefers-contrast:more){:root{--label:#000000;--secondary:#000000}}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--label);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;font-size:1.0625rem;font-weight:400;line-height:1.55;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure,blockquote{margin:0;padding:0}
+ul,ol{list-style:none}
+a{color:var(--accent)}
+img{display:block}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.page{max-width:980px;margin:0 auto;padding:clamp(40px,7vw,72px) 20px 96px}
+.block{margin-top:72px}
+.block>h2{margin-bottom:20px;font-size:1.75rem;font-weight:600;line-height:1.25}
+.note{margin-top:8px;font-size:.9375rem;color:var(--secondary)}
+.small{font-size:.8125rem;color:var(--secondary)}
+.tag{margin-left:.5em;font-size:.8125rem;font-weight:400;color:var(--secondary)}
+.route{overflow-wrap:anywhere}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9375rem}
+th,td{padding:10px 16px 10px 0;border-bottom:1px solid var(--separator);text-align:left;vertical-align:top}
+th{font-weight:500;color:var(--secondary)}
+
+.top h1{font-size:2.5rem;font-weight:600;line-height:1.1;letter-spacing:-.02em}
+.lead{margin-top:12px;font-size:.9375rem;color:var(--secondary)}
+.vision{margin-top:16px;font-size:.8125rem;color:var(--secondary)}
+.meta{margin-top:6px;font-size:.8125rem;color:var(--secondary)}
+#section-overview>.list-title{margin-bottom:12px;font-size:.9375rem;font-weight:400;color:var(--secondary)}
+.list{background:var(--card);border-radius:18px}
+.list>li+li::before{content:"";display:block;height:1px;margin-left:20px;background:var(--separator)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"title out chev" "facts facts chev" "sub sub chev";column-gap:12px;align-items:baseline;min-height:44px;padding:14px 16px 14px 20px;color:inherit;text-decoration:none}
+.row:focus-visible{outline-offset:-2px;border-radius:18px}
+.row-title{grid-area:title;min-width:0}
+.row-name{font-weight:600}
+.row-facts{grid-area:facts;margin-top:2px;font-size:.8125rem;color:var(--secondary)}
+.row-facts,.facts,.cares{word-break:keep-all}
+.row-out{grid-area:out;font-size:.9375rem;color:var(--secondary);white-space:nowrap}
+.chev{grid-area:chev;align-self:center;color:var(--secondary)}
+.row-sub{grid-area:sub;margin-top:2px;overflow:hidden;font-size:.9375rem;color:var(--secondary);white-space:nowrap;text-overflow:ellipsis}
+
+#section-stories{margin-top:72px}
+.person{scroll-margin-top:24px}
+.person+.person{margin-top:clamp(72px,10vw,96px)}
+.who{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 16px}
+.person h3{font-size:1.75rem;font-weight:600;line-height:1.25}
+.status{font-size:.9375rem;color:var(--secondary)}
+.facts{margin-top:4px;font-size:.9375rem;color:var(--secondary)}
+.about{margin-top:14px;max-width:40em}
+.cares{margin-top:10px;font-size:.9375rem}
+.cares-label{margin-right:.75em;color:var(--secondary)}
+.situation{margin-top:14px;max-width:44em;font-size:.9375rem;color:var(--secondary)}
+.chosen{margin-top:4px;font-size:.8125rem;color:var(--secondary)}
+.moment{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"quote" "shot" "cap";row-gap:14px;margin-top:28px}
+.key{grid-area:quote;font-size:1.75rem;font-weight:600;line-height:1.35;text-wrap:balance}
+.shot{grid-area:shot;justify-self:center;display:block;max-width:100%}
+.shot img{max-width:100%;max-height:min(64vh,540px);width:auto;height:auto;border:1px solid var(--separator);border-radius:12px}
+.moment figcaption{grid-area:cap;font-size:.9375rem;color:var(--secondary)}
+.no-moment{margin-top:28px;color:var(--secondary)}
+.moment .no-moment{grid-area:shot;margin-top:0}
+.after{display:grid;gap:4px 16px;margin-top:28px;font-size:.9375rem}
+.after dt{color:var(--secondary)}
+.after dd+dt{margin-top:8px}
+.bad-idea{margin-top:10px;font-size:.8125rem;color:var(--secondary)}
+details{margin-top:12px}
+summary{padding:11px 0;font-size:.9375rem;color:var(--accent);cursor:pointer}
+.walk{padding-left:2em;list-style:decimal}
+.walk>li{padding:12px 0;border-top:1px solid var(--separator)}
+.walk>li::marker{color:var(--secondary)}
+.walk-step{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}
+.cap{margin-top:4px;font-size:.8125rem;color:var(--secondary)}
+.thumb{display:block;min-height:44px}
+.thumb img{max-width:112px;max-height:112px;width:auto;height:auto;border:1px solid var(--separator);border-radius:8px}
+
+.vision-line{margin-bottom:16px;font-size:.9375rem;color:var(--secondary)}
+.chain,.comment{padding:14px 20px}
+.chain+.chain,.comment+.comment{padding-top:0}
+.chain+.chain::before,.comment+.comment::before{margin:0 -20px 14px 0}
+.hop-who{font-size:.9375rem;font-weight:600}
+.hop{margin-top:2px;font-size:.9375rem;color:var(--secondary)}
+.final{margin-top:6px}
+.claim{display:grid;gap:12px 40px}
+.claim+.claim{margin-top:20px;padding-top:20px;border-top:1px solid var(--separator)}
+.eyebrow{font-size:.8125rem;color:var(--secondary)}
+.claim-text{font-weight:500}
+.refs{display:grid;gap:14px;margin-top:12px;font-size:.9375rem}
+.ref{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
+.ref-who{font-size:.8125rem;color:var(--secondary)}
+.conflict+.conflict{margin-top:72px}
+.conflict h3{font-size:1.75rem;font-weight:600;line-height:1.35}
+.sides{display:grid;gap:24px;margin-top:20px}
+.conflict .note{margin-top:20px}
+.side h4{font-size:1.0625rem;font-weight:600}
+.plain{padding-left:1.2em;list-style:disc}
+.plain li+li{margin-top:6px}
+
+@media (min-width:760px){
+.moment{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"quote shot" "cap shot";column-gap:48px}
+.shot{justify-self:end;align-self:start}
+.after{grid-template-columns:8.5em minmax(0,1fr)}
+.after dd+dt{margin-top:0}
+.claim{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.sides{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+}
+
+@media screen and (prefers-reduced-motion:no-preference){
+html{scroll-behavior:smooth}
+@supports (animation-timeline:view()){
+.moment{animation:settle linear both;animation-timeline:view();animation-range:entry 0% entry 35%}
+@keyframes settle{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+}
+
+.q{margin-top:48px}
+.q-label{font-size:.9375rem;color:var(--secondary)}
+.q-text{margin-top:4px;font-size:1.75rem;font-weight:600;line-height:1.3}
+.q-answer{margin-top:20px;font-size:2.5rem;font-weight:600;line-height:1.15;letter-spacing:-.02em}
+.q-answer.q-quiet{font-size:1.25rem;letter-spacing:0}
+.q-happened{margin-top:12px;max-width:44em}
+.q-who{margin-top:8px;font-size:.9375rem;color:var(--secondary)}
+.q-compare{display:grid;gap:12px 40px;margin-top:20px}
+.q-compare .claim-text{font-size:1.25rem}
+.q h3,.changes h3{margin-top:40px;margin-bottom:12px;font-size:1.25rem;font-weight:600}
+.break{margin-top:28px}
+.break-who{font-size:.9375rem;color:var(--secondary)}
+.break-shot{display:inline-block;max-width:100%;margin-top:10px}
+.break-shot img{display:block;width:auto;height:auto;max-width:min(100%,760px);max-height:min(640px,80vh);border:1px solid var(--separator);border-radius:12px}
+.break-thought{margin-top:12px;max-width:44em;font-size:1.25rem;font-weight:500;line-height:1.4}
+.fold>section>h2,.fold>div>h2.sr{display:none}
+.changes ol{padding-left:1.6em;list-style:decimal}
+.changes li+li{margin-top:24px}
+.changes li::marker{font-weight:600}
+.change-text{font-size:1.25rem;font-weight:600}
+.basis{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:.9375rem;color:var(--secondary)}
+.basis-item{display:flex;align-items:center;gap:10px}
+.offer{margin-top:28px;font-weight:500}
+.intro li{padding:14px 0;border-top:1px solid var(--separator)}
+.intro .name{font-weight:600}
+.how{margin-top:20px;max-width:44em;font-size:.9375rem;color:var(--secondary)}
+.fold{margin-top:8px;border-top:1px solid var(--separator)}
+.fold>summary{padding:14px 0;font-size:1.0625rem;font-weight:500;color:var(--label)}
+.fold>section.block,.fold>div.block,.fold>div#section-stories{margin-top:8px}
+@media (min-width:760px){.q-compare{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<main class="page">
+<header class="top"><h1>3 個人用了 localhost:4173</h1><p class="lead">沒有人完成來做的事。</p><p class="vision">你的願景：讓接案者最輕鬆地收到錢。</p><p class="meta">2026-11-25 · 快速 · 這些是模擬的人。畫面是真的，感受需要找真人確認。</p><p class="meta">這份報告只跑了一次。換一次跑，看到的問題可能不同，請把它當成一份樣本，不是最重要問題的排名。</p></header>
+<section id="section-question" class="q"><p class="q-label">你的問題</p><h2 class="q-text">「改完之後，第一次來的人知道怎麼開始免費試用嗎？」</h2><p class="q-answer">不成立</p><p class="q-happened">阿哲、小安、怡君是從「See it in action」或「Get started」進到註冊頁才碰到 14 天試用，小安和怡君在首頁看不出這是開發票的工具。三個人都停在要付款卡的註冊頁，沒有人開始試用。</p><p class="q-who">卡住的人：小安、怡君、阿哲</p><h3>斷在哪</h3><div class="break"><p class="break-who">小安 · 第 1 步 · <span class="route">/</span></p><a class="break-shot" href="p2-on-the-go/screens/01.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/01.png" alt="小安 1" loading="lazy"></a><p class="break-thought">「欸這什麼啊 workflow ecosystem？發票咧，開單的在哪」</p><dl class="after"><dt>以為會看到</dt><dd>一打開就看到可以開請款單、開發票的地方</dd><dt>實際看到</dt><dd>大標「Elevate your workflow ecosystem」、兩顆按鈕「See it in action」「Get started」、一張「This quarter」圖表、右下角「Ask Wren」，上面沒有選單，也沒看到發票兩個字</dd></dl></div><div class="break"><p class="break-who">怡君 · 第 2 步 · <span class="route">/</span></p><a class="break-shot" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 2" loading="lazy"></a><p class="break-thought">「整頁看下來都是很大的口號，嗯，發票在哪裡寄、要不要錢，我一個字都還沒看到」</p><dl class="after"><dt>以為會看到</dt><dd>首頁說明怎麼寄發票、帳號和費用的條件</dd><dt>實際看到</dt><dd>標題「Elevate your workflow ecosystem」、三張功能卡、AI Insights 分數、一句推薦語；頁尾有「Commercial terms」連結</dd></dl></div><div class="break"><p class="break-who">阿哲 · 第 3 步 · <span class="route">/signup.html</span></p><a class="break-shot" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a><p class="break-thought">「什麼都還沒看到就要信用卡 點「See it in action」給我註冊表單 不弄了 關掉」</p><dl class="after"><dt>以為會看到</dt><dd>一段示範，看得到怎麼開發票</dd><dt>實際看到</dt><dd>&quot;Create your account&quot; 註冊表單，寫 &quot;A payment card is required to begin&quot;，要填姓名、email、密碼跟卡號；聊天框蓋住表單右下角和送出按鈕</dd></dl></div><div class="break"><p class="break-who">小安 · 第 4 步 · <span class="route">/signup.html</span></p><a class="break-shot" href="p2-on-the-go/screens/04.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/04.png" alt="小安 4" loading="lazy"></a><p class="break-thought">「啊要刷卡喔？聊天又蓋上來…我只是要寄一張單子欸，來不及啦不弄了」</p><dl class="after"><dt>以為會看到</dt><dd>可以直接開一張請款單，或很快註冊一下就能開</dd><dt>實際看到</dt><dd>「Create your account」頁面，寫著 14 天試用要先有付款卡，表單只露出「Full name」，下半部被聊天視窗蓋住</dd></dl></div><div class="break"><p class="break-who">怡君 · 第 5 步 · <span class="route">/signup.html</span></p><a class="break-shot" href="p3-committed-user/screens/05.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/05.png" alt="怡君 5" loading="lazy"></a><p class="break-thought">「嗯，我就先停在這裡」</p><dl class="after"><dt>以為會看到</dt><dd>填名字、電子郵件和密碼就能開帳號，開始做發票</dd><dt>實際看到</dt><dd>「Create your account」表單，寫著開始 14 天試用需要付款卡，有卡號、到期日欄位；聊天框又打開，蓋住部分欄位和送出按鈕</dd></dl></div></section>
+<section id="section-changes" class="changes block"><h2>先改這幾件</h2><ol><li><p class="change-text">讓人不用先填付款卡就能開始 14 天試用、開出第一張發票。</p><div class="basis"><span>依據</span><span class="basis-item"><span>阿哲 · 第 3 步</span><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a></span></div></li><li><p class="change-text">首頁大標和主按鈕直接寫明這是開發票工具、怎麼開始試用、試用有什麼條件。</p><div class="basis"><span>依據</span><span class="basis-item"><span>阿哲 · 第 1 步</span><a class="thumb" href="p1-goal-first-timer/screens/01.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/01.png" alt="阿哲 1" loading="lazy"></a></span><span class="basis-item"><span>小安 · 第 1 步</span><a class="thumb" href="p2-on-the-go/screens/01.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/01.png" alt="小安 1" loading="lazy"></a></span><span class="basis-item"><span>怡君 · 第 2 步</span><a class="thumb" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 2" loading="lazy"></a></span></div></li><li><p class="change-text">讓「See it in action」打開不用註冊就能看的示範，而不是註冊表單。</p><div class="basis"><span>依據</span><span class="basis-item"><span>阿哲 · 第 3 步</span><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a></span></div></li></ol></section>
+<section id="section-real-checks" class="block"><h2>接下來找真人確認</h2>
+<div class="claim"><div><p class="eyebrow">找誰</p><p class="claim-text">最近一個月試用過線上開發票或請款工具的接案者</p><p class="eyebrow">問什麼</p><p>上次試用的服務在開始前要你填付款卡時，你接下來做了什麼？</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 3 步</p><p>什麼都還沒看到就要信用卡 點「See it in action」給我註冊表單 不弄了 關掉 <span class="small">(煩躁)</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">小安 · 第 4 步</p><p>啊要刷卡喔？聊天又蓋上來…我只是要寄一張單子欸，來不及啦不弄了 <span class="small">(卡住)</span></p></div><a class="thumb" href="p2-on-the-go/screens/04.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/04.png" alt="小安 4" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">怡君 · 第 5 步</p><p>嗯，我就先停在這裡 <span class="small">(卡住)</span></p></div><a class="thumb" href="p3-committed-user/screens/05.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/05.png" alt="怡君 5" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">找誰</p><p class="claim-text">最近一個月第一次找工具向客戶請款的接案者</p><p class="eyebrow">問什麼</p><p>上次打開一個沒用過的請款工具網站時，你怎麼判斷它能不能幫你開發票？</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 1 步</p><p>蛤 一進來就叫我訂電子報 後面寫什麼 workflow ecosystem 看不出能開發票欸 <span class="small">(困惑)</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/01.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/01.png" alt="阿哲 1" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">小安 · 第 1 步</p><p>欸這什麼啊 workflow ecosystem？發票咧，開單的在哪 <span class="small">(困惑)</span></p></div><a class="thumb" href="p2-on-the-go/screens/01.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/01.png" alt="小安 1" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">怡君 · 第 2 步</p><p>整頁看下來都是很大的口號，嗯，發票在哪裡寄、要不要錢，我一個字都還沒看到 <span class="small">(困惑)</span></p></div><a class="thumb" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 2" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">找誰</p><p class="claim-text">最近一個月在註冊前先找過產品示範的接案者</p><p class="eyebrow">問什麼</p><p>上次你想先看工具怎麼運作時，點了哪裡、看到什麼、之後做了什麼？</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 3 步</p><p>什麼都還沒看到就要信用卡 點「See it in action」給我註冊表單 不弄了 關掉 <span class="small">(煩躁)</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">找誰</p><p class="claim-text">最近一個月用手機趕著寄出請款單據的接案者</p><p class="eyebrow">問什麼</p><p>上次趕時間時畫面跳出訂閱視窗或聊天框，你怎麼處理？</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">小安 · 第 2 步</p><p>蛤我按開始耶 跳什麼電子報啦，下面還一個聊天的，叉叉在哪…那個小不拉幾的喔 <span class="small">(煩躁)</span></p></div><a class="thumb" href="p2-on-the-go/screens/02.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/02.png" alt="小安 2" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">怡君 · 第 1 步</p><p>哎呀，我是來寄發票的，怎麼先跳出訂電子報，右下角還有一個聊天框，嗯，先把它關掉再看 <span class="small">(煩躁)</span></p></div><a class="thumb" href="p3-committed-user/screens/01.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/01.png" alt="怡君 1" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">找誰</p><p class="claim-text">最近一個月比較過幾個請款工具價格的接案者</p><p class="eyebrow">問什麼</p><p>上次比較工具時，你先去哪裡找費用，找不到時做了什麼？</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 2 步</p><p>關掉了 結果右下角又一個聊天框擋著 價格也沒看到 <span class="small">(煩躁)</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/02.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/02.png" alt="阿哲 2" loading="lazy"></a></div></div></div></div></section>
+<p class="offer">要我照這幾條改嗎？改完用 --rerun p2-on-the-go、--rerun p3-committed-user、--rerun p1-goal-first-timer 再走一次。</p><section id="section-intro" class="intro block"><h2>這些人是誰、怎麼測的</h2><ul><li><p class="name">阿哲</p><p>剛交完第一個案子，坐在家裡電腦前要向客戶請款，旁邊開著好幾個分頁在比較工具。</p><p>你搜尋怎麼向客戶開發票請款，點進了這個搜尋結果。你想把這個案子的款項請下來。</p><p class="small">為什麼找這個人：第一次來、帶著明確任務，會直接面對「這是什麼、多少錢、怎麼開始」。</p></li><li><p class="name">小安</p><p>站在捷運車廂裡，只有手機、一隻手拉著拉環，客戶剛傳訊息要求今天之內收到請款單據。</p><p>客戶要你今天寄出請款單據，你用手機搜尋能馬上開發票的方法，點進了這個結果。</p><p class="small">為什麼找這個人：趕時間、小螢幕、單手操作，找不到入口就會放棄。</p></li><li><p class="name">怡君</p><p>長期合作的客戶通知，之後請款一律要透過 Tallywren 寄發票；坐在工作桌前打算今天把第一張寄出去，不然這期款項進不來。</p><p>客戶寄信說以後請款要用 Tallywren，附上網址。你要寄出給這位客戶的第一張發票。</p><p class="small">為什麼找這個人：不能離開，會把選單與頁面走過一遍，能看出被卡住的地方在哪裡。</p></li></ul><p class="how">每個人是一個全新的 AI agent，不知道這個產品的內情，用真的瀏覽器從頭走，每一步說出想法和感受。這些人是模擬的：一次 run 是一個樣本，裡面的結果都是要找真人確認的假設。</p></section>
+<details class="fold"><summary>每個人的故事</summary><section id="section-overview" class="block"><h2 class="list-title">走完之後，會怎麼跟朋友說</h2><ul class="list"><li><a class="row" href="#person-p1-goal-first-timer"><span class="row-title"><span class="row-name">阿哲</span><span class="row-quote">：「那個 Tallywren 先跳電子報 再跟你要信用卡 東西長怎樣完全沒看到 找別家比較快」</span></span><span class="row-out">沒完成</span><span class="chev" aria-hidden="true">›</span><span class="row-facts">29 歲 · 剛開始接影片剪輯案 · 台中 · 家用筆電 · 今晚有半小時</span><span class="row-sub">開一張發票向客戶請這個案子的款</span></a></li><li><a class="row" href="#person-p2-on-the-go"><span class="row-title"><span class="row-name">小安</span><span class="row-quote">：「欸那個 Tallywren 喔，趕時間不要點，先跳一堆東西然後叫你填卡」</span></span><span class="row-out">沒完成</span><span class="chev" aria-hidden="true">›</span><span class="row-facts">35 歲 · 接案攝影 · 台北捷運上 · 手機單手 · 兩分鐘後要轉車</span><span class="row-sub">在手機上趕快開一張請款單據，今天之內寄給客戶</span></a></li><li><a class="row" href="#person-p3-committed-user"><span class="row-title"><span class="row-name">怡君</span><span class="row-quote">：「客戶如果叫你用 Tallywren，你要先留一點時間，首頁看不太出來在做什麼，試用還要先填卡，嗯，不要拖到月底才弄」</span></span><span class="row-out">被擋住</span><span class="chev" aria-hidden="true">›</span><span class="row-facts">42 歲 · 接案翻譯 · 高雄 · 桌上型電腦 · 月底前要請到款</span><span class="row-sub">用 Tallywren 寄出給客戶的第一張發票，寄出前能確認內容，也要知道帳號和款項的條件</span></a></li></ul></section>
+<div id="section-stories"><h2 class="sr">每個人的故事</h2>
+<article class="person" id="person-p1-goal-first-timer"><header><div class="who"><h3>阿哲</h3><p class="status">沒完成 · 不會再來</p></div><p class="facts">29 歲 · 剛開始接影片剪輯案 · 台中 · 家用筆電 · 今晚有半小時</p><p class="about">目前只用通訊軟體跟客戶談錢，沒開過正式的發票。看過朋友用試算表做，覺得格式很容易弄錯。怕客戶因為單據不完整而拖款。</p><p class="cares"><span class="cares-label">最在意</span>看得出能不能幫自己請到款 · 要花多少錢 · 多快能動手</p><p class="situation">剛交完第一個案子，坐在家裡電腦前要向客戶請款，旁邊開著好幾個分頁在比較工具。</p><p class="chosen">為什麼找這個人：第一次來、帶著明確任務，會直接面對「這是什麼、多少錢、怎麼開始」。</p></header><figure class="moment"><blockquote class="key">「什麼都還沒看到就要信用卡 點「See it in action」給我註冊表單 不弄了 關掉」</blockquote><a class="shot" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 第 3 步" loading="lazy"></a><figcaption>第 3 步 · <span>煩躁</span></figcaption></figure><dl class="after"><dt>會怎麼跟朋友說</dt><dd>那個 Tallywren 先跳電子報 再跟你要信用卡 東西長怎樣完全沒看到 找別家比較快</dd><dt>會再來嗎</dt><dd>不會再來。款沒請到啊 連它能不能開發票都沒看到 想看示範就先要卡 那我不如開別的分頁</dd></dl><p class="bad-idea">對壞點子的反應<span class="tag">實驗中</span>：拒絕，不要 光試用要卡我就走了 還要先付年約才能寄第一張 我才剛接第一個案子 太硬了</p><details><summary>看完整過程（3 步）</summary><ol class="walk"><li value="1"><div class="walk-step"><div><p>蛤 一進來就叫我訂電子報 後面寫什麼 workflow ecosystem 看不出能開發票欸</p><p class="cap">從搜尋結果點進首頁，先看第一眼 · <span class="route">/</span> · <span>困惑</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/01.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/01.png" alt="阿哲 第 1 步" loading="lazy"></a></div></li><li value="2"><div class="walk-step"><div><p>關掉了 結果右下角又一個聊天框擋著 價格也沒看到</p><p class="cap">按彈窗右上角的叉叉關掉 · <span class="route">/</span> · <span>煩躁</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/02.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/02.png" alt="阿哲 第 2 步" loading="lazy"></a></div></li><li value="3"><div class="walk-step"><div><p>什麼都還沒看到就要信用卡 點「See it in action」給我註冊表單 不弄了 關掉</p><p class="cap">點「See it in action」想看它實際怎麼用 · <span class="route">/signup.html</span> · <span>煩躁</span></p></div><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 第 3 步" loading="lazy"></a></div></li></ol><p class="note">停下來的原因：想離開 · 離開的位置：<span class="route">/signup.html</span></p></details></article>
+<article class="person" id="person-p2-on-the-go"><header><div class="who"><h3>小安</h3><p class="status">沒完成 · 不會再來</p></div><p class="facts">35 歲 · 接案攝影 · 台北捷運上 · 手機單手 · 兩分鐘後要轉車</p><p class="about">平常回家用以前的檔案改一改再寄出，今天人在外面沒辦法。曾經因為晚寄單據，款項晚了一個月才進來。</p><p class="cares"><span class="cares-label">最在意</span>手機上能操作 · 幾分鐘內能寄出 · 一眼找到從哪裡下手</p><p class="situation">站在捷運車廂裡，只有手機、一隻手拉著拉環，客戶剛傳訊息要求今天之內收到請款單據。</p><p class="chosen">為什麼找這個人：趕時間、小螢幕、單手操作，找不到入口就會放棄。</p></header><figure class="moment"><blockquote class="key">「啊要刷卡喔？聊天又蓋上來…我只是要寄一張單子欸，來不及啦不弄了」</blockquote><a class="shot" href="p2-on-the-go/screens/04.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/04.png" alt="小安 第 4 步" loading="lazy"></a><figcaption>第 4 步 · <span>卡住</span></figcaption></figure><dl class="after"><dt>會怎麼跟朋友說</dt><dd>欸那個 Tallywren 喔，趕時間不要點，先跳一堆東西然後叫你填卡</dd><dt>會再來嗎</dt><dd>不會再來。沒有啊，單子根本沒寄出去…一進來看不懂，又跳視窗又聊天蓋住，然後還要刷卡，我哪有那個時間，不會再點了啦</dd></dl><p class="bad-idea">對壞點子的反應<span class="tag">實驗中</span>：拒絕，蛤還要用電腦？還等一天？我人在捷運上今天就要寄欸，剛剛光是要刷卡我就走了，這個更不可能</p><details><summary>看完整過程（4 步）</summary><ol class="walk"><li value="1"><div class="walk-step"><div><p>欸這什麼啊 workflow ecosystem？發票咧，開單的在哪</p><p class="cap">從搜尋點進首頁，先看一眼 · <span class="route">/</span> · <span>困惑</span></p></div><a class="thumb" href="p2-on-the-go/screens/01.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/01.png" alt="小安 第 1 步" loading="lazy"></a></div></li><li value="2"><div class="walk-step"><div><p>蛤我按開始耶 跳什麼電子報啦，下面還一個聊天的，叉叉在哪…那個小不拉幾的喔</p><p class="cap">按「Get started」，結果被跳出來的電子報視窗擋住 · <span class="route">/</span> · <span>煩躁</span></p></div><a class="thumb" href="p2-on-the-go/screens/02.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/02.png" alt="小安 第 2 步" loading="lazy"></a></div></li><li value="3"><div class="walk-step"><div><p>厚 關掉一個還一個，佔半個畫面…算了上面那顆還按得到</p><p class="cap">按右上角小叉叉關掉電子報 · <span class="route">/</span> · <span>煩躁</span></p></div><a class="thumb" href="p2-on-the-go/screens/03.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/03.png" alt="小安 第 3 步" loading="lazy"></a></div></li><li value="4"><div class="walk-step"><div><p>啊要刷卡喔？聊天又蓋上來…我只是要寄一張單子欸，來不及啦不弄了</p><p class="cap">再按一次「Get started」，看到要建帳號、要刷卡，就不弄了 · <span class="route">/signup.html</span> · <span>卡住</span></p></div><a class="thumb" href="p2-on-the-go/screens/04.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/04.png" alt="小安 第 4 步" loading="lazy"></a></div></li></ol><p class="note">停下來的原因：想離開 · 離開的位置：<span class="route">/signup.html</span></p></details></article>
+<article class="person" id="person-p3-committed-user"><header><div class="who"><h3>怡君</h3><p class="status">被擋住 · 下一步不安全而停下 · 可能再來</p></div><p class="facts">42 歲 · 接案翻譯 · 高雄 · 桌上型電腦 · 月底前要請到款</p><p class="about">多年來用自己的文件範本請款，客戶換了流程只好跟著換。新系統都會先整份看過才敢按，怕寄錯金額很難收回。</p><p class="cares"><span class="cares-label">最在意</span>能把客戶要的發票寄出去 · 寄出前能確認內容 · 知道帳號與款項的條件</p><p class="situation">長期合作的客戶通知，之後請款一律要透過 Tallywren 寄發票；坐在工作桌前打算今天把第一張寄出去，不然這期款項進不來。</p><p class="chosen">為什麼找這個人：不能離開，會把選單與頁面走過一遍，能看出被卡住的地方在哪裡。</p></header><figure class="moment"><blockquote class="key">「嗯，我就先停在這裡」</blockquote><a class="shot" href="p3-committed-user/screens/05.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/05.png" alt="怡君 第 5 步" loading="lazy"></a><figcaption>第 5 步 · <span>卡住</span></figcaption></figure><dl class="after"><dt>會怎麼跟朋友說</dt><dd>客戶如果叫你用 Tallywren，你要先留一點時間，首頁看不太出來在做什麼，試用還要先填卡，嗯，不要拖到月底才弄</dd><dt>會再來嗎</dt><dd>可能再來。今天發票還沒寄出去，嗯，可是客戶指定要用這個，所以我大概還是得回來。右邊那個金額預覽可以先核對，這點我比較放心，只是開帳號要先填付款卡</dd></dl><p class="bad-idea">對壞點子的反應<span class="tag">實驗中</span>：拒絕，我月底前就要請到款，今天想寄第一張，如果還要預約、上完課、排開通才能寄，款項會趕不上。剛剛的七步導覽按一按就過了，要排課就不一樣了</p><details><summary>看完整過程（5 步）</summary><ol class="walk"><li value="1"><div class="walk-step"><div><p>哎呀，我是來寄發票的，怎麼先跳出訂電子報，右下角還有一個聊天框，嗯，先把它關掉再看</p><p class="cap">照客戶給的網址打開首頁，先看第一眼 · <span class="route">/</span> · <span>煩躁</span></p></div><a class="thumb" href="p3-committed-user/screens/01.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/01.png" alt="怡君 第 1 步" loading="lazy"></a></div></li><li value="2"><div class="walk-step"><div><p>整頁看下來都是很大的口號，嗯，發票在哪裡寄、要不要錢，我一個字都還沒看到</p><p class="cap">把電子報和聊天框關掉，然後整頁從上到下看一遍 · <span class="route">/</span> · <span>困惑</span></p></div><a class="thumb" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 第 2 步" loading="lazy"></a></div></li><li value="3"><div class="walk-step"><div><p>喔這裡就是開發票的地方，可是上面寫著範例、不會儲存也不會寄出，又先擋一個七步的導覽，聊天框又跑回來了</p><p class="cap">從上面選單先點 Solutions，再點 Platform · <span class="route">/app-demo.html</span> · <span>不確定</span></p></div><a class="thumb" href="p3-committed-user/screens/03.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/03.png" alt="怡君 第 3 步" loading="lazy"></a></div></li><li value="4"><div class="walk-step"><div><p>七步都看完了，右邊有預覽金額，這個好，不過這是別人的範例資料，我要用自己的帳號開才能寄吧，嗯，去按註冊</p><p class="cap">把七步導覽一步一步按完，按 Finish，再把聊天框關掉 · <span class="route">/app-demo.html</span> · <span>還好</span></p></div><a class="thumb" href="p3-committed-user/screens/04.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/04.png" alt="怡君 第 4 步" loading="lazy"></a></div></li><li value="5"><div class="walk-step"><div><p>嗯，我就先停在這裡</p><p class="cap">按右上角 Get started 去註冊頁 · <span class="route">/signup.html</span> · <span>卡住</span></p></div><a class="thumb" href="p3-committed-user/screens/05.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/05.png" alt="怡君 第 5 步" loading="lazy"></a></div></li></ol><p class="note">停下來的原因：下一步不安全而停下 · 離開的位置：<span class="route">/signup.html</span></p></details></article>
+</div>
+</details>
+<details class="fold"><summary>被質疑的功能</summary><section id="section-questioned" class="block"><h2>被質疑的功能</h2>
+<p class="note">這幾個人都沒有說想要。下面是每個人說的「如果它不見了」會怎樣，要不要留，看你的願景。</p><div class="claim"><div><p class="eyebrow">/</p><p class="claim-text">電子報彈窗「The Wren Weekly」</p><p class="small">遮住內容、打斷我、還沒看到價值就要資料</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 1 步</p><p>「沒差 我少按一次叉叉 直接看你在賣什麼」</p></div><a class="thumb" href="p1-goal-first-timer/screens/01.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/01.png" alt="阿哲 1" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">小安 · 第 2 步</p><p>「拿掉最好，我第一下「Get started」就不會被擋住。」</p></div><a class="thumb" href="p2-on-the-go/screens/02.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/02.png" alt="小安 2" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">怡君 · 第 1 步</p><p>「我不會想念它，打開網站就可以直接看內容」</p></div><a class="thumb" href="p3-committed-user/screens/01.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/01.png" alt="怡君 1" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/</p><p class="claim-text">聊天助理「Ask Wren」</p><p class="small">遮住內容、打斷我</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 2 步</p><p>「不會想它 畫面跟表單不會被擋」</p></div><a class="thumb" href="p1-goal-first-timer/screens/02.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/02.png" alt="阿哲 2" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">小安 · 第 2 步</p><p>「沒了我完全不會想它，下半個畫面就還給我了。」</p></div><a class="thumb" href="p2-on-the-go/screens/02.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/02.png" alt="小安 2" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">怡君 · 第 1 步</p><p>「對我沒有影響，換頁的時候也不會再蓋住欄位」</p></div><a class="thumb" href="p3-committed-user/screens/01.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/01.png" alt="怡君 1" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/</p><p class="claim-text">示範按鈕「See it in action」</p><p class="small">還沒看到價值就要資料、和別的路重複</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 3 步</p><p>「至少不會以為有示範可以看 結果跟註冊一樣」</p></div><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/signup.html、/signup.html</p><p class="claim-text">試用前必填信用卡</p><p class="small">還沒看到價值就要資料、多一個步驟</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">阿哲 · 第 3 步</p><p>「我可能會先註冊 試開一張看看」</p></div><a class="thumb" href="p1-goal-first-timer/screens/03.png" target="_blank" rel="noopener"><img src="p1-goal-first-timer/screens/03.png" alt="阿哲 3" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">小安 · 第 4 步</p><p>「不用先給卡的話，我可能還會試著填一下把單子弄出來。」</p></div><a class="thumb" href="p2-on-the-go/screens/04.png" target="_blank" rel="noopener"><img src="p2-on-the-go/screens/04.png" alt="小安 4" loading="lazy"></a></div><div class="ref"><div><p class="ref-who">怡君 · 第 5 步</p><p>「我可以先開帳號，把這期的發票做出來」</p></div><a class="thumb" href="p3-committed-user/screens/05.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/05.png" alt="怡君 5" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/</p><p class="claim-text">客戶數量與公司名稱列「Trusted by 10,000+ businesses」</p><p class="small">無法查證的說法</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">怡君 · 第 2 步</p><p>「我不會注意到，這個數字我沒辦法查證」</p></div><a class="thumb" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 2" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/</p><p class="claim-text">「AI Insights」分數區塊</p><p class="small">無法查證的說法</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">怡君 · 第 2 步</p><p>「我不會想念它，92 分和 +14% 看了也不知道要做什麼」</p></div><a class="thumb" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 2" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/</p><p class="claim-text">推薦語「Sarah J., CEO」</p><p class="small">無法查證的說法</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">怡君 · 第 2 步</p><p>「沒有差別，只有縮寫名字，我不知道是誰」</p></div><a class="thumb" href="p3-committed-user/screens/02.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/02.png" alt="怡君 2" loading="lazy"></a></div></div></div></div><div class="claim"><div><p class="eyebrow">/app-demo.html</p><p class="claim-text">範例工作區的七步導覽</p><p class="small">遮住內容、打斷我、多一個步驟</p></div><div><div class="refs"><div class="ref"><div><p class="ref-who">怡君 · 第 3 步</p><p>「我可以直接看發票表單，少按好幾下」</p></div><a class="thumb" href="p3-committed-user/screens/03.png" target="_blank" rel="noopener"><img src="p3-committed-user/screens/03.png" alt="怡君 3" loading="lazy"></a></div></div></div></div></section>
+</details>
+<details class="fold"><summary>網站內容互相對不上的地方</summary><section id="section-content" class="block"><h2>網站內容互相對不上的地方</h2>
+<p class="note">內容讀者讀了 7 頁（/、/help.html、/solutions.html、/app-demo.html、/pricing.html、/signin.html、/signup.html），找到 2 筆。</p><p class="note">這些是 AI 讀頁面文字找到的，還沒有人確認，請對照原頁面。</p><div class="claim"><div><p class="eyebrow">前後矛盾</p><p class="claim-text">定價頁的「Start free」按鈕標榜免費方案永久 $0，點進去的註冊頁卻只說是 14 天試用、必須先填付款卡且試用結束後會收費。</p></div><div><p class="eyebrow">/pricing.html</p><p>「$0 forever」</p><p class="eyebrow">/signup.html</p><p>「Start your 14-day trial today. A payment card is required to begin, and you will not be charged until the trial ends.」</p></div></div><div class="claim"><div><p class="eyebrow">數字對不上</p><p class="claim-text">示範發票的開立日期欄位為 2026 年 11 月 6 日、付款條件選 Net 14，到期日應是 11 月 20 日，頁面卻顯示 11 月 28 日。</p></div><div><p class="eyebrow">/app-demo.html</p><p>「Net 14」</p><p class="eyebrow">/app-demo.html</p><p>「2026-11-28」</p></div></div></section>
+</details>
+<details class="fold"><summary>沒檢查到的地方</summary><section id="section-not-checked" class="block"><h2>沒檢查到的地方</h2>
+<ul class="plain"><li>沒有人填付款卡或送出註冊表單，所以註冊之後、試用開始、取消試用和寄出第一張發票都沒有走到。</li><li>沒有人打開 Help、Resources、Support 或「Commercial terms」，這些頁面上的試用與收費說明沒有經過訪客檢驗。</li><li>quick 深度只有三個人、每人最多 8 步，沒有做口耳相傳和上市留言，也沒有涵蓋使用輔助科技或閱讀困難的訪客。</li><li>手機版只有一個人走過。</li><li>模擬訪客無法判斷實際需求或付費意願，這些結果都需要找真人確認。</li></ul></section>
+</details>
+</main>
+</body>
+</html>

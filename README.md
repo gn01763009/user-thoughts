@@ -103,6 +103,8 @@ When you give a question, the top of the report answers it. First comes the ques
 
 These images are from one run of 1.2.1 on Tallywren, a fictional product in this repository's test sites, with the question "After the change, do first-time visitors know how to start the free trial?". People write in the language you use, and the report's labels come in English or Traditional Chinese. This run was in English; the [Traditional Chinese README](README.zh-TW.md) shows a run in Traditional Chinese.
 
+**[Open the full report from this run](https://gn01763009.github.io/user-thoughts/example/)**, with every person's walk and screenshots. Nothing to install.
+
 Without a question, the report goes person by person. It opens with an overview, one row per person with what they would tell a friend and how the visit ended. Each person's section introduces them (who they are and their situation), shows the one moment that mattered most with its screenshot, and gives their last words and the bad-idea reaction. The full walk, every step with a thought and a screenshot, opens on request. Around the people are the word-of-mouth result set beside your vision, your assumption against what happened, conflicts with each side's reasons, and what the run did not check. There is no overall score.
 
 After the people's stories, the report lists who to ask and what to ask for the biggest findings, what you already decided to keep, and what may only be an effect of the test setup.
